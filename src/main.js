@@ -44,6 +44,8 @@ function drawDisc(row, col, color='black') {
   // Draws game piece by referencing a row and column on board
   
   ctx.strokeStyle = color === 'red' ? 'hsl(0,100%,20%)' : 'hsl(0,0%,80%)';
+  // Adjust for differential contrast between dark on light versus light on dark lines
+  ctx.lineWidth = color === 'red' ? 1 : 0.9; 
 
   // Fill disc
   ctx.save();
@@ -73,16 +75,41 @@ function drawDisc(row, col, color='black') {
   ctx.restore();
 
   // Circle inlay pattern
-  const numInlays = 12;
+  const numInlays = 8;
   ctx.save();
   for (let i = 0; i < numInlays; i++) {
+    // Centered small circle
     ctx.rotate(2*Math.PI/numInlays);
     ctx.beginPath();
-    ctx.arc(20, 0, 1.5, 0, 2*Math.PI);
+    ctx.arc(21, 0, 2, 0, 2*Math.PI);
     ctx.stroke();
+
+    // Arc encompassing disc center
+    ctx.moveTo(9, 0);
+    ctx.beginPath();
+    ctx.arc(9, 0, 11, Math.PI*3/12, Math.PI*21/12);
+    ctx.stroke();
+
+    // Arc outer to small circle
+    ctx.moveTo(25,0);
+    ctx.beginPath();
+    ctx.arc(20, 0, 9, -Math.PI*6/12, Math.PI*6/12);
+    ctx.stroke();
+
+    // Line details 'round small circle
+    ctx.save();
+    ctx.translate(21, 0);
+    ctx.rotate(Math.PI*-10/12);
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      ctx.rotate(Math.PI*5/12);
+      ctx.moveTo(4, 0);
+      ctx.lineTo(6, 0);
+    }
+    ctx.stroke();
+    ctx.restore();
   }
   ctx.restore();
-
   ctx.restore();
 }
 
