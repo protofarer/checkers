@@ -39,11 +39,14 @@ function drawBoard() {
 }
 drawBoard();
 
-const disc = {
-  ROW: null,
-  COL: null,
-  registeredPath: null,
-  registerPath: function(row, col) {
+class Disc {
+  constructor(col, row) {
+    this.col = col;
+    this.row = row;
+    this.path = registerPath(this.row, this.col);
+  }
+
+  registerPath (row, col) {
     let path = new Path2D();
     const x = ((col) * 100) + 50;
     const y = ((row) * 100) + 50;
@@ -51,15 +54,18 @@ const disc = {
     ctx.translate(x, y);
     path.arc(0, 0, 40, 0, 2*Math.PI);
     path.closePath();
-    this.registeredPath = path;
-  },
-  isClicked: function(x, y) {
-    const body = this.registerPath(this.ROW, this.COL);
-    const isInPath = ctx.isPointInPath(body, x, y);
-    console.log('isInPath', isInPath);
+    ctx.restore();
+    return path;
+  }
+
+  isClicked (x, y) {
+    const isInPath = ctx.isPointInPath(this.path, x, y);
+    // console.log(this.registeredPath);
+    // console.log('isInPath', isInPath);
     return isInPath;
   }
 }
+
 function drawDisc(row, col, color='black') {
   // Draws game piece by referencing a row and column on board
   
@@ -148,13 +154,13 @@ const BLANK = 0;
 const BLACK = 1;
 const RED = 2;
 
+
 let discs = [];
 for (let i = 0; i < 8; i++) {
   for (let j = 0; j < 8; j++) {
     const newDisc = Object.create(disc);
     newDisc.ROW = i;
     newDisc.COL = j;
-    newDisc.registerPath(i, j);
     switch(board[i][j]) {
       case RED:
         drawDisc(i, j, 'red');
@@ -178,4 +184,21 @@ canvas.onclick = function(event) {
   const x = event.clientX - rect.left;
   const y = event.clientY - rect.top;
   console.log('logging x y clicks', x, y);
+  for (let disc of discs) {
+    if (disc.isClicked(x, y)){
+      console.log('ROW:',disc.ROW,' COL:', disc.COL);
+      console.log('isClicked?', disc.isClicked(x, y));
+    }
+    // if (disc.isClicked(x, y)) {
+    //   console.log('found dis clicked');
+    // }
+  }
 }
+
+// ctx.beginPath();
+// const p = new Path2D();
+// p.arc(400,400,60,0,2*Math.PI);
+// // p.closePath();
+// ctx.strokeStyle = 'rgb(0,0,0)';
+// ctx.stroke(p);
+// console.log(ctx.isPointInPath(p, 400, 400));
