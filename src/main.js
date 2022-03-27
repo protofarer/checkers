@@ -24,7 +24,6 @@ function drawBoard() {
   ctx.moveTo(0, 0);
   ctx.strokeRect(0, 0, 800, 800);
   ctx.beginPath();
-  ctx.beginPath();
   ctx.moveTo(0, 80);
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
@@ -40,6 +39,27 @@ function drawBoard() {
 }
 drawBoard();
 
+const disc = {
+  ROW: null,
+  COL: null,
+  registeredPath: null,
+  registerPath: function(row, col) {
+    let path = new Path2D();
+    const x = ((col) * 100) + 50;
+    const y = ((row) * 100) + 50;
+    ctx.save();
+    ctx.translate(x, y);
+    path.arc(0, 0, 40, 0, 2*Math.PI);
+    path.closePath();
+    this.registeredPath = path;
+  },
+  isClicked: function(x, y) {
+    const body = this.registerPath(this.ROW, this.COL);
+    const isInPath = ctx.isPointInPath(body, x, y);
+    console.log('isInPath', isInPath);
+    return isInPath;
+  }
+}
 function drawDisc(row, col, color='black') {
   // Draws game piece by referencing a row and column on board
   
@@ -83,7 +103,7 @@ function drawDisc(row, col, color='black') {
     ctx.beginPath();
     ctx.arc(21, 0, 2, 0, 2*Math.PI);
     ctx.stroke();
-
+    
     // Arc encompassing disc center
     ctx.moveTo(9, 0);
     ctx.beginPath();
@@ -128,14 +148,21 @@ const BLANK = 0;
 const BLACK = 1;
 const RED = 2;
 
+let discs = [];
 for (let i = 0; i < 8; i++) {
   for (let j = 0; j < 8; j++) {
+    const newDisc = Object.create(disc);
+    newDisc.ROW = i;
+    newDisc.COL = j;
+    newDisc.registerPath(i, j);
     switch(board[i][j]) {
       case RED:
         drawDisc(i, j, 'red');
+        discs.push(newDisc);
         break;
       case BLACK:
-        drawDisc(i, j);
+        drawDisc(i, j, 'black');
+        discs.push(newDisc);
         break;
       case BLANK:
         break;
@@ -144,4 +171,11 @@ for (let i = 0; i < 8; i++) {
         debug.innerText += 'error rendering board object';
     }
   }
+}
+
+canvas.onclick = function(event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  console.log('logging x y clicks', x, y);
 }
