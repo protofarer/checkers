@@ -1,6 +1,7 @@
 import {
-  canvas, ctx, status, debug,
-  clr, board, Disc, BLANK, BLACK, RED
+  canvas, ctx, status, debug, updateStatus,
+  clr, board, Disc, BLANK, BLACK, RED,
+  mouseX, mouseY, rect
 } from './init.js';
 
 function drawBoard() {
@@ -48,21 +49,48 @@ for (let i = 0; i < 8; i++) {
   }
 }
 
-canvas.onclick = function(event) {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  console.log(`x:${x} y:${y}`);
+canvas.onmousedown = function(e) {
+  // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
+  // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
   for (let disc of discs) {
-    if (disc.isClicked(x, y)){
+    if (disc.isClicked(mouseX, mouseY)){
       console.log('disc clicked at r:',disc.row,' c:', disc.col);
+      console.log(`clientxy@:${e.clientX},${e.clientY}`);
+      disc.toggleGrab();
+      // console.log(disc.isGrabbed);
     }
   }
 }
 
+canvas.onmouseup = function(e) {
+  for (let disc of discs) {
+    if (disc.isGrabbed) {
+      // if (disc.validMoveLocation()) {
+      //   disc.col = getColumnFromMouse();
+      //   disc.row = getRowFromMouse();
+      // }
+      disc.toggleGrab();
+      // console.log(disc.isGrabbed);
+    }
+  }
+}
+
+function getSquareFromMouse() {
+  // Returns the row and colum of the square under the current mouse position
+  return []
+}
+
+
+
 function draw() {
+  clr();
   drawBoard();
   drawDiscs();
+  updateStatus();
+
+  // TODO GAME LOGIC
+
+  requestAnimationFrame(draw);
 }
 
 draw();
