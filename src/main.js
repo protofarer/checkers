@@ -1,27 +1,9 @@
 import {
-  canvas, ctx, status, debug, updateStatus,
+  canvas, ctx, status, debug, updateStatus, drawBoard,
   clr, board, Disc, BLANK, BLACK, RED,
   mouseX, mouseY, rect
 } from './init.js';
 
-function drawBoard() {
-  const boardHue = 45;
-  ctx.moveTo(0, 0);
-  ctx.strokeRect(0, 0, 800, 800);
-  ctx.beginPath();
-  ctx.moveTo(0, 80);
-  for (let row = 0; row < 8; row++) {
-    for (let col = 0; col < 8; col++) {
-      if (( row + col) % 2 === 0) {
-        ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
-        ctx.fillRect(col * 100, row * 100, 100, 100);
-      } else {
-        ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
-        ctx.fillRect(col * 100, row * 100, 100, 100);
-      }
-    }
-  }
-}
 
 function drawDiscs() {
   for (let disc of discs) {
@@ -55,7 +37,6 @@ canvas.onmousedown = function(e) {
   for (let disc of discs) {
     if (disc.isClicked(mouseX, mouseY)){
       console.log('disc clicked at r:',disc.row,' c:', disc.col);
-      console.log(`clientxy@:${e.clientX},${e.clientY}`);
       disc.toggleGrab();
       // console.log(disc.isGrabbed);
     }

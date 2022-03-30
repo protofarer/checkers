@@ -10,35 +10,11 @@ export const canvas = document.querySelector('canvas');
 export const rect = canvas.getBoundingClientRect();
 export const ctx = canvas.getContext('2d');
 // canvas.style.borderStyle = 'solid';
-
 export const status = document.querySelector('#status');
 export const debug = document.querySelector('#debug');
 
-export function clr() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
 export let mouseX, mouseY;
 export let cX, cY;
-
-export function updateStatus() {
-  status.innerText = `client: ${cX},${cY}
-  mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
-  row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
-  rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}
-  canvas: ${canvas.width},${canvas.height}
-  `;
-}
-
-document.addEventListener('mousemove', handleMouseMove);
-
-function handleMouseMove(e) {
-  mouseX = e.clientX - rect.left; //window.scrollX
-  mouseY = e.clientY - rect.top;
-  cX = e.clientX;
-  cY = e.clientY;
-}
-
 export let board = [
   [0,2,0,2,0,2,0,2],
   [2,0,2,0,2,0,2,0],
@@ -49,10 +25,29 @@ export let board = [
   [0,1,0,1,0,1,0,1],
   [1,0,1,0,1,0,1,0],
 ];
-
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX - rect.left; //window.scrollX
+  mouseY = e.clientY - rect.top;
+  cX = e.clientX;
+  cY = e.clientY;
+});
+
+export function clr() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+export function updateStatus() {
+  status.innerText = 
+  `client: ${cX},${cY}
+  mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
+  row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
+  rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}
+  canvas: ${canvas.width},${canvas.height}`;
+}
 
 export class Disc {
   constructor(row, col, color) {
@@ -172,5 +167,21 @@ export class Disc {
     }
     ctx.restore();
     ctx.restore();
+  }
+}
+
+export function drawBoard() {
+  const boardHue = 45;
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      ctx.beginPath();
+      if (( row + col) % 2 === 0) {
+        ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
+        ctx.fillRect(col * 100, row * 100, 100, 100);
+      } else {
+        ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
+        ctx.fillRect(col * 100, row * 100, 100, 100);
+      }
+    }
   }
 }
