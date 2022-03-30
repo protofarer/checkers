@@ -36,7 +36,7 @@ canvas.onmousedown = function(e) {
   // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
   for (let disc of discs) {
     if (disc.isClicked(mouseX, mouseY)){
-      console.log('disc clicked at r:',disc.row,' c:', disc.col);
+      console.log(disc.toString());
       disc.toggleGrab();
       // console.log(disc.isGrabbed);
     }

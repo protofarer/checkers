@@ -68,7 +68,9 @@ export class Disc {
     let path = new Path2D();
     const x = ((this.col) * 100) + 50;
     const y = ((this.row) * 100) + 50;
-    path.arc(x, y, 40, 0, 2*Math.PI);
+    path.arc(x, y, 45, 0, 2*Math.PI);
+    ctx.strokeStyle = 'blue';
+    ctx.stroke();
     // path.closePath();
     return path;
   }
@@ -83,7 +85,7 @@ export class Disc {
   }
 
   toString() {
-    return `Disc located @ row:${this.row} col:${this.col}`;
+    return `Disc @ r,c: ${this.row},${this.col}`;
   }
 
   toggleGrab() {
@@ -101,7 +103,7 @@ export class Disc {
       x = ((this.col) * 100) + 50;
       y = ((this.row) * 100) + 50;
     }
-    // console.log('isGrabbed inside drawdisc', this.isGrabbed);
+    
     ctx.strokeStyle = this.color === 'red' ? 'hsl(0,100%,20%)' : 'hsl(0,0%,80%)';
     // Adjust for differential contrast between dark on light versus light on dark lines
     ctx.lineWidth = this.color === 'red' ? 1 : 0.9; 
@@ -122,49 +124,68 @@ export class Disc {
     // Outer ridges
     const numRidges = 48;
     ctx.save();
+    ctx.beginPath();
     for (let i = 0; i < numRidges; i++) {
       ctx.rotate(2*Math.PI/numRidges);
-      ctx.beginPath();
       ctx.moveTo(34, 0);
       ctx.lineTo(38, 0);
-      ctx.stroke();
     }
+    ctx.stroke();
     ctx.restore();
 
     const numInlays = 8;
     ctx.save();
+    ctx.beginPath();
     for (let i = 0; i < numInlays; i++) {
-      // Centered small circle
       ctx.rotate(2*Math.PI/numInlays);
-      ctx.beginPath();
+
+      // Outer and encircled small circle
+      ctx.moveTo(23, 0);
       ctx.arc(21, 0, 2, 0, 2*Math.PI);
-      ctx.stroke();
       
       // Arc encompassing disc center
-      ctx.moveTo(9, 0);
-      ctx.beginPath();
-      ctx.arc(9, 0, 11, Math.PI*3/12, Math.PI*21/12);
-      ctx.stroke();
-
+      ctx.save();
+      ctx.translate(9, 0);
+      ctx.rotate(Math.PI*3/12);
+      ctx.moveTo(11,0);
+      ctx.arc(0, 0, 11, 0, Math.PI*18/12);
+      ctx.restore();
+      
       // Arc outer to small circle
-      ctx.moveTo(25,0);
-      ctx.beginPath();
-      ctx.arc(20, 0, 9, -Math.PI*6/12, Math.PI*6/12);
-      ctx.stroke();
+      ctx.save();
+      ctx.translate(20, 0);
+      ctx.rotate(-Math.PI*6/12);
+      ctx.moveTo(9, 0);
+      ctx.arc(0, 0, 9, 0, Math.PI);
+      ctx.restore();
+      // ctx.moveTo(20 + 9*Math.cos(-Math.PI*6/12), 9*Math.sin(-Math.PI*6/12));
+      // ctx.arc(20, 0, 9, -Math.PI*6/12, Math.PI*6/12);
 
       // Line details 'round small circle
       ctx.save();
       ctx.translate(21, 0);
       ctx.rotate(Math.PI*-10/12);
-      ctx.beginPath();
       for (let i = 0; i < 3; i++) {
         ctx.rotate(Math.PI*5/12);
         ctx.moveTo(4, 0);
         ctx.lineTo(6, 0);
       }
-      ctx.stroke();
+      ctx.restore();
+      
+      // Details just within solid outer circle
+      ctx.save();
+      ctx.rotate(Math.PI/numInlays);
+      ctx.moveTo(27, 0);
+      ctx.lineTo(30, 0);
+      ctx.rotate(Math.PI/24);
+      ctx.moveTo(29, 0);
+      ctx.lineTo(30, 0);
+      ctx.rotate(-2*Math.PI/24);
+      ctx.moveTo(29, 0);
+      ctx.lineTo(30, 0);
       ctx.restore();
     }
+    ctx.stroke();
     ctx.restore();
     ctx.restore();
   }
