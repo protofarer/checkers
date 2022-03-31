@@ -28,6 +28,8 @@ export let board = [
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
+export const DOWN = 3;
+export const UP = 4;
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX - rect.left; //window.scrollX
@@ -62,22 +64,24 @@ export class Disc {
     this.color = color;
     this.path = this.registerPath();
     this.isGrabbed = false;
+    this.direction = color === 'red' ? DOWN : UP;
   }
 
-  registerPath () {
+  registerPath() {
     let path = new Path2D();
     const x = ((this.col) * 100) + 50;
     const y = ((this.row) * 100) + 50;
-    path.arc(x, y, 45, 0, 2*Math.PI);
-    ctx.strokeStyle = 'blue';
-    ctx.stroke();
-    // path.closePath();
+    // CSDR: IDK why the y offset for the path's center is off by ~3 pixels
+    // from the drawn disc
+    path.arc(x, y+3, 42, 0, 2*Math.PI);
     return path;
   }
 
-  isClicked (x, y) {
-    // console.log(this.path);
+  isClicked(x, y) {
     const isInPath = ctx.isPointInPath(this.path, x, y);
+    // if (isInPath) {
+    //   console.log(x,y);
+    // }
     // console.log(`disc @ r:${this.row} c:${this.col}; resulting isInPath:${isInPath}`);
     // console.log(this.registeredPath);
     // console.log('isInPath', isInPath);
