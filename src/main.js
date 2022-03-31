@@ -17,10 +17,10 @@ for (let i = 0; i < 8; i++) {
   for (let j = 0; j < 8; j++) {
     switch(board[i][j]) {
       case RED:
-        discs.push(new Disc(i, j, 'red'));
+        discs.push(new Disc(i, j, RED));
         break;
       case BLACK:
-        discs.push(new Disc(i, j, 'black'));
+        discs.push(new Disc(i, j, BLACK));
         break;
       case BLANK:
         break;

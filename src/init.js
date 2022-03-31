@@ -63,7 +63,7 @@ export class Disc {
     this.opposite = color === RED ? BLACK : RED;
     this.path = this.registerPath();
     this.isGrabbed = false;
-    this.direction = color === 'red' ? 1 : -1;
+    this.direction = color === RED ? 1 : -1;
   }
 
   validMoveLocations() {
@@ -142,16 +142,16 @@ export class Disc {
       y = ((this.row) * 100) + 50;
     }
     
-    ctx.strokeStyle = this.color === 'red' ? 'hsl(0,100%,20%)' : 'hsl(0,0%,80%)';
+    ctx.strokeStyle = this.color === RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
     // Adjust for differential contrast between dark on light versus light on dark lines
-    ctx.lineWidth = this.color === 'red' ? 1 : 0.9; 
+    ctx.lineWidth = this.color === RED ? 1 : 0.9; 
 
     // Fill disc
     ctx.save();
     ctx.translate(x, y);
     ctx.beginPath();
     ctx.arc(0, 0, 40, 0, 2*Math.PI);
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = this.color === RED ? 'crimson' : 'black';
     ctx.fill();
 
     // Inner circle detail
