@@ -1,7 +1,7 @@
 import {
-  canvas, ctx, status, debug, updateStatus, drawBoard,
+  canvas, debug, updateStatus, drawBoard,
   clr, board, Disc, BLANK, BLACK, RED,
-  mouseX, mouseY, rect
+  mouseX, mouseY
 } from './init.js';
 
 
@@ -12,25 +12,6 @@ function updateDiscs() {
   }
 }
 
-// Initialize discs
-let discs = [];
-for (let i = 0; i < 8; i++) {
-  for (let j = 0; j < 8; j++) {
-    switch(board[i][j]) {
-      case RED:
-        discs.push(new Disc(i, j, RED));
-        break;
-      case BLACK:
-        discs.push(new Disc(i, j, BLACK));
-        break;
-      case BLANK:
-        break;
-      default:
-        console.log('unhandled board object render');
-        debug.innerText += 'error rendering board object';
-    }
-  }
-}
 
 canvas.onmousedown = function(e) {
   // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
@@ -70,8 +51,6 @@ function getSquareFromMouse() {
   console.log('getsquarefrommouse',square);
   return square;
 }
-
-
 
 function draw() {
   clr();

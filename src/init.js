@@ -6,11 +6,10 @@ status: <span id="status"></span><br />
 debug: <span id="debug"></span>
 `
 
+const rect = canvas.getBoundingClientRect();
+const ctx = canvas.getContext('2d');
+const status = document.querySelector('#status');
 export const canvas = document.querySelector('canvas');
-export const rect = canvas.getBoundingClientRect();
-export const ctx = canvas.getContext('2d');
-// canvas.style.borderStyle = 'solid';
-export const status = document.querySelector('#status');
 export const debug = document.querySelector('#debug');
 
 export let mouseX, mouseY;
@@ -25,9 +24,12 @@ export let board = [
   [0,1,0,1,0,1,0,1],
   [1,0,1,0,1,0,1,0],
 ];
+export let discs = [];
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
+
+initDiscs();
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX - rect.left; //window.scrollX
@@ -251,4 +253,25 @@ function isMouseInSquare(x, y, r, c) {
   // return (
   //   r*100 <= x && x <= (r + 1)*100 - 1 && c*100 <= y && y <= (c+1)*100 - 1
   // )      
+}
+
+// Initialize discs
+function initDiscs() {
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      switch(board[i][j]) {
+        case RED:
+          discs.push(new Disc(i, j, RED));
+          break;
+        case BLACK:
+          discs.push(new Disc(i, j, BLACK));
+          break;
+        case BLANK:
+          break;
+        default:
+          console.log('unhandled board object render');
+          debug.innerText += 'error rendering board object';
+      }
+    }
+  }
 }
