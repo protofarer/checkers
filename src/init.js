@@ -61,7 +61,7 @@ export class Disc {
     this.row = row;
     this.color = color;
     this.opposite = color === RED ? BLACK : RED;
-    this.path = this.registerPath();
+    this.registerPath(); // TODO this runs twice, see updateDiscs fn
     this.isGrabbed = false;
     this.direction = color === RED ? 1 : -1;
   }
@@ -107,6 +107,7 @@ export class Disc {
     // CSDR: IDK why the y offset for the path's center is off by ~3 pixels
     // from the drawn disc
     path.arc(x, y+3, 42, 0, 2*Math.PI);
+    this.path = path;
     return path;
   }
 

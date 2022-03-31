@@ -5,9 +5,10 @@ import {
 } from './init.js';
 
 
-function drawDiscs() {
+function updateDiscs() {
   for (let disc of discs) {
     disc.drawDisc();
+    disc.registerPath();
   }
 }
 
@@ -48,7 +49,10 @@ canvas.onmouseup = function(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
       if (disc.isValidMove(mouseX, mouseY)) {
+        board[disc.row][disc.col] = 0;
         [disc.col, disc.row] = getSquareFromMouse();
+        board[disc.row][disc.col] = disc.color;
+        console.log(board);
       }
       disc.toggleGrab();
       // console.log(disc.isGrabbed);
@@ -72,7 +76,7 @@ function getSquareFromMouse() {
 function draw() {
   clr();
   drawBoard();
-  drawDiscs();
+  updateDiscs();
   updateStatus();
 
   // TODO GAME LOGIC
