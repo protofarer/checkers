@@ -1,6 +1,7 @@
 import {
-  canvas, debug, updateStatus, drawBoard,
-  clr, board, Disc, BLANK, BLACK, RED,
+  canvas, ctx, status, debug, 
+  clr, board, Disc, BLANK, BLACK, RED, discs,
+  updateStatus, drawBoard,
   mouseX, mouseY
 } from './init.js';
 

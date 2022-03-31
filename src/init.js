@@ -1,16 +1,34 @@
 import './style.css'
 
-document.querySelector('#app').innerHTML = `
-<canvas height="800" width="800"></canvas><br />
-status: <span id="status"></span><br />
-debug: <span id="debug"></span>
-`
+
+function setupApp(id, width, height) {
+  let divWrapper = document.createElement('div');
+  divWrapper.id = id;
+  document.body.appendChild(divWrapper);
+
+  let canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  divWrapper.appendChild(canvas);
+  let ctx = canvas.getContext('2d');
+
+  divWrapper.appendChild(document.createElement('hr'));
+
+  let status = document.createElement('div');
+  status.id = 'status';
+  divWrapper.appendChild(status);
+
+  let debug = document.createElement('div');
+  debug.id = 'debug';
+  divWrapper.appendChild(debug);
+  
+
+  return { canvas, ctx, status, debug };
+}
+
+export let { canvas, ctx, status, debug } = setupApp('app', 800, 800);
 
 const rect = canvas.getBoundingClientRect();
-const ctx = canvas.getContext('2d');
-const status = document.querySelector('#status');
-export const canvas = document.querySelector('canvas');
-export const debug = document.querySelector('#debug');
 
 export let mouseX, mouseY;
 export let cX, cY;
@@ -28,8 +46,6 @@ export let discs = [];
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
-
-initDiscs();
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX - rect.left; //window.scrollX
@@ -275,3 +291,5 @@ function initDiscs() {
     }
   }
 }
+
+initDiscs();
