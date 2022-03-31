@@ -28,8 +28,6 @@ export let board = [
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
-export const DOWN = 3;
-export const UP = 4;
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX - rect.left; //window.scrollX
@@ -62,9 +60,44 @@ export class Disc {
     this.col = col;
     this.row = row;
     this.color = color;
+    this.opposite = color === RED ? BLACK : RED;
     this.path = this.registerPath();
     this.isGrabbed = false;
-    this.direction = color === 'red' ? DOWN : UP;
+    this.direction = color === 'red' ? 1 : -1;
+  }
+
+  validMoveLocations() {
+    let possibleMoves = [];
+    if (this.row + this.direction > 0 && 
+        this.row + this.direction < 8) {
+      if ((this.col + 1 < 8) && (board[this.row + this.direction][this.col + 1] === 0)) {
+        possibleMoves.push([this.row + this.direction, this.col + 1])
+      }
+      if ((this.col - 1 > 0) && (board[this.row + this.direction][this.col - 1] === 0)) {
+        possibleMoves.push([this.row + this.direction, this.col - 1])
+      }
+    }
+    if ((board[this.row + this.direction][this.col - 1] === this.opposite) && 
+      (board[this.row + 2*this.direction][this.col - 1] === 0)) {
+        possibleMoves.push([this.row + 2*this.direction, this.col - 1]);
+      }
+    if ((board[this.row + this.direction][this.col + 1] === this.opposite) &&
+      (board[this.row + 2*this.direction][this.col + 1] === 0)) {
+        possibleMoves.push([this.row + 2*this.direction, this.col + 1]);
+      }
+    for (let m in possibleMoves) {
+      ctx.beginPath();
+      ctx.arc(m[0]*100 + 50, m[1]*100 + 50, 10, 0, 2*Math.PI);
+      ctx.strokeStyle = 'rgb(0,0,255)';
+      ctx.stroke();
+    }
+    return possibleMoves;
+  }
+
+  isValidMove(x, y) {
+    const possibleMoves = this.validMoveLocations();
+    const isValidMove = possibleMoves.filter(m => isMouseInSquare(x, y, m[0], m[1])).length > 0;
+    return isValidMove;
   }
 
   registerPath() {
@@ -94,6 +127,7 @@ export class Disc {
 
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
+    console.log('isGrabbed', this.isGrabbed);
     return this.isGrabbed;
   }
 
@@ -209,4 +243,11 @@ export function drawBoard() {
       }
     }
   }
+}
+
+function isMouseInSquare(x, y, r, c) {
+  return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+  // return (
+  //   r*100 <= x && x <= (r + 1)*100 - 1 && c*100 <= y && y <= (c+1)*100 - 1
+  // )      
 }

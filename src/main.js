@@ -38,6 +38,7 @@ canvas.onmousedown = function(e) {
     if (disc.isClicked(mouseX, mouseY)){
       console.log(disc.toString());
       disc.toggleGrab();
+      console.log('possibleMoves', disc.validMoveLocations());
       // console.log(disc.isGrabbed);
     }
   }
@@ -46,10 +47,9 @@ canvas.onmousedown = function(e) {
 canvas.onmouseup = function(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
-      // if (disc.validMoveLocation()) {
-      //   disc.col = getColumnFromMouse();
-      //   disc.row = getRowFromMouse();
-      // }
+      if (disc.isValidMove(mouseX, mouseY)) {
+        [disc.col, disc.row] = getSquareFromMouse();
+      }
       disc.toggleGrab();
       // console.log(disc.isGrabbed);
     }
@@ -58,7 +58,13 @@ canvas.onmouseup = function(e) {
 
 function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position
-  return []
+  const floorX = Math.floor(mouseX/100);
+  const floorY = Math.floor(mouseY/100);
+  console.log('floorx', floorX)
+  console.log('floory', floorY)
+  const square = [floorX, floorY];
+  console.log('getsquarefrommouse',square);
+  return square;
 }
 
 
