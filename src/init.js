@@ -1,7 +1,7 @@
 import './style.css'
 
 
-function setupApp(id, width, height) {
+export function setupApp(id, width, height) {
   let divWrapper = document.createElement('div');
   divWrapper.id = id;
   document.body.appendChild(divWrapper);
@@ -26,34 +26,8 @@ function setupApp(id, width, height) {
   return { canvas, ctx, status, debug };
 }
 
-export let { canvas, ctx, status, debug } = setupApp('app', 800, 800);
 
-const rect = canvas.getBoundingClientRect();
 
-export let mouseX, mouseY;
-export let cX, cY;
-export let board = [
-  [0,2,0,2,0,2,0,2],
-  [2,0,2,0,2,0,2,0],
-  [0,2,0,2,0,2,0,2],
-  [0,0,0,0,0,0,0,0],
-  [0,0,0,0,0,0,0,0],
-  [1,0,1,0,1,0,1,0],
-  [0,1,0,1,0,1,0,1],
-  [1,0,1,0,1,0,1,0],
-];
-export let discs = [];
-export const BLANK = 0;
-export const BLACK = 1;
-export const RED = 2;
-export const GHOST = 3;
-
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX - rect.left; //window.scrollX
-  mouseY = e.clientY - rect.top;
-  cX = e.clientX;
-  cY = e.clientY;
-});
 
 export function clr() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);

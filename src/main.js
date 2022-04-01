@@ -1,27 +1,66 @@
 import {
-  canvas, ctx, status, debug, 
   board, discs, 
   Disc, BLANK, BLACK, RED, GHOST,
-  clr, updateStatus, drawBoard,
+  clr, updateStatus, drawBoard, setupApp,
   mouseX, mouseY
 } from './init.js';
 
 function main() {
-  clr();
-  drawBoard();
-  updateDiscs();
+  const boardWidth = 800;
+  const boardHeight = 800;
+  let { canvas, ctx, status, debug } = setupApp(
+    'app', 
+    boardWidth, 
+    boardHeight
+  );
+  
+  let mouseX, mouseY;
+  let cX, cY;
+  let board = [
+    [0,2,0,2,0,2,0,2],
+    [2,0,2,0,2,0,2,0],
+    [0,2,0,2,0,2,0,2],
+    [0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0],
+    [1,0,1,0,1,0,1,0],
+    [0,1,0,1,0,1,0,1],
+    [1,0,1,0,1,0,1,0],
+  ];
+  let discs = [];
+  const BLANK = 0;
+  const BLACK = 1;
+  const RED = 2;
+  const GHOST = 3;
+
+
+
   updateStatus();
-  showPossibleMoves();
-  requestAnimationFrame(draw);
+  // Draw and collision loop
+
+  while (true) {
+    clr();
+    drawBoard();
+    updateDiscs();
+    requestAnimationFrame(draw);
+  }
 }
+
 
 function updateDiscs() {
   for (let disc of discs) {
     disc.drawDisc();
     disc.registerPath();
   }
+  showPossibleMoves();
 }
 
+document.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left; //window.scrollX
+  mouseY = e.clientY - rect.top;
+  cX = e.clientX;
+  cY = e.clientY;
+});
 
 canvas.onmousedown = function(e) {
   // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
