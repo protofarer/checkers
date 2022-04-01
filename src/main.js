@@ -1,7 +1,8 @@
 import {
   canvas, ctx, status, debug, 
-  clr, board, Disc, BLANK, BLACK, RED, discs,
-  updateStatus, drawBoard,
+  board, discs, 
+  Disc, BLANK, BLACK, RED,
+  clr, updateStatus, drawBoard,
   mouseX, mouseY
 } from './init.js';
 
@@ -21,8 +22,17 @@ canvas.onmousedown = function(e) {
     if (disc.isClicked(mouseX, mouseY)){
       console.log(disc.toString());
       disc.toggleGrab();
-      console.log('possibleMoves', disc.validMoveLocations());
+      // console.log('possibleMoves', disc.validMoveLocations());
       // console.log(disc.isGrabbed);
+      const possibleMoves = disc.validMoveLocations();
+      for (let m of possibleMoves) {
+        // console.log('ctx in validmovelocs', ctx);
+        ctx.beginPath();
+        ctx.arc(m[0]*100 + 50, m[1]*100 + 50, 20, 0, 2*Math.PI);
+        ctx.fillStyle = 'rgb(0,0,255)';
+        ctx.fill();
+        ctx.closePath();
+    }
     }
   }
 }
@@ -30,11 +40,14 @@ canvas.onmousedown = function(e) {
 canvas.onmouseup = function(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
-      if (disc.isValidMove(mouseX, mouseY)) {
+      if (disc.isValidMove()) {
         board[disc.row][disc.col] = 0;
         [disc.col, disc.row] = getSquareFromMouse();
         board[disc.row][disc.col] = disc.color;
-        console.log(board);
+        if (disc.row === 0 || disc.row === 7) {
+          disc.direction *= -1;
+        }
+        // console.log(board);
       }
       disc.toggleGrab();
       // console.log(disc.isGrabbed);
@@ -46,10 +59,9 @@ function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position
   const floorX = Math.floor(mouseX/100);
   const floorY = Math.floor(mouseY/100);
-  console.log('floorx', floorX)
-  console.log('floory', floorY)
+  // console.log('floorx', floorX, 'floory', floorY);
   const square = [floorX, floorY];
-  console.log('getsquarefrommouse',square);
+  // console.log('getsquarefrommouse',square);
   return square;
 }
 
@@ -58,9 +70,6 @@ function draw() {
   drawBoard();
   updateDiscs();
   updateStatus();
-
-  // TODO GAME LOGIC
-
   requestAnimationFrame(draw);
 }
 

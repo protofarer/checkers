@@ -86,35 +86,34 @@ export class Disc {
 
   validMoveLocations() {
     let possibleMoves = [];
-    if (this.row + this.direction > 0 && 
+    if (this.row + this.direction >= 0 && 
         this.row + this.direction < 8) {
-      if ((this.col + 1 < 8) && (board[this.row + this.direction][this.col + 1] === 0)) {
+      if ((this.col + 1 < 8) && 
+          (board[this.row + this.direction][this.col + 1] === 0)) {
         possibleMoves.push([this.row + this.direction, this.col + 1])
       }
-      if ((this.col - 1 > 0) && (board[this.row + this.direction][this.col - 1] === 0)) {
+      if ((this.col - 1 >= 0) && 
+          (board[this.row + this.direction][this.col - 1] === 0)) {
         possibleMoves.push([this.row + this.direction, this.col - 1])
       }
     }
-    if ((board[this.row + this.direction][this.col - 1] === this.opposite) && 
-      (board[this.row + 2*this.direction][this.col - 1] === 0)) {
-        possibleMoves.push([this.row + 2*this.direction, this.col - 1]);
+    if (this.row + (2*this.direction) >= 0 &&
+        this.row + (2*this.direction) < 8) {
+      if ((board[this.row + this.direction][this.col - 1] === this.opposite) && 
+        (board[this.row + (2*this.direction)][this.col - 2] === 0)) {
+          possibleMoves.push([this.row + (2*this.direction), this.col - 2]);
+        }
+      if ((board[this.row + this.direction][this.col + 1] === this.opposite) &&
+        (board[this.row + (2*this.direction)][this.col + 2] === 0)) {
+          possibleMoves.push([this.row + (2*this.direction), this.col + 2]);
+        }
       }
-    if ((board[this.row + this.direction][this.col + 1] === this.opposite) &&
-      (board[this.row + 2*this.direction][this.col + 1] === 0)) {
-        possibleMoves.push([this.row + 2*this.direction, this.col + 1]);
-      }
-    for (let m in possibleMoves) {
-      ctx.beginPath();
-      ctx.arc(m[0]*100 + 50, m[1]*100 + 50, 10, 0, 2*Math.PI);
-      ctx.strokeStyle = 'rgb(0,0,255)';
-      ctx.stroke();
-    }
     return possibleMoves;
   }
 
-  isValidMove(x, y) {
+  isValidMove() {
     const possibleMoves = this.validMoveLocations();
-    const isValidMove = possibleMoves.filter(m => isMouseInSquare(x, y, m[0], m[1])).length > 0;
+    const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m[0], m[1])).length > 0;
     return isValidMove;
   }
 
@@ -122,7 +121,7 @@ export class Disc {
     let path = new Path2D();
     const x = ((this.col) * 100) + 50;
     const y = ((this.row) * 100) + 50;
-    // CSDR: IDK why the y offset for the path's center is off by ~3 pixels
+    // CSDR: The y offset for the path's center is off by ~3 pixels
     // from the drawn disc
     path.arc(x, y+3, 42, 0, 2*Math.PI);
     this.path = path;
@@ -131,12 +130,6 @@ export class Disc {
 
   isClicked(x, y) {
     const isInPath = ctx.isPointInPath(this.path, x, y);
-    // if (isInPath) {
-    //   console.log(x,y);
-    // }
-    // console.log(`disc @ r:${this.row} c:${this.col}; resulting isInPath:${isInPath}`);
-    // console.log(this.registeredPath);
-    // console.log('isInPath', isInPath);
     return isInPath;
   }
 
