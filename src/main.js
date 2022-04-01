@@ -1,7 +1,7 @@
 import {
   canvas, ctx, status, debug, 
   board, discs, 
-  Disc, BLANK, BLACK, RED,
+  Disc, BLANK, BLACK, RED, GHOST,
   clr, updateStatus, drawBoard,
   mouseX, mouseY
 } from './init.js';
@@ -24,15 +24,6 @@ canvas.onmousedown = function(e) {
       disc.toggleGrab();
       // console.log('possibleMoves', disc.validMoveLocations());
       // console.log(disc.isGrabbed);
-      const possibleMoves = disc.validMoveLocations();
-      for (let m of possibleMoves) {
-        // console.log('ctx in validmovelocs', ctx);
-        ctx.beginPath();
-        ctx.arc(m[0]*100 + 50, m[1]*100 + 50, 20, 0, 2*Math.PI);
-        ctx.fillStyle = 'rgb(0,0,255)';
-        ctx.fill();
-        ctx.closePath();
-    }
     }
   }
 }
@@ -65,11 +56,25 @@ function getSquareFromMouse() {
   return square;
 }
 
+function showPossibleMoves() {
+  for (let disc of discs) {
+    if (disc.isGrabbed) {
+      const possibleMoves = disc.validMoveLocations();
+      for (let m of possibleMoves) {
+        // console.log('ctx in validmovelocs', ctx);
+        const ghostDisc = new Disc(m.row, m.col, GHOST)
+        ghostDisc.drawDisc();
+      }
+    }
+  }
+}
+
 function draw() {
   clr();
   drawBoard();
   updateDiscs();
   updateStatus();
+  showPossibleMoves();
   requestAnimationFrame(draw);
 }
 

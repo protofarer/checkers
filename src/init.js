@@ -46,6 +46,7 @@ export let discs = [];
 export const BLANK = 0;
 export const BLACK = 1;
 export const RED = 2;
+export const GHOST = 3;
 
 document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX - rect.left; //window.scrollX
@@ -90,22 +91,22 @@ export class Disc {
         this.row + this.direction < 8) {
       if ((this.col + 1 < 8) && 
           (board[this.row + this.direction][this.col + 1] === 0)) {
-        possibleMoves.push([this.row + this.direction, this.col + 1])
+        possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
       }
       if ((this.col - 1 >= 0) && 
           (board[this.row + this.direction][this.col - 1] === 0)) {
-        possibleMoves.push([this.row + this.direction, this.col - 1])
+        possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
       }
     }
     if (this.row + (2*this.direction) >= 0 &&
         this.row + (2*this.direction) < 8) {
       if ((board[this.row + this.direction][this.col - 1] === this.opposite) && 
         (board[this.row + (2*this.direction)][this.col - 2] === 0)) {
-          possibleMoves.push([this.row + (2*this.direction), this.col - 2]);
+          possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
         }
       if ((board[this.row + this.direction][this.col + 1] === this.opposite) &&
         (board[this.row + (2*this.direction)][this.col + 2] === 0)) {
-          possibleMoves.push([this.row + (2*this.direction), this.col + 2]);
+          possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
         }
       }
     return possibleMoves;
@@ -113,7 +114,7 @@ export class Disc {
 
   isValidMove() {
     const possibleMoves = this.validMoveLocations();
-    const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m[0], m[1])).length > 0;
+    const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col)).length > 0;
     return isValidMove;
   }
 
@@ -154,18 +155,26 @@ export class Disc {
       y = ((this.row) * 100) + 50;
     }
     
-    ctx.strokeStyle = this.color === RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
-    // Adjust for differential contrast between dark on light versus light on dark lines
-    ctx.lineWidth = this.color === RED ? 1 : 0.9; 
+    if (this.color === GHOST) {
+      ctx.strokeStyle = 'hsl(250, 100%, 60%)';
+    } else {
+      ctx.strokeStyle = this.color === RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+      // Adjust for differential contrast between dark on light versus light on dark lines
+      ctx.lineWidth = this.color === RED ? 1 : 0.9; 
+    }
 
     // Fill disc
     ctx.save();
     ctx.translate(x, y);
     ctx.beginPath();
     ctx.arc(0, 0, 40, 0, 2*Math.PI);
-    ctx.fillStyle = this.color === RED ? 'crimson' : 'black';
-    ctx.fill();
-
+    if (this.color === GHOST) {
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = this.color === RED ? 'crimson' : 'black';
+      ctx.fill();
+    }
+    
     // Inner circle detail
     ctx.beginPath();
     ctx.arc(0, 0, 32, 0, 2*Math.PI);
