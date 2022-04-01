@@ -6,6 +6,14 @@ import {
   mouseX, mouseY
 } from './init.js';
 
+function main() {
+  clr();
+  drawBoard();
+  updateDiscs();
+  updateStatus();
+  showPossibleMoves();
+  requestAnimationFrame(draw);
+}
 
 function updateDiscs() {
   for (let disc of discs) {
@@ -69,13 +77,4 @@ function showPossibleMoves() {
   }
 }
 
-function draw() {
-  clr();
-  drawBoard();
-  updateDiscs();
-  updateStatus();
-  showPossibleMoves();
-  requestAnimationFrame(draw);
-}
-
-draw();
+main();
