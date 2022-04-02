@@ -24,6 +24,13 @@ function main() {
   const RED = 2;
   const GHOST = 3;
 
+  let state = {
+    board: new Board(),
+    turn: BLACK,
+    turnCount: 0,
+    capturesForRed: 0,
+    capturesForBlack: 0,
+  }
   updateStatus(statusEle);
   // Draw and collision loop
 

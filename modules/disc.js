@@ -179,3 +179,10 @@ export default class Disc {
     ctx.restore();
   }
 }
+
+function isMouseInSquare(x, y, r, c) {
+  return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+  // return (
+  //   r*100 <= x && x <= (r + 1)*100 - 1 && c*100 <= y && y <= (c+1)*100 - 1
+  // )      
+}

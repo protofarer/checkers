@@ -39,28 +39,6 @@ export function updateStatus(statusEle) {
   canvas: ${canvas.width},${canvas.height}`;
 }
 
-export function drawBoard() {
-  const boardHue = 45;
-  for (let row = 0; row < 8; row++) {
-    for (let col = 0; col < 8; col++) {
-      ctx.beginPath();
-      if (( row + col) % 2 === 0) {
-        ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
-        ctx.fillRect(col * 100, row * 100, 100, 100);
-      } else {
-        ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
-        ctx.fillRect(col * 100, row * 100, 100, 100);
-      }
-    }
-  }
-}
-
-function isMouseInSquare(x, y, r, c) {
-  return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-  // return (
-  //   r*100 <= x && x <= (r + 1)*100 - 1 && c*100 <= y && y <= (c+1)*100 - 1
-  // )      
-}
 
 // Initialize discs
 function initDiscs() {
