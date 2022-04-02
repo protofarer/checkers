@@ -1,7 +1,7 @@
 import { 
   setupApp, initDiscs, 
   clr, 
-  updateStatus,
+  updateDebug,
  } from './init.js';
 
 import Disc from './modules/disc.js';
@@ -17,7 +17,7 @@ export const CONSTANTS = {
 function main() {
   const boardWidth = 800;
   const boardHeight = 800;
-  let { canvas, ctx, status, debug } = setupApp(
+  let { canvas, ctx, statusEle, debugEle } = setupApp(
     'app', 
     boardWidth, 
     boardHeight
@@ -38,14 +38,8 @@ function main() {
     capturesForBlack: 0,
   }
 
-  document.addEventListener('mousemove', handleMouseMove(
-    canvas, mouseX, mouseY, cX, cY 
-  ));
-  // is e as opposed to event sufficient?
-  canvas.addEventListener('mousedown', handleMouseDown(e)); 
-  canvas.addEventListener('mouseup', handleMouseUp(e)); 
-
-  updateStatus(statusEle);
+  setupEventListeners(canvas, mouseX, mouseY, cX, cY);
+  updateDebug(debugEle);
   // Draw and collision loop
 
   while (true) {
@@ -56,6 +50,53 @@ function main() {
   }
 }
 
+function setupEventListeners(canvas, mouseX, mouseY, cX, cY) {
+  document.addEventListener('mousemove', handleMouseMove(
+    canvas, mouseX, mouseY, cX, cY 
+  ));
+  canvas.addEventListener('mousedown', handleMouseDown(e)); 
+  canvas.addEventListener('mouseup', handleMouseUp(e)); 
+  
+  function handleMouseMove(e) {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left; //window.scrollX
+    mouseY = e.clientY - rect.top;
+    cX = e.clientX;
+    cY = e.clientY;
+  }
+
+  // does this have access to discs?
+  function handleMouseDown(e) {
+    // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
+    // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
+    for (let disc of discs) {
+      if (disc.isClicked(mouseX, mouseY)){
+        console.log(disc.toString());
+        disc.toggleGrab();
+        // console.log('possibleMoves', disc.validMoveLocations());
+        // console.log(disc.isGrabbed);
+      }
+    }
+  }
+
+  function handleMouseUp(e) {
+    for (let disc of discs) {
+      if (disc.isGrabbed) {
+        if (disc.isValidMove()) {
+          board[disc.row][disc.col] = 0;
+          [disc.col, disc.row] = getSquareFromMouse();
+          board[disc.row][disc.col] = disc.color;
+          if (disc.row === 0 || disc.row === 7) {
+            disc.direction *= -1;
+          }
+          // console.log(board);
+        }
+        disc.toggleGrab();
+        // console.log(disc.isGrabbed);
+      }
+    }
+  }
+}
 
 function updateDiscs() {
   for (let disc of discs) {
@@ -65,45 +106,8 @@ function updateDiscs() {
   showPossibleMoves();
 }
 
-function handleMouseMove(canvas, mouseX, mouseY, cX, cY) {
-  const rect = canvas.getBoundingClientRect();
-  mouseX = e.clientX - rect.left; //window.scrollX
-  mouseY = e.clientY - rect.top;
-  cX = e.clientX;
-  cY = e.clientY;
-}
 
-// does this have access to discs?
-function handleMouseDown(e) {
-  // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
-  // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
-  for (let disc of discs) {
-    if (disc.isClicked(mouseX, mouseY)){
-      console.log(disc.toString());
-      disc.toggleGrab();
-      // console.log('possibleMoves', disc.validMoveLocations());
-      // console.log(disc.isGrabbed);
-    }
-  }
-}
 
-function handleMouseUp(e) {
-  for (let disc of discs) {
-    if (disc.isGrabbed) {
-      if (disc.isValidMove()) {
-        board[disc.row][disc.col] = 0;
-        [disc.col, disc.row] = getSquareFromMouse();
-        board[disc.row][disc.col] = disc.color;
-        if (disc.row === 0 || disc.row === 7) {
-          disc.direction *= -1;
-        }
-        // console.log(board);
-      }
-      disc.toggleGrab();
-      // console.log(disc.isGrabbed);
-    }
-  }
-}
 
 function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position

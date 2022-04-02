@@ -19,20 +19,24 @@ export function setupApp(id, width, height) {
   statusEle.id = 'status';
   divWrapper.appendChild(statusEle);
 
-  let debug = document.createElement('div');
-  debug.id = 'debug';
-  divWrapper.appendChild(debug);
+  let debugButton = document.createElement('button');
+  debugButton.id = 'debugButton';
+  divWrapper.appendChild(debugButton);
+  
+  let debugEle = document.createElement('div');
+  debugEle.id = 'debug';
+  divWrapper.appendChild(debugEle);
   
 
-  return { canvas, ctx, statusEle, debug };
+  return { canvas, ctx, statusEle, debugEle };
 }
 
 export function clr(ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-export function updateStatus(statusEle) {
-  statusEle.innerText = 
+export function updateDebug(debugEle) {
+  debugEle.innerText = 
   `client: ${cX},${cY}
   mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
   row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
