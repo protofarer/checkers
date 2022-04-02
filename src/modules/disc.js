@@ -76,7 +76,7 @@ export default class Disc {
     return this.isGrabbed;
   }
 
-  drawDisc() {
+  drawDisc(ctx) {
     // Draws game piece by referencing a row and column on board
     let x, y;
     if (this.isGrabbed) {
@@ -87,7 +87,7 @@ export default class Disc {
       y = ((this.row) * 100) + 50;
     }
     
-    if (this.color === GHOST) {
+    if (this.color === CONSTANTS.GHOST) {
       ctx.strokeStyle = 'hsl(250, 100%, 60%)';
     } else {
       ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
@@ -100,7 +100,7 @@ export default class Disc {
     ctx.translate(x, y);
     ctx.beginPath();
     ctx.arc(0, 0, 40, 0, 2*Math.PI);
-    if (this.color === GHOST) {
+    if (this.color === CONSTANTS.GHOST) {
       ctx.stroke();
     } else {
       ctx.fillStyle = this.color === CONSTANTS.RED ? 'crimson' : 'black';

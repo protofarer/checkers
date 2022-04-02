@@ -28,7 +28,8 @@ function main() {
     
 
   let board = new Board();
-  let discs = initDiscs(board.boardState);
+  console.log(board.state);
+  let discs = initDiscs(board.state);
 
   let state = {
     board,
@@ -40,19 +41,20 @@ function main() {
     debug: 1,
   }
 
-  setupEventListeners(canvas, mouseX, mouseY, cX, cY);
+  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
   updateDebug(debugEle, rect, canvas);
   // Draw and collision loop
 
-  while (true) {
+  function draw() {
     clr(canvas, ctx);
     drawBoard(ctx);
-    updateDiscs(ctx);
+    updateDiscs(ctx, discs);
     requestAnimationFrame(draw);
   }
+  draw();
 }
 
-function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state) {
+function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state, rect, discs) {
   document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 
   canvas.addEventListener('mouseup', handleMouseUp); 
@@ -105,12 +107,12 @@ function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state) {
   }
 }
 
-function updateDiscs() {
+function updateDiscs(ctx, discs) {
   for (let disc of discs) {
-    disc.drawDisc();
+    disc.drawDisc(ctx);
     disc.registerPath();
   }
-  showPossibleMoves();
+  showPossibleMoves(ctx, discs);
 }
 
 
@@ -126,14 +128,14 @@ function getSquareFromMouse() {
   return square;
 }
 
-function showPossibleMoves() {
+function showPossibleMoves(ctx, discs) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
       const possibleMoves = disc.validMoveLocations();
       for (let m of possibleMoves) {
         // console.log('ctx in validmovelocs', ctx);
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.drawDisc();
+        ghostDisc.drawDisc(ctx);
       }
     }
   }

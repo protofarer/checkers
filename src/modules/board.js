@@ -12,10 +12,14 @@ export default class Board {
     ];
   }
 
+  get state() {
+    return this.boardState;
+  }
+
   // state update fn
 }
 
-export function drawBoard() {
+export function drawBoard(ctx) {
   const boardHue = 45;
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
