@@ -1,9 +1,11 @@
 import {
-  board, discs, 
-  Disc, BLANK, BLACK, RED, GHOST,
+  board, discs,
   clr, updateStatus, drawBoard, setupApp,
   mouseX, mouseY
 } from './init.js';
+
+import Disc from './modules/disc.js';
+import Board from './modules/board.js';
 
 function main() {
   const boardWidth = 800;
@@ -16,25 +18,13 @@ function main() {
   
   let mouseX, mouseY;
   let cX, cY;
-  let board = [
-    [0,2,0,2,0,2,0,2],
-    [2,0,2,0,2,0,2,0],
-    [0,2,0,2,0,2,0,2],
-    [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0],
-    [1,0,1,0,1,0,1,0],
-    [0,1,0,1,0,1,0,1],
-    [1,0,1,0,1,0,1,0],
-  ];
   let discs = [];
   const BLANK = 0;
   const BLACK = 1;
   const RED = 2;
   const GHOST = 3;
 
-
-
-  updateStatus();
+  updateStatus(statusEle);
   // Draw and collision loop
 
   while (true) {
