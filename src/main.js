@@ -25,11 +25,8 @@ function main() {
     boardHeight
     );
   const rect = canvas.getBoundingClientRect();
-    
-
   let board = new Board();
   let discs = initDiscs(board.state);
-
   let state = {
     board,
     discs,
@@ -39,14 +36,14 @@ function main() {
     capturesForBlack: 0,
     debug: 1,
   }
-  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
-  updateDebug(debugEle, rect, canvas);
-  // Draw and collision loop
 
+  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
+  
   function draw() {
     clr(canvas, ctx);
     drawBoard(ctx);
     updateDiscs(ctx, discs);
+    updateDebug(debugEle, rect, canvas);
     requestAnimationFrame(draw);
   }
   draw();
