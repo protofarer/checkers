@@ -47,10 +47,10 @@ export function initDiscs(board) {
     for (let j = 0; j < 8; j++) {
       switch(board[i][j]) {
         case CONSTANTS.RED:
-          discs.push(new Disc(i, j, RED));
+          discs.push(new Disc(i, j, CONSTANTS.RED));
           break;
         case CONSTANTS.BLACK:
-          discs.push(new Disc(i, j, BLACK));
+          discs.push(new Disc(i, j, CONSTANTS.BLACK));
           break;
         case CONSTANTS.BLANK:
           break;
