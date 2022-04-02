@@ -39,7 +39,7 @@ function main() {
   }
 
   document.addEventListener('mousemove', handleMouseMove(
-    e, canvas, mouseX, mouseY, cX, cY 
+    canvas, mouseX, mouseY, cX, cY 
   ));
   // is e as opposed to event sufficient?
   canvas.addEventListener('mousedown', handleMouseDown(e)); 
@@ -65,7 +65,7 @@ function updateDiscs() {
   showPossibleMoves();
 }
 
-function handleMouseMove(e, canvas, mouseX, mouseY, cX, cY) {
+function handleMouseMove(canvas, mouseX, mouseY, cX, cY) {
   const rect = canvas.getBoundingClientRect();
   mouseX = e.clientX - rect.left; //window.scrollX
   mouseY = e.clientY - rect.top;
