@@ -28,7 +28,6 @@ function main() {
     
 
   let board = new Board();
-  console.log(board.state);
   let discs = initDiscs(board.state);
 
   let state = {
@@ -40,7 +39,6 @@ function main() {
     capturesForBlack: 0,
     debug: 1,
   }
-
   setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
   updateDebug(debugEle, rect, canvas);
   // Draw and collision loop
@@ -66,16 +64,12 @@ function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state, rect, discs)
     cY = e.clientY;
   }
 
-  // does this have access to discs?
   function handleMouseDown(e) {
-    // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
-    // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
+    console.log(discs)
     for (let disc of discs) {
       if (disc.isClicked(mouseX, mouseY)){
         console.log(disc.toString());
         disc.toggleGrab();
-        // console.log('possibleMoves', disc.validMoveLocations());
-        // console.log(disc.isGrabbed);
       }
     }
   }
@@ -90,20 +84,16 @@ function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state, rect, discs)
           if (disc.row === 0 || disc.row === 7) {
             disc.direction *= -1;
           }
-          // console.log(board);
         }
         disc.toggleGrab();
-        // console.log(disc.isGrabbed);
       }
     }
   }
 
   function toggleDebug(e) {
-    if (state.debug) {
-      debugButton.innerText = 'turn debug off';
-
-    }
-
+    debugButton.innerText = state.debug 
+      ? 'turn debug off' 
+      : 'turn debug on';
   }
 }
 
