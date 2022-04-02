@@ -1,6 +1,7 @@
 import './style.css'
 import { CONSTANTS } from './main';
 import Disc from './modules/disc';
+import { cX, cY, mouseX, mouseY } from './main';
 
 export function setupApp(id, width, height) {
   let divWrapper = document.createElement('div');
@@ -22,7 +23,7 @@ export function setupApp(id, width, height) {
   let debugButton = document.createElement('button');
   debugButton.id = 'debugButton';
   divWrapper.appendChild(debugButton);
-  
+
   let debugEle = document.createElement('div');
   debugEle.id = 'debug';
   divWrapper.appendChild(debugEle);
@@ -31,11 +32,11 @@ export function setupApp(id, width, height) {
   return { canvas, ctx, statusEle, debugEle };
 }
 
-export function clr(ctx) {
+export function clr(canvas, ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-export function updateDebug(debugEle) {
+export function updateDebug(debugEle, rect, canvas) {
   debugEle.innerText = 
   `client: ${cX},${cY}
   mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}

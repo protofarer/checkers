@@ -13,6 +13,8 @@ export const CONSTANTS = {
   RED: 2,
   GHOST: 3,
 }
+export let cX, cY;
+export let mouseX, mouseY;
 
 function main() {
   const boardWidth = 800;
@@ -21,10 +23,9 @@ function main() {
     'app', 
     boardWidth, 
     boardHeight
-  );
-  
-  let mouseX, mouseY;
-  let cX, cY;
+    );
+  const rect = canvas.getBoundingClientRect();
+    
 
   let board = new Board();
   let discs = initDiscs(board.boardState);
@@ -36,29 +37,27 @@ function main() {
     turnCount: 0,
     capturesForRed: 0,
     capturesForBlack: 0,
+    debug: 1,
   }
 
   setupEventListeners(canvas, mouseX, mouseY, cX, cY);
-  updateDebug(debugEle);
+  updateDebug(debugEle, rect, canvas);
   // Draw and collision loop
 
   while (true) {
-    clr(ctx);
+    clr(canvas, ctx);
     drawBoard(ctx);
     updateDiscs(ctx);
     requestAnimationFrame(draw);
   }
 }
 
-function setupEventListeners(canvas, mouseX, mouseY, cX, cY) {
-  document.addEventListener('mousemove', handleMouseMove(
-    canvas, mouseX, mouseY, cX, cY 
-  ));
-  canvas.addEventListener('mousedown', handleMouseDown(e)); 
-  canvas.addEventListener('mouseup', handleMouseUp(e)); 
+function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state) {
+  document.addEventListener('mousemove', handleMouseMove);
+  canvas.addEventListener('mousedown', handleMouseDown); 
+  canvas.addEventListener('mouseup', handleMouseUp); 
   
   function handleMouseMove(e) {
-    const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left; //window.scrollX
     mouseY = e.clientY - rect.top;
     cX = e.clientX;
@@ -95,6 +94,14 @@ function setupEventListeners(canvas, mouseX, mouseY, cX, cY) {
         // console.log(disc.isGrabbed);
       }
     }
+  }
+
+  function toggleDebug(e) {
+    if (state.debug) {
+      debugButton.innerText = 'turn debug off';
+
+    }
+
   }
 }
 
