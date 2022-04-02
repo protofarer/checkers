@@ -1,5 +1,6 @@
 import './style.css'
-
+import { CONSTANTS } from './main';
+import Disc from './modules/disc';
 
 export function setupApp(id, width, height) {
   let divWrapper = document.createElement('div');
@@ -26,7 +27,7 @@ export function setupApp(id, width, height) {
   return { canvas, ctx, statusEle, debug };
 }
 
-export function clr() {
+export function clr(ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -39,19 +40,19 @@ export function updateStatus(statusEle) {
   canvas: ${canvas.width},${canvas.height}`;
 }
 
-
 // Initialize discs
-function initDiscs() {
+export function initDiscs(board) {
+  let discs = [];
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
       switch(board[i][j]) {
-        case RED:
+        case CONSTANTS.RED:
           discs.push(new Disc(i, j, RED));
           break;
-        case BLACK:
+        case CONSTANTS.BLACK:
           discs.push(new Disc(i, j, BLACK));
           break;
-        case BLANK:
+        case CONSTANTS.BLANK:
           break;
         default:
           console.log('unhandled board object render');
@@ -59,6 +60,5 @@ function initDiscs() {
       }
     }
   }
+  return discs;
 }
-
-initDiscs();

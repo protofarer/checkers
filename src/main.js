@@ -1,11 +1,18 @@
-import {
-  board, discs,
-  clr, updateStatus, drawBoard, setupApp,
-  mouseX, mouseY
-} from './init.js';
+import { 
+  setupApp, initDiscs, 
+  clr, 
+  updateStatus,
+ } from './init.js';
 
 import Disc from './modules/disc.js';
-import Board from './modules/board.js';
+import Board, { drawBoard } from './modules/board.js';
+
+export const CONSTANTS = {
+  BLANK: 0,
+  BLACK: 1,
+  RED: 2,
+  GHOST: 3,
+}
 
 function main() {
   const boardWidth = 800;
@@ -18,26 +25,33 @@ function main() {
   
   let mouseX, mouseY;
   let cX, cY;
-  let discs = [];
-  const BLANK = 0;
-  const BLACK = 1;
-  const RED = 2;
-  const GHOST = 3;
+
+  let board = new Board();
+  let discs = initDiscs(board.boardState);
 
   let state = {
-    board: new Board(),
-    turn: BLACK,
+    board,
+    discs,
+    turn: CONSTANTS.BLACK,
     turnCount: 0,
     capturesForRed: 0,
     capturesForBlack: 0,
   }
+
+  document.addEventListener('mousemove', handleMouseMove(
+    e, canvas, mouseX, mouseY, cX, cY 
+  ));
+  // is e as opposed to event sufficient?
+  canvas.addEventListener('mousedown', handleMouseDown(e)); 
+  canvas.addEventListener('mouseup', handleMouseUp(e)); 
+
   updateStatus(statusEle);
   // Draw and collision loop
 
   while (true) {
-    clr();
-    drawBoard();
-    updateDiscs();
+    clr(ctx);
+    drawBoard(ctx);
+    updateDiscs(ctx);
     requestAnimationFrame(draw);
   }
 }
@@ -51,15 +65,16 @@ function updateDiscs() {
   showPossibleMoves();
 }
 
-document.addEventListener('mousemove', (e) => {
+function handleMouseMove(e, canvas, mouseX, mouseY, cX, cY) {
   const rect = canvas.getBoundingClientRect();
   mouseX = e.clientX - rect.left; //window.scrollX
   mouseY = e.clientY - rect.top;
   cX = e.clientX;
   cY = e.clientY;
-});
+}
 
-canvas.onmousedown = function(e) {
+// does this have access to discs?
+function handleMouseDown(e) {
   // console.log(`clientX,Y: ${e.clientX},${e.clientY}`);
   // console.log(`mouseX:${mouseX} mouseY:${mouseY}`);
   for (let disc of discs) {
@@ -72,7 +87,7 @@ canvas.onmousedown = function(e) {
   }
 }
 
-canvas.onmouseup = function(e) {
+function handleMouseUp(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
       if (disc.isValidMove()) {
@@ -106,7 +121,7 @@ function showPossibleMoves() {
       const possibleMoves = disc.validMoveLocations();
       for (let m of possibleMoves) {
         // console.log('ctx in validmovelocs', ctx);
-        const ghostDisc = new Disc(m.row, m.col, GHOST)
+        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.drawDisc();
       }
     }
