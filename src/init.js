@@ -6,28 +6,28 @@ import Board from './modules/board';
 export function setupApp(id) {
   const boardWidth = 800;
   const boardHeight = 800;
-  let divWrapper = document.createElement('div');
+  const divWrapper = document.createElement('div');
   divWrapper.id = id;
   document.body.appendChild(divWrapper);
 
-  let canvas = document.createElement('canvas');
+  const canvas = document.createElement('canvas');
   canvas.width = boardWidth;
   canvas.height = boardHeight;
   divWrapper.appendChild(canvas);
-  let ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d');
 
   divWrapper.appendChild(document.createElement('hr'));
 
-  let statusEle = document.createElement('div');
+  const statusEle = document.createElement('div');
   statusEle.id = 'status';
   divWrapper.appendChild(statusEle);
 
-  let debugButton = document.createElement('button');
+  const debugButton = document.createElement('button');
   debugButton.id = 'debugButton';
   debugButton.innerText = 'turn debug off'
   divWrapper.appendChild(debugButton);
 
-  let debugEle = document.createElement('div');
+  const debugEle = document.createElement('div');
   debugEle.id = 'debug';
   divWrapper.appendChild(debugEle);
   
@@ -52,10 +52,10 @@ export function setupGame() {
   }
   return { board, discs, gameState };
 }
+
 export function clr(canvas, ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
-
 
 // Initialize discs
 export function initDiscs(board) {
