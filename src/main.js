@@ -1,10 +1,10 @@
 import { 
-  setupApp, initDiscs, 
+  setupApp, 
+  setupGame, 
   clr, 
  } from './init.js';
-
+import { drawBoard } from './modules/board.js';
 import Disc from './modules/disc.js';
-import Board, { drawBoard } from './modules/board.js';
 
 export const CONSTANTS = {
   BLANK: 0,
@@ -12,30 +12,15 @@ export const CONSTANTS = {
   RED: 2,
   GHOST: 3,
 }
-const boardWidth = 800;
-const boardHeight = 800;
-
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect,
-} = setupApp(
-  'app', boardWidth, boardHeight
-);
+} = setupApp('app');
 
-// export TBRemoved once Disc updated
-export let board = new Board();
-let discs = initDiscs(board.state);
-let gameState = {
-  board,
-  discs,
-  turn: CONSTANTS.BLACK,
-  turnCount: 0,
-  capturesForRed: 0,
-  capturesForBlack: 0,
-  debug: true,
-}
+export let {
+  board, discs, gameState
+} = setupGame();
 
 function main() {
-
   setupEventListeners();
 
   function draw() {
@@ -107,9 +92,7 @@ function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position
   const floorX = Math.floor(mouseX/100);
   const floorY = Math.floor(mouseY/100);
-  // console.log('floorx', floorX, 'floory', floorY);
   const square = [floorX, floorY];
-  // console.log('getsquarefrommouse',square);
   return square;
 }
 
@@ -118,7 +101,6 @@ function showPossibleMoves(ctx, discs) {
     if (disc.isGrabbed) {
       const possibleMoves = disc.validMoveLocations();
       for (let m of possibleMoves) {
-        // console.log('ctx in validmovelocs', ctx);
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.drawDisc(ctx);
       }

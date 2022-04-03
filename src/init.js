@@ -1,16 +1,18 @@
 import './style.css'
 import { CONSTANTS } from './main';
 import Disc from './modules/disc';
-import { cX, cY, mouseX, mouseY } from './main';
+import Board from './modules/board';
 
-export function setupApp(id, width, height) {
+export function setupApp(id) {
+  const boardWidth = 800;
+  const boardHeight = 800;
   let divWrapper = document.createElement('div');
   divWrapper.id = id;
   document.body.appendChild(divWrapper);
 
   let canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = boardWidth;
+  canvas.height = boardHeight;
   divWrapper.appendChild(canvas);
   let ctx = canvas.getContext('2d');
 
@@ -36,6 +38,20 @@ export function setupApp(id, width, height) {
   return { canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect };
 }
 
+export function setupGame() {
+  let board = new Board();
+  let discs = initDiscs(board.state);
+  let gameState = {
+    board,
+    discs,
+    turn: CONSTANTS.BLACK,
+    turnCount: 0,
+    capturesForRed: 0,
+    capturesForBlack: 0,
+    debug: true,
+  }
+  return { board, discs, gameState };
+}
 export function clr(canvas, ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
