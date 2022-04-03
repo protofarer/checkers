@@ -16,38 +16,36 @@ export const CONSTANTS = {
 export let cX, cY;
 export let mouseX, mouseY;
 
-function main() {
-  const boardWidth = 800;
-  const boardHeight = 800;
-  let { canvas, ctx, statusEle, debugEle } = setupApp(
-    'app', 
-    boardWidth, 
-    boardHeight
-    );
-  const rect = canvas.getBoundingClientRect();
-  let board = new Board();
-  let discs = initDiscs(board.state);
-  let state = {
-    board,
-    discs,
-    turn: CONSTANTS.BLACK,
-    turnCount: 0,
-    capturesForRed: 0,
-    capturesForBlack: 0,
-    debug: 1,
-  }
-
-  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
-  
-  function draw() {
-    clr(canvas, ctx);
-    drawBoard(ctx);
-    updateDiscs(ctx, discs);
-    updateDebug(debugEle, rect, canvas);
-    requestAnimationFrame(draw);
-  }
-  draw();
+const boardWidth = 800;
+const boardHeight = 800;
+let { canvas, ctx, statusEle, debugEle } = setupApp(
+  'app', 
+  boardWidth, 
+  boardHeight
+  );
+const rect = canvas.getBoundingClientRect();
+let board = new Board();
+let discs = initDiscs(board.state);
+let state = {
+  board,
+  discs,
+  turn: CONSTANTS.BLACK,
+  turnCount: 0,
+  capturesForRed: 0,
+  capturesForBlack: 0,
+  debug: 1,
 }
+
+setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
+
+function draw() {
+  clr(canvas, ctx);
+  drawBoard(ctx);
+  updateDiscs(ctx, discs);
+  updateDebug(debugEle, rect, canvas);
+  requestAnimationFrame(draw);
+}
+draw();
 
 function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state, rect, discs) {
   document.addEventListener('mousemove', handleMouseMove);
@@ -102,9 +100,6 @@ function updateDiscs(ctx, discs) {
   showPossibleMoves(ctx, discs);
 }
 
-
-
-
 function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position
   const floorX = Math.floor(mouseX/100);
@@ -127,5 +122,3 @@ function showPossibleMoves(ctx, discs) {
     }
   }
 }
-
-main();
