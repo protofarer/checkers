@@ -13,41 +13,42 @@ export const CONSTANTS = {
   RED: 2,
   GHOST: 3,
 }
-export let cX, cY;
-export let mouseX, mouseY;
 const boardWidth = 800;
 const boardHeight = 800;
-export let { canvas, ctx, statusEle, debugEle } = setupApp(
-  'app', 
-  boardWidth, 
-  boardHeight
-);
-const rect = canvas.getBoundingClientRect();
 
+export let { 
+  canvas, ctx, statusEle, debugEle, cX, cY, mouseX, mouseY, rect
+} = setupApp(
+  'app', boardWidth, boardHeight
+);
+
+// export TBRemoved once Disc updated
 export let board = new Board();
 
-let discs = initDiscs(board.state);
+function main() {
+  let discs = initDiscs(board.state);
+  let gameState = {
+    board,
+    discs,
+    turn: CONSTANTS.BLACK,
+    turnCount: 0,
+    capturesForRed: 0,
+    capturesForBlack: 0,
+    debug: 1,
+  }
 
-let gameState = {
-  board,
-  discs,
-  turn: CONSTANTS.BLACK,
-  turnCount: 0,
-  capturesForRed: 0,
-  capturesForBlack: 0,
-  debug: 1,
+  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
+
+  function draw() {
+    clr(canvas, ctx);
+    drawBoard(ctx);
+    updateDiscs(ctx, discs);
+    updateDebug(debugEle, rect, canvas);
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
-
-setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
-
-function draw() {
-  clr(canvas, ctx);
-  drawBoard(ctx);
-  updateDiscs(ctx, discs);
-  updateDebug(debugEle, rect, canvas);
-  requestAnimationFrame(draw);
-}
-draw();
+main();
 
 function setupEventListeners(
   canvas, mouseX, mouseY, cX, cY, gameState, rect, discs
@@ -124,4 +125,13 @@ function showPossibleMoves(ctx, discs) {
       }
     }
   }
+}
+
+export function updateDebug(debugEle, rect, canvas) {
+  debugEle.innerText = 
+  `client: ${cX},${cY}
+  mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
+  row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
+  rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}
+  canvas: ${canvas.width},${canvas.height}`;
 }

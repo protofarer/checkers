@@ -28,22 +28,17 @@ export function setupApp(id, width, height) {
   debugEle.id = 'debug';
   divWrapper.appendChild(debugEle);
   
+  let cX, cY;
+  let mouseX, mouseY;
+  const rect = canvas.getBoundingClientRect();
 
-  return { canvas, ctx, statusEle, debugEle };
+  return { canvas, ctx, statusEle, debugEle, cX, cY, mouseX, mouseY, rect };
 }
 
 export function clr(canvas, ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-export function updateDebug(debugEle, rect, canvas) {
-  debugEle.innerText = 
-  `client: ${cX},${cY}
-  mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
-  row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
-  rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}
-  canvas: ${canvas.width},${canvas.height}`;
-}
 
 // Initialize discs
 export function initDiscs(board) {
