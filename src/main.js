@@ -15,18 +15,20 @@ export const CONSTANTS = {
 }
 export let cX, cY;
 export let mouseX, mouseY;
-
 const boardWidth = 800;
 const boardHeight = 800;
-let { canvas, ctx, statusEle, debugEle } = setupApp(
+export let { canvas, ctx, statusEle, debugEle } = setupApp(
   'app', 
   boardWidth, 
   boardHeight
-  );
+);
 const rect = canvas.getBoundingClientRect();
-let board = new Board();
+
+export let board = new Board();
+
 let discs = initDiscs(board.state);
-let state = {
+
+let gameState = {
   board,
   discs,
   turn: CONSTANTS.BLACK,
@@ -47,49 +49,50 @@ function draw() {
 }
 draw();
 
-function setupEventListeners(canvas, mouseX, mouseY, cX, cY, state, rect, discs) {
+function setupEventListeners(
+  canvas, mouseX, mouseY, cX, cY, gameState, rect, discs
+) {
   document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 
   canvas.addEventListener('mouseup', handleMouseUp); 
-  
-  function handleMouseMove(e) {
-    mouseX = e.clientX - rect.left; //window.scrollX
-    mouseY = e.clientY - rect.top;
-    cX = e.clientX;
-    cY = e.clientY;
-  }
+}
 
-  function handleMouseDown(e) {
-    console.log(discs)
-    for (let disc of discs) {
-      if (disc.isClicked(mouseX, mouseY)){
-        console.log(disc.toString());
-        disc.toggleGrab();
-      }
+function handleMouseMove(e) {
+  mouseX = e.clientX - rect.left; //window.scrollX
+  mouseY = e.clientY - rect.top;
+  cX = e.clientX;
+  cY = e.clientY;
+}
+
+function handleMouseDown(e) {
+  for (let disc of discs) {
+    if (disc.isClicked(mouseX, mouseY)){
+      console.log(disc.toString());
+      disc.toggleGrab();
     }
   }
+}
 
-  function handleMouseUp(e) {
-    for (let disc of discs) {
-      if (disc.isGrabbed) {
-        if (disc.isValidMove()) {
-          board[disc.row][disc.col] = 0;
-          [disc.col, disc.row] = getSquareFromMouse();
-          board[disc.row][disc.col] = disc.color;
-          if (disc.row === 0 || disc.row === 7) {
-            disc.direction *= -1;
-          }
+function handleMouseUp(e) {
+  for (let disc of discs) {
+    if (disc.isGrabbed) {
+      if (disc.isValidMove()) {
+        board.state[disc.row][disc.col] = 0;
+        [disc.col, disc.row] = getSquareFromMouse();
+        board.state[disc.row][disc.col] = disc.color;
+        if (disc.row === 0 || disc.row === 7) {
+          disc.direction *= -1;
         }
-        disc.toggleGrab();
       }
+      disc.toggleGrab();
     }
   }
+}
 
-  function toggleDebug(e) {
-    debugButton.innerText = state.debug 
-      ? 'turn debug off' 
-      : 'turn debug on';
-  }
+function toggleDebug(e) {
+  debugButton.innerText = gameState.debug 
+    ? 'turn debug off' 
+    : 'turn debug on';
 }
 
 function updateDiscs(ctx, discs) {

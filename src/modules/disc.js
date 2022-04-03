@@ -1,4 +1,5 @@
 import { CONSTANTS } from '../main';
+import { ctx, mouseX, mouseY, board } from '../main';
 
 export default class Disc {
   constructor(row, col, color) {
@@ -22,22 +23,22 @@ export default class Disc {
     if (this.row + this.direction >= 0 && 
         this.row + this.direction < 8) {
       if ((this.col + 1 < 8) && 
-          (board[this.row + this.direction][this.col + 1] === 0)) {
+          (board.state[this.row + this.direction][this.col + 1] === 0)) {
         possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
       }
       if ((this.col - 1 >= 0) && 
-          (board[this.row + this.direction][this.col - 1] === 0)) {
+          (board.state[this.row + this.direction][this.col - 1] === 0)) {
         possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
       }
     }
     if (this.row + (2*this.direction) >= 0 &&
         this.row + (2*this.direction) < 8) {
-      if ((board[this.row + this.direction][this.col - 1] === this.opposite) && 
-        (board[this.row + (2*this.direction)][this.col - 2] === 0)) {
+      if ((board.state[this.row + this.direction][this.col - 1] === this.opposite) && 
+        (board.state[this.row + (2*this.direction)][this.col - 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
         }
-      if ((board[this.row + this.direction][this.col + 1] === this.opposite) &&
-        (board[this.row + (2*this.direction)][this.col + 2] === 0)) {
+      if ((board.state[this.row + this.direction][this.col + 1] === this.opposite) &&
+        (board.state[this.row + (2*this.direction)][this.col + 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
         }
       }
