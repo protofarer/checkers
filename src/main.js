@@ -1,7 +1,6 @@
 import { 
   setupApp, initDiscs, 
   clr, 
-  updateDebug,
  } from './init.js';
 
 import Disc from './modules/disc.js';
@@ -17,27 +16,27 @@ const boardWidth = 800;
 const boardHeight = 800;
 
 export let { 
-  canvas, ctx, statusEle, debugEle, cX, cY, mouseX, mouseY, rect
+  canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect,
 } = setupApp(
   'app', boardWidth, boardHeight
 );
 
 // export TBRemoved once Disc updated
 export let board = new Board();
+let discs = initDiscs(board.state);
+let gameState = {
+  board,
+  discs,
+  turn: CONSTANTS.BLACK,
+  turnCount: 0,
+  capturesForRed: 0,
+  capturesForBlack: 0,
+  debug: true,
+}
 
 function main() {
-  let discs = initDiscs(board.state);
-  let gameState = {
-    board,
-    discs,
-    turn: CONSTANTS.BLACK,
-    turnCount: 0,
-    capturesForRed: 0,
-    capturesForBlack: 0,
-    debug: 1,
-  }
 
-  setupEventListeners(canvas, mouseX, mouseY, cX, cY, rect, discs);
+  setupEventListeners();
 
   function draw() {
     clr(canvas, ctx);
@@ -50,12 +49,11 @@ function main() {
 }
 main();
 
-function setupEventListeners(
-  canvas, mouseX, mouseY, cX, cY, gameState, rect, discs
-) {
+function setupEventListeners() {
   document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 
   canvas.addEventListener('mouseup', handleMouseUp); 
+  debugButton.addEventListener('click', toggleDebug);
 }
 
 function handleMouseMove(e) {
@@ -91,6 +89,7 @@ function handleMouseUp(e) {
 }
 
 function toggleDebug(e) {
+  gameState.debug = !gameState.debug;
   debugButton.innerText = gameState.debug 
     ? 'turn debug off' 
     : 'turn debug on';

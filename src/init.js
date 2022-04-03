@@ -22,6 +22,7 @@ export function setupApp(id, width, height) {
 
   let debugButton = document.createElement('button');
   debugButton.id = 'debugButton';
+  debugButton.innerText = 'turn debug off'
   divWrapper.appendChild(debugButton);
 
   let debugEle = document.createElement('div');
@@ -32,7 +33,7 @@ export function setupApp(id, width, height) {
   let mouseX, mouseY;
   const rect = canvas.getBoundingClientRect();
 
-  return { canvas, ctx, statusEle, debugEle, cX, cY, mouseX, mouseY, rect };
+  return { canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect };
 }
 
 export function clr(canvas, ctx) {
