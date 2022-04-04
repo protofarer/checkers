@@ -2,7 +2,7 @@ import { CONSTANTS } from '../main';
 import { ctx, mouseX, mouseY, board } from '../main';
 
 export default class Disc {
-  // #path = new Path2D();
+  #path;
   constructor(row, col, color) {
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row must be initialized`);
@@ -16,8 +16,7 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    let newPath = new Path2D();
-    this.path = newPath.arc(((this.col)*100) + 50, (((this.row)*100)+50)+3, 42, 0, 2*Math.PI);
+    // this.registerPath();
   }
   // TODO remove from this class
   validMoveLocations() {
@@ -55,7 +54,7 @@ export default class Disc {
   }
 
   isClicked(x, y) {
-    const isInPath = ctx.isPointInPath(this.path, x, y);
+    const isInPath = ctx.isPointInPath(this.#path, x, y);
     return isInPath;
   }
 
@@ -67,6 +66,21 @@ export default class Disc {
     this.isGrabbed = !this.isGrabbed;
   }
 
+  // registerPath() {
+  //   // Register path for click detection
+  //   // Divergent dimensions from draw compensating for unknown
+  //   // differences between rendered disc and click event coordinates
+  //   // This click path valid only for when disc is at rest and ungrabbed state
+  //   const x = ((this.col) * 100) + 50;
+  //   const y = ((this.row) * 100) + 50;
+  //   // CSDR: The y offset for the path's center is off by ~3 pixels
+  //   // from the drawn disc
+  //   let newPath = new Path2D();
+  //   newPath.arc(x, y+3, 42, 0, 2*Math.PI);
+  //   this.path = newPath;
+  //   return newPath;
+  // }
+
   draw(ctx) {
     // Draws game piece by referencing a row and column on board
     let x, y;
@@ -76,17 +90,15 @@ export default class Disc {
     } else {
       x = ((this.col) * 100) + 50;
       y = ((this.row) * 100) + 50;
-    }
+
     // Register path for click detection
     // Divergent dimensions from draw compensating for unknown
     // differences between rendered disc and click event coordinates
     // This click path valid only for when disc is at rest and ungrabbed state
-    // const x = ((this.col) * 100) + 50;
-    // const y = ((this.row) * 100) + 50;
     // CSDR: The y offset for the path's center is off by ~3 pixels
-    // from the drawn disc
-    let newPath = new Path2D();
-    this.path = newPath.arc(((this.col)*100) + 50, (((this.row)*100)+50)+3, 42, 0, 2*Math.PI);
+      this.#path = new Path2D();
+      this.#path.arc(x, y+3, 42, 0, 2*Math.PI);
+    }
     
     
     if (this.color === CONSTANTS.GHOST) {

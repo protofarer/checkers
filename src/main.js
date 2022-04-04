@@ -79,12 +79,12 @@ function toggleDebug(e) {
   debugButton.innerText = gameState.debug 
     ? 'turn debug off' 
     : 'turn debug on';
+  debugEle.style.display = gameState.debug ? 'block' : 'none';
 }
 
 function updateDiscs(ctx, discs) {
   for (let disc of discs) {
     disc.draw(ctx);
-    // disc.registerPath();
   }
   showPossibleMoves(ctx, discs);
 }
