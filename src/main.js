@@ -72,6 +72,7 @@ function handleMouseUp(e) {
           );
         }
         // [disc.col, disc.row] = getSquareFromMouse();
+        board.boardState[disc.row][disc.col] = 0;
         disc.row = validMove.row;
         disc.col = validMove.col;
         board.boardState[validMove.row][validMove.col] = disc.color;
