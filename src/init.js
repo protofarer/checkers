@@ -40,7 +40,7 @@ export function setupApp(id) {
 
 export function setupGame() {
   let board = new Board();
-  let discs = initDiscs(board.state);
+  let discs = initDiscs(board.boardState);
   let gameState = {
     board,
     discs,

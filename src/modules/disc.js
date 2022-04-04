@@ -2,6 +2,7 @@ import { CONSTANTS } from '../main';
 import { ctx, mouseX, mouseY, board } from '../main';
 
 export default class Disc {
+  // #path = new Path2D();
   constructor(row, col, color) {
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row must be initialized`);
@@ -13,53 +14,44 @@ export default class Disc {
     this.row = row;
     this.color = color;
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
-    this.registerPath(); // TODO this runs twice, see updateDiscs fn
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
+    let newPath = new Path2D();
+    this.path = newPath.arc(((this.col)*100) + 50, (((this.row)*100)+50)+3, 42, 0, 2*Math.PI);
   }
-
+  // TODO remove from this class
   validMoveLocations() {
     let possibleMoves = [];
     if (this.row + this.direction >= 0 && 
         this.row + this.direction < 8) {
       if ((this.col + 1 < 8) && 
-          (board.state[this.row + this.direction][this.col + 1] === 0)) {
+          (board.boardState[this.row + this.direction][this.col + 1] === 0)) {
         possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
       }
       if ((this.col - 1 >= 0) && 
-          (board.state[this.row + this.direction][this.col - 1] === 0)) {
+          (board.boardState[this.row + this.direction][this.col - 1] === 0)) {
         possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
       }
     }
     if (this.row + (2*this.direction) >= 0 &&
         this.row + (2*this.direction) < 8) {
-      if ((board.state[this.row + this.direction][this.col - 1] === this.opposite) && 
-        (board.state[this.row + (2*this.direction)][this.col - 2] === 0)) {
+      if ((board.boardState[this.row + this.direction][this.col - 1] === this.opposite) && 
+        (board.boardState[this.row + (2*this.direction)][this.col - 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
         }
-      if ((board.state[this.row + this.direction][this.col + 1] === this.opposite) &&
-        (board.state[this.row + (2*this.direction)][this.col + 2] === 0)) {
+      if ((board.boardState[this.row + this.direction][this.col + 1] === this.opposite) &&
+        (board.boardState[this.row + (2*this.direction)][this.col + 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
         }
       }
     return possibleMoves;
   }
 
+  // TODO remove from this class
   isValidMove() {
     const possibleMoves = this.validMoveLocations();
     const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col)).length > 0;
     return isValidMove;
-  }
-
-  registerPath() {
-    let path = new Path2D();
-    const x = ((this.col) * 100) + 50;
-    const y = ((this.row) * 100) + 50;
-    // CSDR: The y offset for the path's center is off by ~3 pixels
-    // from the drawn disc
-    path.arc(x, y+3, 42, 0, 2*Math.PI);
-    this.path = path;
-    return path;
   }
 
   isClicked(x, y) {
@@ -73,11 +65,9 @@ export default class Disc {
 
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
-    console.log('isGrabbed', this.isGrabbed);
-    return this.isGrabbed;
   }
 
-  drawDisc(ctx) {
+  draw(ctx) {
     // Draws game piece by referencing a row and column on board
     let x, y;
     if (this.isGrabbed) {
@@ -87,6 +77,17 @@ export default class Disc {
       x = ((this.col) * 100) + 50;
       y = ((this.row) * 100) + 50;
     }
+    // Register path for click detection
+    // Divergent dimensions from draw compensating for unknown
+    // differences between rendered disc and click event coordinates
+    // This click path valid only for when disc is at rest and ungrabbed state
+    // const x = ((this.col) * 100) + 50;
+    // const y = ((this.row) * 100) + 50;
+    // CSDR: The y offset for the path's center is off by ~3 pixels
+    // from the drawn disc
+    let newPath = new Path2D();
+    this.path = newPath.arc(((this.col)*100) + 50, (((this.row)*100)+50)+3, 42, 0, 2*Math.PI);
+    
     
     if (this.color === CONSTANTS.GHOST) {
       ctx.strokeStyle = 'hsl(250, 100%, 60%)';
@@ -182,6 +183,9 @@ export default class Disc {
     ctx.restore();
   }
 }
+// should this be a class method rather than stand alone?
+// it would make import cleaner!
+
 
 function isMouseInSquare(x, y, r, c) {
   return (Math.floor(x/100) === c && Math.floor(y/100) === r)

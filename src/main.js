@@ -3,7 +3,7 @@ import {
   setupGame, 
   clr, 
  } from './init.js';
-import { drawBoard } from './modules/board.js';
+import Board from './modules/board.js';
 import Disc from './modules/disc.js';
 
 export const CONSTANTS = {
@@ -12,6 +12,7 @@ export const CONSTANTS = {
   RED: 2,
   GHOST: 3,
 }
+
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect,
 } = setupApp('app');
@@ -25,7 +26,7 @@ function main() {
 
   function draw() {
     clr(canvas, ctx);
-    drawBoard(ctx);
+    Board.draw(ctx);
     updateDiscs(ctx, discs);
     updateDebug(debugEle, rect, canvas);
     requestAnimationFrame(draw);
@@ -61,9 +62,9 @@ function handleMouseUp(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
       if (disc.isValidMove()) {
-        board.state[disc.row][disc.col] = 0;
+        board.boardState[disc.row][disc.col] = 0;
         [disc.col, disc.row] = getSquareFromMouse();
-        board.state[disc.row][disc.col] = disc.color;
+        board.boardState[disc.row][disc.col] = disc.color;
         if (disc.row === 0 || disc.row === 7) {
           disc.direction *= -1;
         }
@@ -82,8 +83,8 @@ function toggleDebug(e) {
 
 function updateDiscs(ctx, discs) {
   for (let disc of discs) {
-    disc.drawDisc(ctx);
-    disc.registerPath();
+    disc.draw(ctx);
+    // disc.registerPath();
   }
   showPossibleMoves(ctx, discs);
 }
@@ -102,7 +103,7 @@ function showPossibleMoves(ctx, discs) {
       const possibleMoves = disc.validMoveLocations();
       for (let m of possibleMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.drawDisc(ctx);
+        ghostDisc.draw(ctx);
       }
     }
   }
