@@ -16,12 +16,10 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    // this.registerPath();
   }
   // TODO remove from this class
   possibleMoves() {
     let possibleMoves = [];
-    let capturedLocation = [];
     if (this.row + this.direction >= 0 && 
         this.row + this.direction < 8) {
       if ((this.col + 1 < 8) && 
@@ -38,20 +36,20 @@ export default class Disc {
       if ((board.boardState[this.row + this.direction][this.col - 1] === this.opposite) && 
         (board.boardState[this.row + (2*this.direction)][this.col - 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
-          capturableLocations.push({ row: this.row + this.direction, col: this.col - 1 });
-        }
+      }
       if ((board.boardState[this.row + this.direction][this.col + 1] === this.opposite) &&
         (board.boardState[this.row + (2*this.direction)][this.col + 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
-          capturableLocations.push({ row: this.row + this.direction, col: this.col + 1 });
-        }
       }
+    }
+    console.log('in method possmoves, possmoves', possibleMoves)
     return possibleMoves;
   }
 
-  isValidMove(possibleMoves) {
-    const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col)).length > 0;
-    return isValidMove;
+  validMove() {
+    const possibleMoves = this.possibleMoves();
+    const validMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col))[0];
+    return validMove;
   }
 
   isClicked(x, y) {

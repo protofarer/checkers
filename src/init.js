@@ -18,24 +18,35 @@ export function setupApp(id) {
 
   divWrapper.appendChild(document.createElement('hr'));
 
+  const infoWrapper = document.createElement('div');
+  divWrapper.appendChild(infoWrapper);
+  infoWrapper.style.display = 'flex';
+  infoWrapper.style.gap = '30px';
+  
   const statusEle = document.createElement('div');
   statusEle.id = 'status';
-  divWrapper.appendChild(statusEle);
+  infoWrapper.appendChild(statusEle);
 
   const debugButton = document.createElement('button');
   debugButton.id = 'debugButton';
   debugButton.innerText = 'turn debug off'
-  divWrapper.appendChild(debugButton);
+  infoWrapper.appendChild(debugButton);
 
   const debugEle = document.createElement('div');
   debugEle.id = 'debug';
-  divWrapper.appendChild(debugEle);
+  infoWrapper.appendChild(debugEle);
   
+  const boardStateEle = document.createElement('div');
+  boardStateEle.id = 'boardState';
+  boardStateEle.style.border = '1px dotted blue';
+  boardStateEle.style.fontSize = '12px';
+  infoWrapper.appendChild(boardStateEle);
+
   let cX, cY;
   let mouseX, mouseY;
   const rect = canvas.getBoundingClientRect();
 
-  return { canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect };
+  return { canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, cX, cY, mouseX, mouseY, rect };
 }
 
 export function setupGame() {
@@ -44,10 +55,12 @@ export function setupGame() {
   let gameState = {
     board,
     discs,
-    turn: CONSTANTS.BLACK,
+    turnColor: CONSTANTS.BLACK,
     turnCount: 0,
-    capturesForRed: 0,
-    capturesForBlack: 0,
+    captures: {
+      forRed: 0,
+      forBlack: 0
+    },
     debug: true,
   }
   return { board, discs, gameState };

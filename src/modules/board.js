@@ -12,6 +12,13 @@ export default class Board {
     ];
   }
 
+  toHTML() {
+    let s = '';
+    for (let r of this.boardState) {
+      s += `${r}<br />`;
+    }
+    return s;
+  }
   static draw(ctx) {
     const boardHue = 45;
     for (let row = 0; row < 8; row++) {

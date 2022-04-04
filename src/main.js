@@ -14,7 +14,7 @@ export const CONSTANTS = {
 }
 
 export let { 
-  canvas, ctx, statusEle, debugEle, debugButton, cX, cY, mouseX, mouseY, rect,
+  canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, cX, cY, mouseX, mouseY, rect,
 } = setupApp('app');
 
 export let {
@@ -29,6 +29,8 @@ function main() {
     Board.draw(ctx);
     updateDiscs(ctx, discs);
     updateDebug(debugEle, rect, canvas);
+    updateStatus(statusEle);
+    updateBoardStateEle(boardStateEle);
     requestAnimationFrame(draw);
   }
   draw();
@@ -61,10 +63,18 @@ function handleMouseDown(e) {
 function handleMouseUp(e) {
   for (let disc of discs) {
     if (disc.isGrabbed) {
-      if (disc.isValidMove()) {
-        board.boardState[disc.row][disc.col] = 0;
-        [disc.col, disc.row] = getSquareFromMouse();
-        board.boardState[disc.row][disc.col] = disc.color;
+      const validMove = disc.validMove();
+      if (validMove) {
+        if (Math.abs(validMove.row - disc.row) === 2) {
+          capture(
+            { row: disc.row, col: disc.col },
+            {row: validMove.row, col: validMove.col }
+          );
+        }
+        // [disc.col, disc.row] = getSquareFromMouse();
+        disc.row = validMove.row;
+        disc.col = validMove.col;
+        board.boardState[validMove.row][validMove.col] = disc.color;
         if (disc.row === 0 || disc.row === 7) {
           disc.direction *= -1;
         }
@@ -72,6 +82,29 @@ function handleMouseUp(e) {
       disc.toggleGrab();
     }
   }
+}
+
+function capture(from, to) {
+  const captured = findCaptured();
+  if (captured.color === CONSTANTS.RED) {
+    gameState.captures.forBlack += 1;
+  } else {
+    gameState.captures.forRed += 1;
+  }
+  console.log('updated capture state', gameState.captures);
+  board.boardState[captured.row][captured.col] = 0;
+
+  function findCaptured() {
+    let captured = {};
+    captured.col = (to.col - from.col) / Math.abs(to.col - from.col);
+    captured.col += from.col;
+    captured.row = (to.row - from.row) / Math.abs(to.row - from.row);
+    captured.row += from.row;
+    captured.color = board.boardState[captured.row][captured.col];
+    return captured;
+  }
+  // TODO update status
+
 }
 
 function toggleDebug(e) {
@@ -98,9 +131,10 @@ function getSquareFromMouse() {
 }
 
 function showPossibleMoves(ctx, discs) {
+  console.log('IN showpossmoves()')
   for (let disc of discs) {
     if (disc.isGrabbed) {
-      const possibleMoves = disc.validMoveLocations();
+      const possibleMoves = disc.possibleMoves();
       for (let m of possibleMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.draw(ctx);
@@ -110,10 +144,29 @@ function showPossibleMoves(ctx, discs) {
 }
 
 export function updateDebug(debugEle, rect, canvas) {
-  debugEle.innerText = 
-  `client: ${cX},${cY}
-  mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}
-  row,col: ${parseFloat((mouseY)/100,2).toFixed(2)},${parseFloat((mouseX)/100,2).toFixed(2)}
-  rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}
-  canvas: ${canvas.width},${canvas.height}`;
+  debugEle.innerHTML = `\
+    <span>
+      client: ${cX},${cY} <br />
+      mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}<br />
+      row,col: ${Math.floor(parseFloat((mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((mouseX)/100,2).toFixed(2))) }<br />
+      rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}<br />
+      canvas: ${canvas.width},${canvas.height}<br />
+    </span>
+  `;
+}
+
+export function updateStatus(statusEle) {
+  statusEle.innerHTML = `\
+    <strong>Status:</strong> <br />
+    turnColor: ${gameState.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
+    turnCount: ${gameState.turnCount} <br />
+    Captures for red: ${gameState.captures.forRed} <br />
+    Captures for black: ${gameState.captures.forBlack}\
+  `;
+}
+
+export function updateBoardStateEle(boardStateEle) {
+  boardStateEle.innerHTML = `\
+    <span>${board.toHTML()}</span>\
+  `;
 }
