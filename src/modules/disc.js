@@ -19,8 +19,9 @@ export default class Disc {
     // this.registerPath();
   }
   // TODO remove from this class
-  validMoveLocations() {
+  possibleMoves() {
     let possibleMoves = [];
+    let capturedLocation = [];
     if (this.row + this.direction >= 0 && 
         this.row + this.direction < 8) {
       if ((this.col + 1 < 8) && 
@@ -37,18 +38,18 @@ export default class Disc {
       if ((board.boardState[this.row + this.direction][this.col - 1] === this.opposite) && 
         (board.boardState[this.row + (2*this.direction)][this.col - 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
+          capturableLocations.push({ row: this.row + this.direction, col: this.col - 1 });
         }
       if ((board.boardState[this.row + this.direction][this.col + 1] === this.opposite) &&
         (board.boardState[this.row + (2*this.direction)][this.col + 2] === 0)) {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
+          capturableLocations.push({ row: this.row + this.direction, col: this.col + 1 });
         }
       }
     return possibleMoves;
   }
 
-  // TODO remove from this class
-  isValidMove() {
-    const possibleMoves = this.validMoveLocations();
+  isValidMove(possibleMoves) {
     const isValidMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col)).length > 0;
     return isValidMove;
   }
@@ -83,6 +84,7 @@ export default class Disc {
 
   draw(ctx) {
     // Draws game piece by referencing a row and column on board
+    // or by mouse location relative to board when disc isGrabbed
     let x, y;
     if (this.isGrabbed) {
       x = mouseX;

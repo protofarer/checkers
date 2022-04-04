@@ -52,7 +52,7 @@ function handleMouseMove(e) {
 function handleMouseDown(e) {
   for (let disc of discs) {
     if (disc.isClicked(mouseX, mouseY)){
-      console.log(disc.toString());
+      console.log(disc.toString(), 'is grabbed');
       disc.toggleGrab();
     }
   }
