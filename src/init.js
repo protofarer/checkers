@@ -66,10 +66,10 @@ export function setupGame() {
       [0,1,0,1,0,1,0,1],
       [1,0,1,0,1,0,1,0],
     ],
-    boardToHTML: () => {
+    boardToHTML: function() {
       let s = '';
-      for (let r of this.boardState) {
-        s += `${r}<br />`;
+      for (let r of this.board) {
+        s += `${r.join(' ')}<br />`;
       }
       return s;
     },

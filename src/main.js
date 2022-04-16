@@ -19,7 +19,7 @@ export let {
 } = setupApp('app');
 
 export let {
-  board, discs, gameState, panel
+  discs, gameState, panel
 } = setupGame();
 
 function main() {
@@ -79,10 +79,10 @@ function handleMouseUp(e) {
           );
         }
         // [disc.col, disc.row] = getSquareFromMouse();
-        board.boardState[disc.row][disc.col] = 0;
+        gameState.board[disc.row][disc.col] = 0;
         disc.row = validMove.row;
         disc.col = validMove.col;
-        board.boardState[validMove.row][validMove.col] = disc.color;
+        gameState.board[validMove.row][validMove.col] = disc.color;
         if (disc.row === 0 || disc.row === 7) {
           disc.direction *= -1;
         }
@@ -107,7 +107,7 @@ function capture(from, to) {
   } else {
     gameState.captures.forRed += 1;
   }
-  board.boardState[capturedDisc.row][capturedDisc.col] = 0;
+  gameState.board[capturedDisc.row][capturedDisc.col] = 0;
   discs = discs.filter(disc => 
     !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
 
@@ -180,7 +180,7 @@ export function updateStatus(statusEle) {
 
 export function updateBoardStateEle(boardStateEle) {
   boardStateEle.innerHTML = `\
-    <span>${board.toHTML()}</span>\
+    <span>${gameState.boardToHTML()}</span>\
   `;
 }
 
