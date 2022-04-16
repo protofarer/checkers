@@ -94,20 +94,16 @@ function capture(from, to) {
   } else {
     gameState.captures.forRed += 1;
   }
-  console.log('updated capture state', gameState.captures);
   board.boardState[captured.row][captured.col] = 0;
-  // TODO remove disc from discs
-  console.log(captured)
   discs = discs.filter(disc => !(disc.row === captured.row && disc.col === captured.col));
+  // TODO add miniature captured disc to jail
 
   function findCaptured() {
-    let captured = {};
-    captured.col = (to.col - from.col) / Math.abs(to.col - from.col);
-    captured.col += from.col;
-    captured.row = (to.row - from.row) / Math.abs(to.row - from.row);
-    captured.row += from.row;
-    captured.color = board.boardState[captured.row][captured.col];
-    return captured;
+    let col = (to.col - from.col) / Math.abs(to.col - from.col);
+    col += from.col;
+    let row = (to.row - from.row) / Math.abs(to.row - from.row);
+    row += from.row;
+    return discs.filter(disc => disc.col === col && disc.row === row)[0];
   }
   // TODO update status
 }
