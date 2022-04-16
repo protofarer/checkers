@@ -54,12 +54,25 @@ export function setupApp(id) {
 }
 
 export function setupGame() {
-  let board = new Board();
   let panel = new Panel(panelWidth, panelHeight);
-  let discs = initDiscs(board.boardState);
   let gameState = {
-    board,
-    discs,
+    board: [
+      [0,2,0,2,0,2,0,2],
+      [2,0,2,0,2,0,2,0],
+      [0,2,0,2,0,2,0,2],
+      [0,0,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,0],
+      [1,0,1,0,1,0,1,0],
+      [0,1,0,1,0,1,0,1],
+      [1,0,1,0,1,0,1,0],
+    ],
+    boardToHTML: () => {
+      let s = '';
+      for (let r of this.boardState) {
+        s += `${r}<br />`;
+      }
+      return s;
+    },
     turnColor: CONSTANTS.BLACK,
     turnCount: 0,
     captures: {
@@ -68,7 +81,8 @@ export function setupGame() {
     },
     debug: true,
   }
-  return { board, discs, gameState, panel };
+  let discs = initDiscs(gameState.board);
+  return { discs, gameState, panel };
 }
 
 export function clr(canvas, ctx) {

@@ -1,24 +1,4 @@
 export default class Board {
-  constructor() {
-    this.boardState = [
-      [0,2,0,2,0,2,0,2],
-      [2,0,2,0,2,0,2,0],
-      [0,2,0,2,0,2,0,2],
-      [0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0],
-      [1,0,1,0,1,0,1,0],
-      [0,1,0,1,0,1,0,1],
-      [1,0,1,0,1,0,1,0],
-    ];
-  }
-
-  toHTML() {
-    let s = '';
-    for (let r of this.boardState) {
-      s += `${r}<br />`;
-    }
-    return s;
-  }
   static draw(ctx) {
     const boardHue = 45;
     for (let row = 0; row < 8; row++) {
