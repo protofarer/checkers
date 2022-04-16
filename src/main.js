@@ -97,6 +97,8 @@ function capture(from, to) {
   console.log('updated capture state', gameState.captures);
   board.boardState[captured.row][captured.col] = 0;
   // TODO remove disc from discs
+  console.log(captured)
+  discs = discs.filter(disc => !(disc.row === captured.row && disc.col === captured.col));
 
   function findCaptured() {
     let captured = {};
@@ -108,7 +110,6 @@ function capture(from, to) {
     return captured;
   }
   // TODO update status
-
 }
 
 function toggleDebug(e) {
