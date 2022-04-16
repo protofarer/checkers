@@ -28,7 +28,7 @@ function main() {
   function draw() {
     clr(canvas, ctx);
     Board.draw(ctx);
-    panel.draw(ctx);
+    panel.draw(ctx, gameState);
     updateDiscs(ctx, discs);
     updateDebug(debugEle, rect, canvas);
     updateStatus(statusEle);
@@ -88,15 +88,15 @@ function handleMouseUp(e) {
 }
 
 function capture(from, to) {
-  const captured = findCaptured();
-  if (captured.color === CONSTANTS.RED) {
+  const capturedDisc = findCaptured();
+  if (capturedDisc.color === CONSTANTS.RED) {
     gameState.captures.forBlack += 1;
   } else {
     gameState.captures.forRed += 1;
   }
-  board.boardState[captured.row][captured.col] = 0;
-  discs = discs.filter(disc => !(disc.row === captured.row && disc.col === captured.col));
-  // TODO add miniature captured disc to jail
+  board.boardState[capturedDisc.row][capturedDisc.col] = 0;
+  discs = discs.filter(disc => 
+    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
 
   function findCaptured() {
     let col = (to.col - from.col) / Math.abs(to.col - from.col);
@@ -170,4 +170,8 @@ export function updateBoardStateEle(boardStateEle) {
   boardStateEle.innerHTML = `\
     <span>${board.toHTML()}</span>\
   `;
+}
+
+export function updatePanel() {
+
 }
