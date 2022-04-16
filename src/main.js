@@ -96,6 +96,7 @@ export function findPossibleMoves(disc) {
     return possibleMoves;
 }
 
+// TODO something wrong in here, keeps returning full array of discs
 function findPotentialCaptors(discs) {
   return discs.filter(d => 
     capturesAvailable(
@@ -108,25 +109,35 @@ function showPossibleMoves(ctx, discs) {
   // console.log('IN showpossmoves()')
   // if any captures are available to player, then only show those moves
   // otherwise show all moves
-  let discsWithAvailableMoves = [];
-  let potentialCaptors = discs.filter(d => 
-    capturesAvailable({ row: d.row, col: d.col }, findPossibleMoves(d))
-  );
-  // console.log('potential caoptors', potentialCaptors)
-  if (potentialCaptors.length) {
-    discsWithAvailableMoves = potentialCaptors;
+
+  let potentialCaptors = findPotentialCaptors(discs);
+  // REFACTOR using functional methods
+
+  if (potentialCaptors.length > 0) {
+    for (let disc of potentialCaptors) {
+      if (disc.isGrabbed) {
+        const captureMoves = capturesAvailable(
+          { row: disc.row, col: disc.col }, 
+          findPossibleMoves(disc)
+        );
+        for (let m of captureMoves) {
+          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+          ghostDisc.draw(ctx);
+        }
+      }
+    }
   } else {
-    discsWithAvailableMoves = discs;
-  }
-  for (let disc of discsWithAvailableMoves) {
-    if (disc.isGrabbed) {
-      const possibleMoves = findPossibleMoves(disc);
-      for (let m of possibleMoves) {
-        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.draw(ctx);
+    for (let disc of discs) {
+      if (disc.isGrabbed) {
+          const possibleMoves = findPossibleMoves(disc);
+          for (let m of possibleMoves) {
+            const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+            ghostDisc.draw(ctx);
+        }
       }
     }
   }
+
 }
 
 function getSquareFromMouse() {
