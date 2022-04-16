@@ -42,7 +42,7 @@ export default class Disc {
           possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
       }
     }
-    console.log('in method possmoves, possmoves', possibleMoves)
+    // console.log('in method possmoves, possmoves', possibleMoves)
     return possibleMoves;
   }
 

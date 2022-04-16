@@ -5,6 +5,7 @@ import {
  } from './init.js';
 import Board from './modules/board.js';
 import Disc from './modules/disc.js';
+import Panel from './modules/panel.js';
 
 export const CONSTANTS = {
   BLANK: 0,
@@ -18,7 +19,7 @@ export let {
 } = setupApp('app');
 
 export let {
-  board, discs, gameState
+  board, discs, gameState, panel
 } = setupGame();
 
 function main() {
@@ -27,6 +28,7 @@ function main() {
   function draw() {
     clr(canvas, ctx);
     Board.draw(ctx);
+    panel.draw(ctx);
     updateDiscs(ctx, discs);
     updateDebug(debugEle, rect, canvas);
     updateStatus(statusEle);
@@ -94,6 +96,7 @@ function capture(from, to) {
   }
   console.log('updated capture state', gameState.captures);
   board.boardState[captured.row][captured.col] = 0;
+  // TODO remove disc from discs
 
   function findCaptured() {
     let captured = {};
@@ -132,7 +135,7 @@ function getSquareFromMouse() {
 }
 
 function showPossibleMoves(ctx, discs) {
-  console.log('IN showpossmoves()')
+  // console.log('IN showpossmoves()')
   for (let disc of discs) {
     if (disc.isGrabbed) {
       const possibleMoves = disc.possibleMoves();

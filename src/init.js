@@ -2,16 +2,20 @@ import './style.css'
 import { CONSTANTS } from './main';
 import Disc from './modules/disc';
 import Board from './modules/board';
+import Panel from './modules/panel';
+
+const boardWidth = 800;
+const boardHeight = 800;
+const panelWidth = 300;
+const panelHeight = boardHeight;
 
 export function setupApp(id) {
-  const boardWidth = 800;
-  const boardHeight = 800;
   const divWrapper = document.createElement('div');
   divWrapper.id = id;
   document.body.appendChild(divWrapper);
 
   const canvas = document.createElement('canvas');
-  canvas.width = boardWidth;
+  canvas.width = boardWidth + panelWidth + 15;
   canvas.height = boardHeight;
   divWrapper.appendChild(canvas);
   const ctx = canvas.getContext('2d');
@@ -51,6 +55,7 @@ export function setupApp(id) {
 
 export function setupGame() {
   let board = new Board();
+  let panel = new Panel(panelWidth, panelHeight);
   let discs = initDiscs(board.boardState);
   let gameState = {
     board,
@@ -63,7 +68,7 @@ export function setupGame() {
     },
     debug: true,
   }
-  return { board, discs, gameState };
+  return { board, discs, gameState, panel };
 }
 
 export function clr(canvas, ctx) {
