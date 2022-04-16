@@ -3,7 +3,10 @@ import {
   setupGame, 
   clr, 
  } from './init.js';
-import { Coords } from './init.js';
+import {
+  mouseX, mouseY,
+  cX, cY
+} from './init.js';
 
 import Board from './modules/board.js';
 import Disc from './modules/disc.js';
@@ -14,7 +17,6 @@ import {
   // handleMouseUp 
 } from './modules/listeners.js';
 
-
 export const CONSTANTS = {
   BLANK: 0,
   BLACK: 1,
@@ -24,14 +26,13 @@ export const CONSTANTS = {
 
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  cX, cY, setCX, setCY, mouseX, mouseY, setMouseX, setMouseY, rect,
+  rect,
 } = setupApp('app');
-
-const coords = new Coords(rect);
 
 export let {
   discs, gameState, panel
 } = setupGame();
+
 
 function main() {
   setupEventListeners();

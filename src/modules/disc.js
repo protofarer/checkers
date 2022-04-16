@@ -1,5 +1,6 @@
 import { CONSTANTS } from '../main';
-import { ctx, mouseX, mouseY, gameState } from '../main';
+import { ctx, gameState } from '../main';
+import { mouseX, mouseY } from '../init.js';
 
 export default class Disc {
   #path;
