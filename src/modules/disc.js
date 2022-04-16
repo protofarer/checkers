@@ -1,6 +1,6 @@
 import { CONSTANTS } from '../main';
 import { ctx, gameState } from '../main';
-import { mouseX, mouseY } from '../init.js';
+import { mouseX, mouseY } from './listeners.js';
 
 export default class Disc {
   #path;
@@ -18,41 +18,43 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-  }
-  // TODO remove from this class
-  possibleMoves() {
-    let possibleMoves = [];
-    if (this.row + this.direction >= 0 && 
-        this.row + this.direction < 8) {
-      if ((this.col + 1 < 8) && 
-          (gameState.board[this.row + this.direction][this.col + 1] === 0)) {
-        possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
-      }
-      if ((this.col - 1 >= 0) && 
-          (gameState.board[this.row + this.direction][this.col - 1] === 0)) {
-        possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
-      }
-    }
-    if (this.row + (2*this.direction) >= 0 &&
-        this.row + (2*this.direction) < 8) {
-      if ((gameState.board[this.row + this.direction][this.col - 1] === this.opposite) && 
-        (gameState.board[this.row + (2*this.direction)][this.col - 2] === 0)) {
-          possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
-      }
-      if ((gameState.board[this.row + this.direction][this.col + 1] === this.opposite) &&
-        (gameState.board[this.row + (2*this.direction)][this.col + 2] === 0)) {
-          possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
-      }
-    }
-    // console.log('in method possmoves, possmoves', possibleMoves)
-    return possibleMoves;
+    this.isKing = false;
   }
 
-  validMove() {
-    const possibleMoves = this.possibleMoves();
-    const validMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col))[0];
-    return validMove;
-  }
+  // TODO remove from this class
+  // possibleMoves() {
+  //   let possibleMoves = [];
+  //   if (this.row + this.direction >= 0 && 
+  //       this.row + this.direction < 8) {
+  //     if ((this.col + 1 < 8) && 
+  //         (gameState.board[this.row + this.direction][this.col + 1] === 0)) {
+  //       possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
+  //     }
+  //     if ((this.col - 1 >= 0) && 
+  //         (gameState.board[this.row + this.direction][this.col - 1] === 0)) {
+  //       possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
+  //     }
+  //   }
+  //   if (this.row + (2*this.direction) >= 0 &&
+  //       this.row + (2*this.direction) < 8) {
+  //     if ((gameState.board[this.row + this.direction][this.col - 1] === this.opposite) && 
+  //       (gameState.board[this.row + (2*this.direction)][this.col - 2] === 0)) {
+  //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
+  //     }
+  //     if ((gameState.board[this.row + this.direction][this.col + 1] === this.opposite) &&
+  //       (gameState.board[this.row + (2*this.direction)][this.col + 2] === 0)) {
+  //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
+  //     }
+  //   }
+  //   // console.log('in method possmoves, possmoves', possibleMoves)
+  //   return possibleMoves;
+  // }
+
+  // validMove() {
+  //   const possibleMoves = this.possibleMoves();
+  //   const validMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col))[0];
+  //   return validMove;
+  // }
 
   isClicked(x, y) {
     const isInPath = ctx.isPointInPath(this.#path, x, y);
@@ -65,6 +67,10 @@ export default class Disc {
 
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
+  }
+
+  makeKing() {
+    this.isKing = true;
   }
 
   // registerPath() {
@@ -101,7 +107,6 @@ export default class Disc {
       this.#path = new Path2D();
       this.#path.arc(x, y+3, 42, 0, 2*Math.PI);
     }
-    
     
     if (this.color === CONSTANTS.GHOST) {
       ctx.strokeStyle = 'hsl(250, 100%, 60%)';
@@ -200,10 +205,3 @@ export default class Disc {
 // should this be a class method rather than stand alone?
 // it would make import cleaner!
 
-
-function isMouseInSquare(x, y, r, c) {
-  return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-  // return (
-  //   r*100 <= x && x <= (r + 1)*100 - 1 && c*100 <= y && y <= (c+1)*100 - 1
-  // )      
-}

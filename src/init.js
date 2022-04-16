@@ -3,6 +3,7 @@ import { CONSTANTS } from './main';
 import Disc from './modules/disc';
 import Board from './modules/board';
 import Panel from './modules/panel';
+import { setupEventListeners } from './modules/listeners';
 
 const boardWidth = 800;
 const boardHeight = 800;
@@ -55,34 +56,9 @@ export function setupApp(id) {
   };
 }
 
-export let mouseX, mouseY, cX, cY;
-document.addEventListener('mousemove', handleMouseMove);
-function handleMouseMove(e) {
-  mouseX = e.clientX - rect.left; //window.scrollX
-  mouseY = e.clientY - rect.top;
-  // setMouseX(e.clientX - rect.leftX);
-  // setMouseY(e.clientY - rect.top);
-  cX = e.clientX;
-  cY = e.clientY;
-  // setCX(e.clientX);
-  // setCY(e.clientY);
-}
-
-// export class trackMouse {
-//   constructor(rect) {
-//     console.log(rect)
-//     this.cX = 0;
-//     this.cY = 0;
-//     this.mouseX = 0;
-//     this.mouseY = 0;
-//     this.rect = rect;
-//   }
-// }
-
 export function setupGame() {
   let panel = new Panel(panelWidth, panelHeight);
-  let gameState = {
-    board: [
+  let board = [
       [0,2,0,2,0,2,0,2],
       [2,0,2,0,2,0,2,0],
       [0,2,0,2,0,2,0,2],
@@ -91,7 +67,9 @@ export function setupGame() {
       [1,0,1,0,1,0,1,0],
       [0,1,0,1,0,1,0,1],
       [1,0,1,0,1,0,1,0],
-    ],
+    ];
+  let gameState = {
+    board,
     boardToHTML: function() {
       let s = '';
       for (let r of this.board) {
@@ -99,6 +77,7 @@ export function setupGame() {
       }
       return s;
     },
+    discs: initDiscs(board),
     turnColor: CONSTANTS.BLACK,
     turnCount: 0,
     captures: {
@@ -107,8 +86,8 @@ export function setupGame() {
     },
     debug: true,
   }
-  let discs = initDiscs(gameState.board);
-  return { discs, gameState, panel };
+  setupEventListeners();
+  return { gameState, panel };
 }
 
 export function clr(canvas, ctx) {
