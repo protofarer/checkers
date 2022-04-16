@@ -12,6 +12,7 @@ export default class Disc {
     }
     this.col = col;
     this.row = row;
+    this.id = `${parseInt(row)}${parseInt(col)}`;
     this.color = color;
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;

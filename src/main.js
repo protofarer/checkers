@@ -29,6 +29,7 @@ function main() {
     clr(canvas, ctx);
     Board.draw(ctx);
     panel.draw(ctx, gameState);
+    isMoveAvailable();
     updateDiscs(ctx, discs);
     updateDebug(debugEle, rect, canvas);
     updateStatus(statusEle);
@@ -38,6 +39,10 @@ function main() {
   draw();
 }
 main();
+
+function isMoveAvailable() {
+  
+}
 
 function setupEventListeners() {
   document.addEventListener('mousemove', handleMouseMove);
@@ -55,8 +60,8 @@ function handleMouseMove(e) {
 
 function handleMouseDown(e) {
   for (let disc of discs) {
-    if (disc.isClicked(mouseX, mouseY)){
-      console.log(disc.toString(), 'is grabbed');
+    if (disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor){
+      // console.log(disc.toString(), 'is grabbed');
       disc.toggleGrab();
     }
   }
@@ -81,10 +86,18 @@ function handleMouseUp(e) {
         if (disc.row === 0 || disc.row === 7) {
           disc.direction *= -1;
         }
+        nextTurn();
       }
       disc.toggleGrab();
     }
   }
+}
+
+function nextTurn() {
+  gameState.turnCount++;
+  gameState.turnColor = gameState.turnColor === CONSTANTS.RED 
+    ? CONSTANTS.BLACK 
+    : CONSTANTS.RED;
 }
 
 function capture(from, to) {
@@ -105,7 +118,6 @@ function capture(from, to) {
     row += from.row;
     return discs.filter(disc => disc.col === col && disc.row === row)[0];
   }
-  // TODO update status
 }
 
 function toggleDebug(e) {
