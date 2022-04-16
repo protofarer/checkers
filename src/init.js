@@ -47,10 +47,49 @@ export function setupApp(id) {
   infoWrapper.appendChild(boardStateEle);
 
   let cX, cY;
+  function setCX(x) {
+    cX = x;
+  }
+  function setCY(y) {
+    cY = y;
+  }
+
   let mouseX, mouseY;
+  function setMouseX(x) {
+    mouseX = x;
+  }
+  function setMouseY(y) {
+    mouseY = y;
+  }
+
   const rect = canvas.getBoundingClientRect();
 
-  return { canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, cX, cY, mouseX, mouseY, rect };
+
+  return { 
+    canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
+    cX, cY, setCX, setCY, mouseX, mouseY, setMouseX, setMouseY, rect 
+  };
+}
+
+export class Coords {
+  constructor(rect) {
+    this.cX = 0;
+    this.cY = 0;
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.rect = rect;
+    document.addEventListener('mousemove', handleMouseMove);
+    function handleMouseMove(e) {
+      this.mouseX = e.clientX - this.rect.left; //window.scrollX
+      this.mouseY = e.clientY - this.rect.top;
+      // setMouseX(e.clientX - rect.leftX);
+      // setMouseY(e.clientY - rect.top);
+      this.cX = e.clientX;
+      this.cY = e.clientY;
+      // setCX(e.clientX);
+      // setCY(e.clientY);
+    }
+  }
 }
 
 export function setupGame() {

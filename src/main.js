@@ -3,9 +3,17 @@ import {
   setupGame, 
   clr, 
  } from './init.js';
+import { Coords } from './init.js';
+
 import Board from './modules/board.js';
 import Disc from './modules/disc.js';
 import Panel from './modules/panel.js';
+import { 
+  // handleMouseDown, 
+  // handleMouseMove, 
+  // handleMouseUp 
+} from './modules/listeners.js';
+
 
 export const CONSTANTS = {
   BLANK: 0,
@@ -15,8 +23,11 @@ export const CONSTANTS = {
 }
 
 export let { 
-  canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, cX, cY, mouseX, mouseY, rect,
+  canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
+  cX, cY, setCX, setCY, mouseX, mouseY, setMouseX, setMouseY, rect,
 } = setupApp('app');
+
+const coords = new Coords(rect);
 
 export let {
   discs, gameState, panel
@@ -45,80 +56,12 @@ function isMoveAvailable() {
 }
 
 function setupEventListeners() {
-  document.addEventListener('mousemove', handleMouseMove);
+  // document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 
   canvas.addEventListener('mouseup', handleMouseUp); 
   debugButton.addEventListener('click', toggleDebug);
 }
 
-function handleMouseMove(e) {
-  mouseX = e.clientX - rect.left; //window.scrollX
-  mouseY = e.clientY - rect.top;
-  cX = e.clientX;
-  cY = e.clientY;
-}
-
-function handleMouseDown(e) {
-  for (let disc of discs) {
-    if (disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor){
-      // console.log(disc.toString(), 'is grabbed');
-      disc.toggleGrab();
-    }
-  }
-}
-
-function handleMouseUp(e) {
-  for (let disc of discs) {
-    if (disc.isGrabbed) {
-      const validMove = disc.validMove();
-      if (validMove) {
-        if (Math.abs(validMove.row - disc.row) === 2) {
-          capture(
-            { row: disc.row, col: disc.col },
-            {row: validMove.row, col: validMove.col }
-          );
-        }
-        // [disc.col, disc.row] = getSquareFromMouse();
-        gameState.board[disc.row][disc.col] = 0;
-        disc.row = validMove.row;
-        disc.col = validMove.col;
-        gameState.board[validMove.row][validMove.col] = disc.color;
-        if (disc.row === 0 || disc.row === 7) {
-          disc.direction *= -1;
-        }
-        nextTurn();
-      }
-      disc.toggleGrab();
-    }
-  }
-}
-
-function nextTurn() {
-  gameState.turnCount++;
-  gameState.turnColor = gameState.turnColor === CONSTANTS.RED 
-    ? CONSTANTS.BLACK 
-    : CONSTANTS.RED;
-}
-
-function capture(from, to) {
-  const capturedDisc = findCaptured();
-  if (capturedDisc.color === CONSTANTS.RED) {
-    gameState.captures.forBlack += 1;
-  } else {
-    gameState.captures.forRed += 1;
-  }
-  gameState.board[capturedDisc.row][capturedDisc.col] = 0;
-  discs = discs.filter(disc => 
-    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
-
-  function findCaptured() {
-    let col = (to.col - from.col) / Math.abs(to.col - from.col);
-    col += from.col;
-    let row = (to.row - from.row) / Math.abs(to.row - from.row);
-    row += from.row;
-    return discs.filter(disc => disc.col === col && disc.row === row)[0];
-  }
-}
 
 function toggleDebug(e) {
   gameState.debug = !gameState.debug;
@@ -186,4 +129,68 @@ export function updateBoardStateEle(boardStateEle) {
 
 export function updatePanel() {
 
+}
+
+export function handleMouseDown(e) {
+  for (let disc of discs) {
+    if (disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor){
+      // console.log(disc.toString(), 'is grabbed');
+      disc.toggleGrab();
+    }
+  }
+}
+
+
+
+export function handleMouseUp(e) {
+  for (let disc of discs) {
+    if (disc.isGrabbed) {
+      const validMove = disc.validMove();
+      if (validMove) {
+        if (Math.abs(validMove.row - disc.row) === 2) {
+          capture(
+            { row: disc.row, col: disc.col },
+            {row: validMove.row, col: validMove.col }
+          );
+        }
+        // [disc.col, disc.row] = getSquareFromMouse();
+        gameState.board[disc.row][disc.col] = 0;
+        disc.row = validMove.row;
+        disc.col = validMove.col;
+        gameState.board[validMove.row][validMove.col] = disc.color;
+        if (disc.row === 0 || disc.row === 7) {
+          disc.direction *= -1;
+        }
+        nextTurn();
+      }
+      disc.toggleGrab();
+    }
+  }
+}
+
+function nextTurn() {
+  gameState.turnCount++;
+  gameState.turnColor = gameState.turnColor === CONSTANTS.RED 
+    ? CONSTANTS.BLACK 
+    : CONSTANTS.RED;
+}
+
+function capture(from, to) {
+  const capturedDisc = findCaptured();
+  if (capturedDisc.color === CONSTANTS.RED) {
+    gameState.captures.forBlack += 1;
+  } else {
+    gameState.captures.forRed += 1;
+  }
+  gameState.board[capturedDisc.row][capturedDisc.col] = 0;
+  discs = discs.filter(disc => 
+    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
+
+  function findCaptured() {
+    let col = (to.col - from.col) / Math.abs(to.col - from.col);
+    col += from.col;
+    let row = (to.row - from.row) / Math.abs(to.row - from.row);
+    row += from.row;
+    return discs.filter(disc => disc.col === col && disc.row === row)[0];
+  }
 }
