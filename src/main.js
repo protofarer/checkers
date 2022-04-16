@@ -69,31 +69,36 @@ function updateDiscs(ctx, discs) {
   showPossibleMoves(ctx, gameState.discs);
 }
 
-export function findPossibleMoves(disc) {
-    let possibleMoves = [];
+export function findNonCaptureMoves(disc) {
+    let nonCaptureMoves = [];
     if (disc.row + disc.direction >= 0 && 
         disc.row + disc.direction < 8) {
       if ((disc.col + 1 < 8) && 
           (gameState.board[disc.row + disc.direction][disc.col + 1] === 0)) {
-        possibleMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
+        nonCaptureMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
       }
       if ((disc.col - 1 >= 0) && 
           (gameState.board[disc.row + disc.direction][disc.col - 1] === 0)) {
-        possibleMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
+        nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
       }
     }
-    if (disc.row + (2*disc.direction) >= 0 &&
-        disc.row + (2*disc.direction) < 8) {
-      if ((gameState.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
-        (gameState.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
-          possibleMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
-      }
-      if ((gameState.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
-        (gameState.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
-          possibleMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
-      }
+    return nonCaptureMoves;
+}
+
+export function findCaptureMoves(disc) {
+  let captureMoves = [];
+  if (disc.row + (2*disc.direction) >= 0 &&
+      disc.row + (2*disc.direction) < 8) {
+    if ((gameState.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
+      (gameState.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
+        captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
     }
-    return possibleMoves;
+    if ((gameState.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
+      (gameState.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
+        captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
+    }
+  }
+  return captureMoves;
 }
 
 // TODO something wrong in here, keeps returning full array of discs
@@ -101,7 +106,7 @@ function findPotentialCaptors(discs) {
   return discs.filter(d => 
     capturesAvailable(
       { row: d.row, col: d.col }, 
-      findPossibleMoves(d)
+      findNonCaptureMoves(d)
     )
   );
 }
@@ -118,7 +123,7 @@ function showPossibleMoves(ctx, discs) {
       if (disc.isGrabbed) {
         const captureMoves = capturesAvailable(
           { row: disc.row, col: disc.col }, 
-          findPossibleMoves(disc)
+          findNonCaptureMoves(disc)
         );
         for (let m of captureMoves) {
           const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
@@ -129,7 +134,7 @@ function showPossibleMoves(ctx, discs) {
   } else {
     for (let disc of discs) {
       if (disc.isGrabbed) {
-          const possibleMoves = findPossibleMoves(disc);
+          const possibleMoves = findNonCaptureMoves(disc);
           for (let m of possibleMoves) {
             const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
             ghostDisc.draw(ctx);
