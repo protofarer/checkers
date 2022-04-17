@@ -58,7 +58,7 @@ export function setupApp(id) {
 
 export function setupGame() {
   let panel = new Panel(panelWidth, panelHeight);
-  let board = [
+  const initBoard = [
       [0,2,0,2,0,2,0,2],
       [2,0,2,0,2,0,2,0],
       [0,2,0,2,0,2,0,2],
@@ -69,7 +69,7 @@ export function setupGame() {
       [1,0,1,0,1,0,1,0],
     ];
   let gameState = {
-    board,
+    board: structuredClone(initBoard),
     boardToHTML: function() {
       let s = '';
       for (let r of this.board) {
@@ -77,7 +77,7 @@ export function setupGame() {
       }
       return s;
     },
-    discs: initDiscs(board),
+    discs: initDiscs(initBoard),
     turnColor: CONSTANTS.BLACK,
     turnCount: 0,
     captures: {

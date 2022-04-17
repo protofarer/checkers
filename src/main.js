@@ -35,11 +35,11 @@ function main() {
     clr(canvas, ctx);
     Board.draw(ctx);
     panel.draw(ctx, gameState);
-    updateDiscs(ctx, gameState.discs);
+    drawDiscs(ctx, gameState.discs);
     drawPossibleMoves();
     drawStatus();
-    updateDebug(debugEle, rect, canvas);
-    updateBoardStateEle(boardStateEle);
+    drawDebugEle(debugEle, rect, canvas);
+    drawBoardStateEle(boardStateEle);
     requestAnimationFrame(draw);
   }
   draw();
@@ -65,7 +65,7 @@ function drawPossibleMoves() {
   }
 }
 
-function updateDiscs(ctx, discs) {
+function drawDiscs(ctx, discs) {
   for (let disc of discs) {
     disc.draw(ctx);
   }
@@ -129,7 +129,7 @@ function getSquareFromMouse() {
 }
 
 
-export function updateDebug(debugEle, rect, canvas) {
+export function drawDebugEle(debugEle, rect, canvas) {
   debugEle.innerHTML = `\
     <span>
       client: ${cX},${cY} <br />
@@ -152,14 +152,10 @@ export function drawStatus() {
   `;
 }
 
-export function updateBoardStateEle(boardStateEle) {
+export function drawBoardStateEle(boardStateEle) {
   boardStateEle.innerHTML = `\
     <span>${gameState.boardToHTML()}</span>\
   `;
-}
-
-export function updatePanel() {
-
 }
 
 export function nextTurn() {

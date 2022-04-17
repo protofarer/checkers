@@ -1,6 +1,6 @@
 import { canvas, rect, gameState, nextTurn, CONSTANTS, ctx, 
   findNonCaptureMoves, findCaptureMoves, findPotentialCaptors,
-  findPotentialMovers
+  findPotentialMovers, debugEle, boardStateEle
 } from "../main";
 import Disc from "./disc";
 export let mouseX, mouseY, cX, cY;
@@ -137,4 +137,5 @@ function toggleDebug(e) {
     ? 'turn debug off' 
     : 'turn debug on';
   debugEle.style.display = gameState.debug ? 'block' : 'none';
+  boardStateEle.style.display = gameState.debug ? 'block' : 'none';
 }
