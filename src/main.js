@@ -7,8 +7,6 @@ import {
   mouseX, mouseY,
   cX, cY,
   setupEventListeners,
-  findCaptured,
-  capturesAvailable,
 } from './modules/listeners.js';
 
 import Board from './modules/board.js';
@@ -38,22 +36,39 @@ function main() {
     Board.draw(ctx);
     panel.draw(ctx, gameState);
     updateDiscs(ctx, gameState.discs);
+    drawPossibleMoves();
     drawStatus();
-    
     updateDebug(debugEle, rect, canvas);
     updateBoardStateEle(boardStateEle);
-
     requestAnimationFrame(draw);
   }
   draw();
 }
 main();
 
+function drawPossibleMoves() {
+  // When disc is grabbed, show available moves
+  if (gameState.grabbedDisc.disc) {
+    if (gameState.grabbedDisc.type === 'captor') {
+      const captureMoves = findCaptureMoves(gameState.grabbedDisc.disc); 
+      for (let m of captureMoves) {
+        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+        ghostDisc.draw(ctx);
+      }
+    } else if (gameState.grabbedDisc.type === 'mover') {
+      const nonCaptureMoves = findNonCaptureMoves(gameState.grabbedDisc.disc);
+      for (let m of nonCaptureMoves) {
+        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+        ghostDisc.draw(ctx);
+      }
+    }
+  }
+}
+
 function updateDiscs(ctx, discs) {
   for (let disc of discs) {
     disc.draw(ctx);
   }
-  showPossibleMoves(ctx, gameState.discs);
 }
 
 export function findNonCaptureMoves(disc) {
@@ -85,6 +100,7 @@ export function findCaptureMoves(disc) {
         captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
     }
   }
+  // console.log('capmoves', captureMoves)
   return captureMoves;
 }
 
@@ -103,37 +119,6 @@ export function findPotentialMovers(discs) {
   return potentialMovers;
 }
 
-// disc manager
-function showPossibleMoves(ctx, discs) {
-  // console.log('IN showpossmoves()')
-  // if any captures are available to player, then only show those moves
-  // otherwise show all moves
-
-  let potentialCaptors = findPotentialCaptors(discs);
-  
-  // REFACTOR using functional methods
-  if (potentialCaptors.length > 0) {
-    for (let disc of potentialCaptors) {
-      if (disc.isGrabbed) {
-        const captureMoves = findCaptureMoves(disc); 
-        for (let m of captureMoves) {
-          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-          ghostDisc.draw(ctx);
-        }
-      }
-    }
-  } else {
-    for (let disc of discs) {
-      if (disc.isGrabbed) {
-          const nonCaptureMoves = findNonCaptureMoves(disc);
-          for (let m of nonCaptureMoves) {
-            const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-            ghostDisc.draw(ctx);
-        }
-      }
-    }
-  }
-}
 
 function getSquareFromMouse() {
   // Returns the row and colum of the square under the current mouse position

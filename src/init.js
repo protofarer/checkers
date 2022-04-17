@@ -86,6 +86,10 @@ export function setupGame() {
     },
     msg: "",
     debug: true,
+    grabbedDisc: {
+      disc: null,
+      type: null,
+    }
   }
   setupEventListeners();
   return { gameState, panel };
