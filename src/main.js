@@ -38,7 +38,7 @@ function main() {
     Board.draw(ctx);
     panel.draw(ctx, gameState);
     updateDiscs(ctx, gameState.discs);
-    updateStatus(statusEle);
+    drawStatus();
     
     updateDebug(debugEle, rect, canvas);
     updateBoardStateEle(boardStateEle);
@@ -156,9 +156,10 @@ export function updateDebug(debugEle, rect, canvas) {
   `;
 }
 
-export function updateStatus(statusEle) {
+export function drawStatus() {
   statusEle.innerHTML = `\
     <strong>Status:</strong> <br />
+    message: ${gameState.msg} <br />
     turnColor: ${gameState.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
     turnCount: ${gameState.turnCount} <br />
     Captures for red: ${gameState.captures.forRed} <br />

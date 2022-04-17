@@ -84,6 +84,7 @@ export function setupGame() {
       forRed: 0,
       forBlack: 0
     },
+    msg: "",
     debug: true,
   }
   setupEventListeners();

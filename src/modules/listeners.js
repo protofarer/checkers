@@ -19,63 +19,79 @@ function handleMouseMove(e) {
 }
 
 function handleMouseDown(e) {
-  const grabbedDisc = gameState.discs.find(d =>
-    d.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor);
-  for (let disc of gameState.discs) {
-    if (disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor){
-      // console.log(disc.toString(), 'is grabbed');
-      disc.toggleGrab();
+  const clickedDisc = gameState.discs.find(disc =>
+    disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor);
+  const captors = findPotentialCaptors(gameState.discs);
+  const movers = findPotentialMovers(gameState.discs);
+  if (clickedDisc) {
+    if (captors.find(c => c === clickedDisc)) {
+      clickedDisc.toggleGrab();
+    } else if (movers.find(m => m === clickedDisc)) {
+      clickedDisc.toggleGrab();
+    } else {
+      gameState.msg = "You have no moves available! Press pass to turn control to other player";
     }
+  } else {
+    gameState.msg = "Nothing clicked";
   }
+  // for (let disc of gameState.discs) {
+  //   if (disc.isClicked(mouseX, mouseY) && disc.color === gameState.turnColor){
+  //     // console.log(disc.toString(), 'is grabbed');
+  //     disc.toggleGrab();
+  //   }
+  // }
 }
 
 function handleMouseUp(e) {
-  // TODO if captureMoves possible, only alloves move with potential captors
-  // TODO else only allow moves with discs that can do regular moves 
 
-  const potentialCaptors = findPotentialCaptors(gameState.discs);
-  const potentialMovers = findPotentialMovers(gameState.discs);
-  if (potentialCaptors.length < 0) {
-    for (let potentialCaptor of potentialCaptors) {
-      if (potentialCaptor.isGrabbed) {
-        const captureMoves = findCaptureMoves(potentialCaptors);
-        const captureMove = captureMoves.filter(move => 
-          isMouseInSquare(mouseX, mouseY, move.row, move.col)
-        )[0];
-        capture(
-          { row: potentialCaptors.row, col: potentialCaptors.col },
-          {row: captureMove.row, col: captureMove.col }
-        );
-        gameState.board[potentialCaptors.row][potentialCaptors.col] = 0;
-        gameState.board[captureMove.row][captureMove.col] = potentialCaptors.color;
-        potentialCaptors.row = captureMove.row;
-        potentialCaptors.col = captureMove.col;
-        if (disc.row === 0 || disc.row === 7) {
-          disc.direction *= -1;
+  // CSDR moving grabbedDisc to gameState
+  const grabbedDisc = gameState.discs.find(disc => disc.isGrabbed);
+  if (grabbedDisc) {
+    const potentialCaptors = findPotentialCaptors(gameState.discs);
+    const potentialMovers = findPotentialMovers(gameState.discs);
+    if (potentialCaptors.length < 0) {
+      for (let potentialCaptor of potentialCaptors) {
+        if (potentialCaptor.isGrabbed) {
+          const captureMoves = findCaptureMoves(potentialCaptors);
+          const captureMove = captureMoves.filter(move => 
+            isMouseInSquare(mouseX, mouseY, move.row, move.col)
+          )[0];
+          capture(
+            { row: potentialCaptors.row, col: potentialCaptors.col },
+            {row: captureMove.row, col: captureMove.col }
+          );
+          gameState.board[potentialCaptors.row][potentialCaptors.col] = 0;
+          gameState.board[captureMove.row][captureMove.col] = potentialCaptors.color;
+          potentialCaptors.row = captureMove.row;
+          potentialCaptors.col = captureMove.col;
+          if (disc.row === 0 || disc.row === 7) {
+            disc.direction *= -1;
+          }
         }
       }
+    } else if (potentialMovers.length > 0) {
+      for (let disc of gameState.discs) {
+        const nonCaptureMoves = findNonCaptureMoves(disc);
+        const nonCaptureMove = nonCaptureMoves.filter(move =>
+          isMouseInSquare(mouseX, mouseY, move.row, move.col)
+        )[0];
+        if (nonCaptureMove) {
+          gameState.board[disc.row][disc.col] = 0;
+          gameState.board[nonCaptureMove.row][nonCaptureMove.col] = disc.color;
+          disc.row = nonCaptureMove.row;
+          disc.col = nonCaptureMove.col;
+          nextTurn();
+          if (disc.row === 0 || disc.row === 7) {
+            disc.direction *= -1;
+          }
+        }    
+      }
+    } else {
+      // Update status no moves 
     }
-  } else if (potentialMovers.length > 0) {
-    for (let disc of gameState.discs) {
-      const nonCaptureMoves = findNonCaptureMoves(disc);
-      const nonCaptureMove = nonCaptureMoves.filter(move =>
-        isMouseInSquare(mouseX, mouseY, move.row, move.col)
-      )[0];
-      if (nonCaptureMove) {
-        gameState.board[disc.row][disc.col] = 0;
-        gameState.board[nonCaptureMove.row][nonCaptureMove.col] = disc.color;
-        disc.row = nonCaptureMove.row;
-        disc.col = nonCaptureMove.col;
-        nextTurn();
-        if (disc.row === 0 || disc.row === 7) {
-          disc.direction *= -1;
-        }
-      }    
-    }
-  } else {
-    // Update status no moves 
+    disc.toggleGrab();
+
   }
-  disc.toggleGrab();
 
   function isMouseInSquare(x, y, r, c) {
     return (Math.floor(x/100) === c && Math.floor(y/100) === r)
