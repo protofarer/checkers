@@ -8,9 +8,9 @@ export default class Panel {
     this.centerX = 800 + 5 + width/2;
     this.centerY = 800/2;
     this.redJailX = 815;
-    this.redJailY = 10;
+    this.redJailY = 20;
     this.blackJailX = 815;
-    this.blackJailY = 410;
+    this.blackJailY = 790;
   }
 
   draw(ctx, gameState) {
@@ -27,22 +27,38 @@ export default class Panel {
 
     ctx.font = '16px serif';
     // Draw red's jail
-    ctx.strokeText(`Blacks captured: ${gameState.captures.forRed}`, this.redJailX, this.redJailY);
+    ctx.strokeText(
+      `Blacks captured: ${gameState.captures.forRed}`, 
+      this.redJailX, 
+      this.redJailY
+    );
 
     // Draw black's jail
-    ctx.strokeText(`Reds captured: ${gameState.captures.forBlack}`, this.blackJailX, this.blackJailY);
+    ctx.strokeText(
+      `Reds captured: ${gameState.captures.forBlack}`, 
+      this.blackJailX, 
+      this.blackJailY
+    );
+
+    // Red's empty turn indicator
+    ctx.moveTo(this.centerX - 125 + 16, this.centerY - 25);
+    ctx.arc(this.centerX - 125, this.centerY - 25, 16, 0, 2*Math.PI);
+    // Black's empty turn indicator
+    ctx.moveTo(this.centerX - 125 + 16, this.centerY + 25);
+    ctx.arc(this.centerX - 125, this.centerY + 25, 16, 0, 2*Math.PI);
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
     if (gameState.turnColor === CONSTANTS.RED) {
       ctx.beginPath();
       // ctx.moveTo(this.centerX - 20, this.centerY + 20);
-      ctx.arc(this.centerX - 125, this.centerY - 200, 15, 0, 2*Math.PI);
+      ctx.arc(this.centerX - 125, this.centerY - 25, 15, 0, 2*Math.PI);
       ctx.fillStyle = 'hsl(100, 50%, 50%)';
       ctx.fill();
-
     } else {
       ctx.beginPath();
       // ctx.moveTo(this.centerX - 20, this.centerY + 200);
-      ctx.arc(this.centerX - 125, this.centerY + 200, 15, 0, 2*Math.PI);
+      ctx.arc(this.centerX - 125, this.centerY + 25, 15, 0, 2*Math.PI);
       ctx.fillStyle = 'hsl(100, 50%, 50%)';
       ctx.fill();
     }
