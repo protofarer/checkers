@@ -37,7 +37,6 @@ function main() {
     clr(canvas, ctx);
     Board.draw(ctx);
     panel.draw(ctx, gameState);
-    // isMoveAvailable();
     updateDiscs(ctx, gameState.discs);
     updateStatus(statusEle);
     
@@ -49,18 +48,6 @@ function main() {
   draw();
 }
 main();
-
-function isMoveAvailable() {
-  // Check if player has any moves left
-  // if not
-  // ...other code...
-  //    update status "player" has no possible moves
-  //    show button for player to pass
-  //      nextTurn
-  // else continue
-  // return boolean
-}
-
 
 function updateDiscs(ctx, discs) {
   for (let disc of discs) {
@@ -101,6 +88,7 @@ export function findCaptureMoves(disc) {
   return captureMoves;
 }
 
+// disc manager
 function findPotentialCaptors(discs) {
   const potentialCaptors = discs.filter(d => 
     findCaptureMoves(d).length > 0
@@ -109,6 +97,7 @@ function findPotentialCaptors(discs) {
   return potentialCaptors;
 }
 
+// disc manager
 function showPossibleMoves(ctx, discs) {
   // console.log('IN showpossmoves()')
   // if any captures are available to player, then only show those moves
