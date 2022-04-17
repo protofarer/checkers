@@ -89,12 +89,18 @@ export function findCaptureMoves(disc) {
 }
 
 // disc manager
-function findPotentialCaptors(discs) {
+export function findPotentialCaptors(discs) {
   const potentialCaptors = discs.filter(d => 
     findCaptureMoves(d).length > 0
   );
   // console.log('potentialCaptors', potentialCaptors)
   return potentialCaptors;
+}
+
+export function findPotentialMovers(discs) {
+  const potentialMovers = discs.filter(d =>
+    findNonCaptureMoves(d).length > 0);
+  return potentialMovers;
 }
 
 // disc manager
