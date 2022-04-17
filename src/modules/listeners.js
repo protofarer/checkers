@@ -45,57 +45,49 @@ function handleMouseUp(e) {
   const isMover = movers.find(m => m === grabbedDisc);
   if (grabbedDisc) {
     // if is a captor and mouseupped on valid capture move
-    if (isCaptor && validCaptureMove){
+    if (isCaptor) {
       const captureMoves = findCaptureMoves(grabbedDisc);
-      const isValidCaptureMove = captureMoves.find(move => 
+      const validCaptureMove = captureMoves.find(move => 
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
-      if (isValidCaptureMove) {
+      if (validCaptureMove) {
         capture(
           { row: grabbedDisc.row, col: grabbedDisc.col },
-          {row: captureMove.row, col: captureMove.col }
+          { row: validCaptureMove.row, col: validCaptureMove.col }
         );
         gameState.board[grabbedDisc.row][grabbedDisc.col] = 0;
         gameState.board[captureMove.row][captureMove.col] = grabbedDisc.color;
-        grabbedDisc.row = captureMove.row;
-        grabbedDisc.col = captureMove.col;
-        if (disc.row === 0 || disc.row === 7) {
-          disc.direction *= -1;
+        grabbedDisc.row = validCaptureMove.row;
+        grabbedDisc.col = validCaptureMove.col;
+        if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
+          grabbedDisc.direction *= -1;
         }
       } else {
-        gameState.msg = "Not a valid capture move"
+        gameState.msg = "Not a valid capture move";
       }
-    } else if (isMover && isValidMove) {
-
-    }
-  }
-    } else if (potentialMovers.length > 0) {
-      for (let disc of gameState.discs) {
-        const nonCaptureMoves = findNonCaptureMoves(disc);
-        const nonCaptureMove = nonCaptureMoves.filter(move =>
-          isMouseInSquare(mouseX, mouseY, move.row, move.col)
-        )[0];
-        if (nonCaptureMove) {
-          gameState.board[disc.row][disc.col] = 0;
-          gameState.board[nonCaptureMove.row][nonCaptureMove.col] = disc.color;
-          disc.row = nonCaptureMove.row;
-          disc.col = nonCaptureMove.col;
-          nextTurn();
-          if (disc.row === 0 || disc.row === 7) {
-            disc.direction *= -1;
-          }
-        }    
-      }
+    } else if (isMover) {
+      const nonCaptureMoves = findNonCaptureMoves(grabbedDisc);
+      const nonCaptureMove = nonCaptureMoves.find(move =>
+        isMouseInSquare(mouseX, mouseY, move.row, move.col)
+      );
+      if (nonCaptureMove) {
+        gameState.board[grabbedDisc.row][grabbedDisc.col] = 0;
+        gameState.board[nonCaptureMove.row][nonCaptureMove.col] = grabbedDisc.color;
+        grabbedDisc.row = nonCaptureMove.row;
+        grabbedDisc.col = nonCaptureMove.col;
+        if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
+          grabbedDisc.direction *= -1;
+        }
+        nextTurn();
+      }    
     } else {
-      // Update status no moves 
+      gameState.msg = "Invalid move. Try again"
     }
-    disc.toggleGrab();
-
   }
-
+  disc.toggleGrab();
   function isMouseInSquare(x, y, r, c) {
     return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-  }
+    }
 }
 
 function toggleDebug(e) {
