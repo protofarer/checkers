@@ -22,8 +22,8 @@ export default class Panel {
 
     this.#resetButtonPath = new Path2D();
     this.#resetButtonPath.rect(
-      this.centerX + 65, 
-      this.centerY - 35,
+      this.resetButtonX, 
+      this.resetButtonY,
       70, 30
     );
 
@@ -66,7 +66,6 @@ export default class Panel {
 
   isResetClicked(x, y) {
     const isInPath = this.ctx.isPointInPath(this.#resetButtonPath, x , y);
-    console.log('reset clicked?:', isInPath)
     return isInPath;
   }
 
