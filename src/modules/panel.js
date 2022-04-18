@@ -2,8 +2,11 @@ import { CONSTANTS } from '../main';
 
 // TODO Panel instances need access to game red and black captures
 export default class Panel {
-  constructor (width, height, ctx) {
+  #resetButtonPath;
+  #passButtonPath;
+  constructor (width, height, ctx, game) {
     this.ctx = ctx;
+    this.game = game;
     this.width = width;     // pixels
     this.height = height;   // pixels
     this.centerX = 800 + 5 + width/2;
@@ -12,23 +15,38 @@ export default class Panel {
     this.redJailY = 20;
     this.blackJailX = 815;
     this.blackJailY = 790;
+    
+    this.#resetButtonPath = new Path2D();
+    this.#resetButtonPath.rect(
+      this.centerX + 65, 
+      this.centerY - 35,
+      70, 30
+    );
   }
 
-  drawResetButton(game) {
+  drawResetButton() {
     this.ctx.beginPath();
 
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'black';
     this.ctx.fillStyle = 'hsl(0,0%,80%)';
     this.ctx.fillRect(this.centerX + 65, this.centerY - 35, 70, 30);
-
+    
+    
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'black';
     this.ctx.fillText('Reset', this.centerX + 80, this.centerY - 15);
+    
   }
 
-  draw(game) {
-    this.drawResetButton(game);
+  isResetClicked(x, y) {
+    const isInPath = this.ctx.isPointInPath(this.#resetButtonPath, x , y);
+    console.log('reset clicked?:', isInPath)
+    return isInPath;
+  }
+
+  draw() {
+    this.drawResetButton(this.game);
     this.ctx.beginPath();
     // WARN hardcoded position
     this.ctx.lineWidth = 1;
@@ -46,14 +64,14 @@ export default class Panel {
     this.ctx.fillStyle = 'black';
     // Draw red's jail
     this.ctx.fillText(
-      `Blacks captured: ${game.captures.forRed}`, 
+      `Blacks captured: ${this.game.captures.forRed}`, 
       this.redJailX, 
       this.redJailY
     );
 
     // Draw black's jail
     this.ctx.fillText(
-      `Reds captured: ${game.captures.forBlack}`, 
+      `Reds captured: ${this.game.captures.forBlack}`, 
       this.blackJailX, 
       this.blackJailY
     );
@@ -67,7 +85,7 @@ export default class Panel {
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
 
-    if (game.turnColor === CONSTANTS.RED) {
+    if (this.game.turnColor === CONSTANTS.RED) {
       this.ctx.beginPath();
       // this.ctx.moveTo(this.centerX - 20, this.centerY + 20);
       this.ctx.arc(this.centerX - 125, this.centerY - 75, 15, 0, 2*Math.PI);

@@ -1,4 +1,4 @@
-import { canvas, rect, game, nextTurn,
+import { canvas, rect, game, panel, nextTurn, ctx, resetGame,
   debugEle, boardStateEle
 } from "../main";
 export let mouseX, mouseY, cX, cY;
@@ -13,6 +13,7 @@ function handleMouseMove(e) {
 function handleMouseDown(e) {
   const clickedDisc = game.discs.find(disc =>
     disc.isClicked(mouseX, mouseY));
+
   if (clickedDisc) {
     if (clickedDisc.color === game.turnColor) {
       const isCaptor = game.captors.find(c => c === clickedDisc);
@@ -44,6 +45,11 @@ function handleMouseDown(e) {
     }
   } else {
     game.msg = "No disc clicked";
+  }
+
+  const isResetClicked = panel.isResetClicked(mouseX, mouseY);
+  if (isResetClicked) {
+    resetGame();
   }
 }
 

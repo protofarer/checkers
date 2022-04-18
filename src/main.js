@@ -19,10 +19,10 @@ export const CONSTANTS = {
 
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  rect, panel, resetButton
+  rect, resetButton
 } = setupApp('app');
 
-export let game = setupGame();
+export let { game, panel } = setupGame(ctx);
 
 function main() {
 
@@ -41,10 +41,12 @@ function main() {
 }
 main();
 
-resetButton.addEventListener('click', resetGame);
+resetButton.addEventListener('click', () => {
+  ({game,panel}=setupGame(ctx));
+});
 
-function resetGame() {
-  game = new Game();
+export function resetGame() {
+  ({ game, panel } = setupGame(ctx));
 }
 
 function drawBoard(ctx) {

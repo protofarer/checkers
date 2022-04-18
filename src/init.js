@@ -59,10 +59,11 @@ export function setupApp(id) {
   };
 }
 
-export function setupGame() {
+export function setupGame(ctx) {
   const game = new Game();
+  const panel = new Panel(panelWidth, panelHeight, ctx, game);
   setupEventListeners();
-  return game;
+  return { game, panel };
 }
 
 export function clr(canvas, ctx) {
