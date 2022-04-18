@@ -123,6 +123,7 @@ function capture(grabbedDisc, to) {
   gameState.board[capturedDisc.row][capturedDisc.col] = 0;
   gameState.discs = gameState.discs.filter(disc => 
     !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
+  gameState.hasCaptureChainStarted = true;
 
   function findCaptured(from, to) {
     let col = (to.col - from.col) / Math.abs(to.col - from.col);

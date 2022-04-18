@@ -89,7 +89,8 @@ export function setupGame() {
     grabbedDisc: {
       disc: null,
       type: null,
-    }
+    },
+    hasCaptureChainStarted: false,
   }
   setupEventListeners();
   return { gameState, panel };

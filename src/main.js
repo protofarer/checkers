@@ -163,4 +163,7 @@ export function nextTurn() {
   gameState.turnColor = gameState.turnColor === CONSTANTS.RED 
     ? CONSTANTS.BLACK 
     : CONSTANTS.RED;
+  gameState.msg = "";
+  gameState.hasCaptureChainStarted = false;
 }
+
