@@ -24,17 +24,29 @@ function handleMouseDown(e) {
   if (clickedDisc) {
     if (clickedDisc.color === gameState.turnColor) {
       const captors = findPotentialCaptors(gameState.discs);
+      console.log('captors', captors)
       const isCaptor = captors.find(c => c === clickedDisc);
       const movers = findPotentialMovers(gameState.discs);
-      const isMover = movers.find(m => m === clickedDisc); 
-      if (isCaptor) {
-        clickedDisc.toggleGrab();
-        gameState.grabbedDisc.disc = clickedDisc;
-        gameState.grabbedDisc.type = "captor";
-      } else if (isMover) {
-        clickedDisc.toggleGrab();
-        gameState.grabbedDisc.disc = clickedDisc;
-        gameState.grabbedDisc.type = "mover";
+      const isMover = movers.find(m => m === clickedDisc);
+      if (captors.length > 0) {
+        if (isCaptor) {
+          console.log('IN mousedown, isCaptor')
+          
+          clickedDisc.toggleGrab();
+          gameState.grabbedDisc.disc = clickedDisc;
+          gameState.grabbedDisc.type = "captor";
+        } else if (isMover) {
+          gameState.msg = "You must capture when possible."
+        } 
+      }
+      else if (movers.length > 0) {
+        if (isMover) {
+          console.log('IN mousedown isMover')
+          
+          clickedDisc.toggleGrab();
+          gameState.grabbedDisc.disc = clickedDisc;
+          gameState.grabbedDisc.type = "mover";
+        }
       } else if (movers.length === 0 && captors.length === 0) {
         gameState.msg = "You have no moves available! Press pass to turn control to other player";
       } else {

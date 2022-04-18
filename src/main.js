@@ -107,7 +107,7 @@ export function findCaptureMoves(disc) {
 // disc manager
 export function findPotentialCaptors(discs) {
   const potentialCaptors = discs.filter(d => 
-    findCaptureMoves(d).length > 0
+    findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
   );
   // console.log('potentialCaptors', potentialCaptors)
   return potentialCaptors;
@@ -115,7 +115,7 @@ export function findPotentialCaptors(discs) {
 
 export function findPotentialMovers(discs) {
   const potentialMovers = discs.filter(d =>
-    findNonCaptureMoves(d).length > 0);
+    findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
   return potentialMovers;
 }
 
