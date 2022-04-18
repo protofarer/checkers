@@ -5,24 +5,24 @@ import './style.css'
 
 const boardWidth = 800;
 const boardHeight = 800;
-const panelWidth = 300;
+const panelWidth = 200;
 const panelHeight = boardHeight;
 
 export function setupApp(id) {
-  const divWrapper = document.createElement('div');
-  divWrapper.id = id;
-  document.body.appendChild(divWrapper);
+  const container = document.createElement('div');
+  container.id = id;
+  document.body.appendChild(container);
 
   const canvas = document.createElement('canvas');
   canvas.width = boardWidth + panelWidth + 15;
   canvas.height = boardHeight;
-  divWrapper.appendChild(canvas);
+  container.appendChild(canvas);
   const ctx = canvas.getContext('2d');
 
-  divWrapper.appendChild(document.createElement('hr'));
+  container.appendChild(document.createElement('hr'));
 
   const infoWrapper = document.createElement('div');
-  divWrapper.appendChild(infoWrapper);
+  container.appendChild(infoWrapper);
   infoWrapper.style.display = 'flex';
   infoWrapper.style.gap = '30px';
   
