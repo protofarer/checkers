@@ -3,7 +3,8 @@ import { CONSTANTS } from '../main';
 // TODO Panel instances need access to game red and black captures
 export default class Panel {
   #resetButtonPath;
-  #passButtonPath;
+  #redPassButtonPath;
+  #blackPassButtonPath;
   constructor (width, height, ctx, game) {
     this.ctx = ctx;
     this.game = game;
@@ -22,6 +23,27 @@ export default class Panel {
       this.centerY - 35,
       70, 30
     );
+
+    this.#redPassButtonPath = new Path2D();
+    this.#redPassButtonPath.rect(
+      this.centerX + 65, 
+      this.centerY - 35,
+      70, 30
+    );
+  }
+  
+  drawPassButton(x, y) {
+    this.ctx.beginPath();
+
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeStyle = 'black';
+    this.ctx.fillStyle = 'hsl(0,0%,80%)';
+    this.ctx.fillRect(x, y, 70, 30);
+    
+    
+    this.ctx.font = '16px Arial';
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillText('Pass', x + 17, y + 21);
   }
 
   drawResetButton() {
@@ -47,6 +69,8 @@ export default class Panel {
 
   draw() {
     this.drawResetButton(this.game);
+    this.drawPassButton(this.centerX - 95, this.centerY - 90);
+    this.drawPassButton(this.centerX - 95, this.centerY + 60);
     this.ctx.beginPath();
     // WARN hardcoded position
     this.ctx.lineWidth = 1;
