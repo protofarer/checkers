@@ -4,11 +4,12 @@ import { CONSTANTS } from '../main';
 export default class Panel {
   #resetButtonPath;
   #redPassButtonPath;
+  #redPassButtonX;
+  #redPassButtonY;
   #blackPassButtonPath;
-  #redPassButtonX = this.centerX - 95
-  #redPassButtonY = this.centerY - 90;
-  #blackPassButtonX = this.centerX - 95;
-  #blackPassButtonY = this.centerY + 60;
+  #blackPassButtonX;
+  #blackPassButtonY;
+  
   constructor (width, height, ctx, game) {
     this.ctx = ctx;
     this.game = game;
@@ -30,12 +31,17 @@ export default class Panel {
       70, 30
     );
 
+    this.#redPassButtonX = this.centerX - 95
+    this.#redPassButtonY = this.centerY - 90;
     this.#redPassButtonPath = new Path2D();
     this.#redPassButtonPath.rect(
       this.redPassButtonX, 
       this.redPassButtonY,
       70, 30
     );
+
+    this.#blackPassButtonX = this.centerX - 95;
+    this.#blackPassButtonY = this.centerY + 60;
     this.#blackPassButtonPath = new Path2D();
     this.#blackPassButtonPath.rect(
       this.blackPassButtonX, 
@@ -75,6 +81,16 @@ export default class Panel {
 
   isResetClicked(x, y) {
     const isInPath = this.ctx.isPointInPath(this.#resetButtonPath, x , y);
+    return isInPath;
+  }
+
+  isRedPassClicked(x, y) {
+    const isInPath = this.ctx.isPointInPath(this.#redPassButtonPath, x, y);
+    return isInPath;
+  }
+  
+  isBlackPassClicked(x, y) {
+    const isInPath = this.ctx.isPointInPath(this.#blackPassButtonPath, x, y);
     return isInPath;
   }
 
