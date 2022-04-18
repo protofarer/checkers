@@ -5,6 +5,10 @@ export default class Panel {
   #resetButtonPath;
   #redPassButtonPath;
   #blackPassButtonPath;
+  #redPassButtonX = this.centerX - 95
+  #redPassButtonY = this.centerY - 90;
+  #blackPassButtonX = this.centerX - 95;
+  #blackPassButtonY = this.centerY + 60;
   constructor (width, height, ctx, game) {
     this.ctx = ctx;
     this.game = game;
@@ -19,7 +23,6 @@ export default class Panel {
     
     this.resetButtonX = this.centerX + 65;
     this.resetButtonY = this.centerY - 15;
-
     this.#resetButtonPath = new Path2D();
     this.#resetButtonPath.rect(
       this.resetButtonX, 
@@ -29,8 +32,14 @@ export default class Panel {
 
     this.#redPassButtonPath = new Path2D();
     this.#redPassButtonPath.rect(
-      this.centerX + 65, 
-      this.centerY - 35,
+      this.redPassButtonX, 
+      this.redPassButtonY,
+      70, 30
+    );
+    this.#blackPassButtonPath = new Path2D();
+    this.#blackPassButtonPath.rect(
+      this.blackPassButtonX, 
+      this.blackPassButtonY,
       70, 30
     );
   }
@@ -71,8 +80,8 @@ export default class Panel {
 
   draw() {
     this.drawResetButton()
-    this.drawPassButton(this.centerX - 95, this.centerY - 90);
-    this.drawPassButton(this.centerX - 95, this.centerY + 60);
+    this.drawPassButton(this.#redPassButtonX, this.#redPassButtonY);
+    this.drawPassButton(this.#blackPassButtonX, this.#blackPassButtonY);
     this.ctx.beginPath();
     // WARN hardcoded position
     this.ctx.lineWidth = 1;
