@@ -30,32 +30,29 @@ function handleMouseDown(e) {
       const isMover = movers.find(m => m === clickedDisc);
       if (captors.length > 0) {
         if (isCaptor) {
-          console.log('IN mousedown, isCaptor')
-          
           clickedDisc.toggleGrab();
           gameState.grabbedDisc.disc = clickedDisc;
           gameState.grabbedDisc.type = "captor";
         } else if (isMover) {
-          gameState.msg = "You must capture when possible."
-        } 
-      }
-      else if (movers.length > 0) {
+          gameState.msg = "You must capture when possible.";
+        }
+      } else if (movers.length > 0) {
         if (isMover) {
-          console.log('IN mousedown isMover')
-          
           clickedDisc.toggleGrab();
           gameState.grabbedDisc.disc = clickedDisc;
           gameState.grabbedDisc.type = "mover";
+        } else if (movers.length === 0 && captors.length === 0) {
+          gameState.msg = "You have no moves available! Press pass to turn control to other player";
+        } else {
+          gameState.msg = "This disc cannot move!";
         }
-      } else if (movers.length === 0 && captors.length === 0) {
-        gameState.msg = "You have no moves available! Press pass to turn control to other player";
-      } else {
-        gameState.msg = "This disc cannot move!";
       }
-    }
-    if (clickedDisc.color !== gameState.turnColor) {
+      if (!isMover && !isCaptor) {
+        gameState.msg = "This disc has no moves available";
+      }
+    } else if (clickedDisc.color !== gameState.turnColor) {
       gameState.msg = "That isn't your disc!";
-    } 
+    }
   } else {
     gameState.msg = "No disc clicked";
   }
