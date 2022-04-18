@@ -6,11 +6,7 @@ import {
 import {
   mouseX, mouseY,
   cX, cY,
-  setupEventListeners,
 } from './modules/listeners.js';
-
-import Board from './modules/board.js';
-import Panel from './modules/panel.js';
 import Disc from './modules/disc.js';
 
 export const CONSTANTS = {
@@ -31,7 +27,7 @@ function main() {
 
   function draw() {
     clr(canvas, ctx);
-    Board.draw(ctx);
+    drawBoard(ctx);
     panel.draw(ctx, game);
     drawDiscs(ctx, game.discs);
     drawPossibleMoves();
@@ -43,6 +39,22 @@ function main() {
   draw();
 }
 main();
+
+function drawBoard(ctx) {
+  const boardHue = 45;
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      ctx.beginPath();
+      if (( row + col) % 2 === 0) {
+        ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
+        ctx.fillRect(col * 100, row * 100, 100, 100);
+      } else {
+        ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
+        ctx.fillRect(col * 100, row * 100, 100, 100);
+      }
+    }
+  }
+}
 
 function drawPossibleMoves() {
   // When disc is grabbed, show available moves
@@ -68,19 +80,6 @@ function drawDiscs(ctx, discs) {
     disc.draw(ctx);
   }
 }
-
-
-
-
-
-function getSquareFromMouse() {
-  // Returns the row and colum of the square under the current mouse position
-  const floorX = Math.floor(mouseX/100);
-  const floorY = Math.floor(mouseY/100);
-  const square = [floorX, floorY];
-  return square;
-}
-
 
 export function drawDebugEle(debugEle, rect, canvas) {
   debugEle.innerHTML = `\
@@ -120,4 +119,3 @@ export function nextTurn() {
   game.hasCaptureChainStarted = false;
   game.updateDiscActors();
 }
-

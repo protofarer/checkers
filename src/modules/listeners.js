@@ -8,12 +8,8 @@ document.addEventListener('mousemove', handleMouseMove);
 function handleMouseMove(e) {
   mouseX = e.clientX - rect.left; //window.scrollX
   mouseY = e.clientY - rect.top;
-  // setMouseX(e.clientX - rect.leftX);
-  // setMouseY(e.clientY - rect.top);
   cX = e.clientX;
   cY = e.clientY;
-  // setCX(e.clientX);
-  // setCY(e.clientY);
 }
 
 function handleMouseDown(e) {
@@ -52,8 +48,6 @@ function handleMouseDown(e) {
     game.msg = "No disc clicked";
   }
 }
-
-// disc manager
 
 function handleMouseUp(e) {
   // CSDR moving grabbedDisc to game

@@ -20,42 +20,6 @@ export default class Disc {
     this.direction = color === CONSTANTS.RED ? 1 : -1;
     this.isKing = false;
   }
-
-  // TODO remove from this class
-  // possibleMoves() {
-  //   let possibleMoves = [];
-  //   if (this.row + this.direction >= 0 && 
-  //       this.row + this.direction < 8) {
-  //     if ((this.col + 1 < 8) && 
-  //         (game.board[this.row + this.direction][this.col + 1] === 0)) {
-  //       possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
-  //     }
-  //     if ((this.col - 1 >= 0) && 
-  //         (game.board[this.row + this.direction][this.col - 1] === 0)) {
-  //       possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
-  //     }
-  //   }
-  //   if (this.row + (2*this.direction) >= 0 &&
-  //       this.row + (2*this.direction) < 8) {
-  //     if ((game.board[this.row + this.direction][this.col - 1] === this.opposite) && 
-  //       (game.board[this.row + (2*this.direction)][this.col - 2] === 0)) {
-  //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
-  //     }
-  //     if ((game.board[this.row + this.direction][this.col + 1] === this.opposite) &&
-  //       (game.board[this.row + (2*this.direction)][this.col + 2] === 0)) {
-  //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
-  //     }
-  //   }
-  //   // console.log('in method possmoves, possmoves', possibleMoves)
-  //   return possibleMoves;
-  // }
-
-  // validMove() {
-  //   const possibleMoves = this.possibleMoves();
-  //   const validMove = possibleMoves.filter(m => isMouseInSquare(mouseX, mouseY, m.row, m.col))[0];
-  //   return validMove;
-  // }
-
   isClicked(x, y) {
     const isInPath = ctx.isPointInPath(this.#path, x, y);
     return isInPath;
@@ -72,21 +36,6 @@ export default class Disc {
   makeKing() {
     this.isKing = true;
   }
-
-  // registerPath() {
-  //   // Register path for click detection
-  //   // Divergent dimensions from draw compensating for unknown
-  //   // differences between rendered disc and click event coordinates
-  //   // This click path valid only for when disc is at rest and ungrabbed state
-  //   const x = ((this.col) * 100) + 50;
-  //   const y = ((this.row) * 100) + 50;
-  //   // CSDR: The y offset for the path's center is off by ~3 pixels
-  //   // from the drawn disc
-  //   let newPath = new Path2D();
-  //   newPath.arc(x, y+3, 42, 0, 2*Math.PI);
-  //   this.path = newPath;
-  //   return newPath;
-  // }
 
   draw(ctx) {
     // Draws game piece by referencing a row and column on board
@@ -202,6 +151,3 @@ export default class Disc {
     ctx.restore();
   }
 }
-// should this be a class method rather than stand alone?
-// it would make import cleaner!
-
