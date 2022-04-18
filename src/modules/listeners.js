@@ -1,4 +1,4 @@
-import { canvas, rect, gameState, nextTurn, CONSTANTS, ctx, 
+import { canvas, rect, game, nextTurn, CONSTANTS, ctx, 
   debugEle, boardStateEle
 } from "../main";
 export let mouseX, mouseY, cX, cY;
@@ -17,54 +17,54 @@ function handleMouseMove(e) {
 }
 
 function handleMouseDown(e) {
-  const clickedDisc = gameState.discs.find(disc =>
+  const clickedDisc = game.discs.find(disc =>
     disc.isClicked(mouseX, mouseY));
   if (clickedDisc) {
-    if (clickedDisc.color === gameState.turnColor) {
-      const isCaptor = gameState.captors.find(c => c === clickedDisc);
-      const isMover = gameState.movers.find(m => m === clickedDisc);
-      if (gameState.captors.length > 0) {
+    if (clickedDisc.color === game.turnColor) {
+      const isCaptor = game.captors.find(c => c === clickedDisc);
+      const isMover = game.movers.find(m => m === clickedDisc);
+      if (game.captors.length > 0) {
         if (isCaptor) {
           clickedDisc.toggleGrab();
-          gameState.grabbedDisc.disc = clickedDisc;
-          gameState.grabbedDisc.type = "captor";
+          game.grabbedDisc.disc = clickedDisc;
+          game.grabbedDisc.type = "captor";
         } else if (isMover) {
-          gameState.msg = "You must capture when possible.";
+          game.msg = "You must capture when possible.";
         }
-      } else if (gameState.movers.length > 0) {
+      } else if (game.movers.length > 0) {
         if (isMover) {
           clickedDisc.toggleGrab();
-          gameState.grabbedDisc.disc = clickedDisc;
-          gameState.grabbedDisc.type = "mover";
-        } else if (gameState.movers.length === 0 && gameState.captors.length === 0) {
-          gameState.msg = "You have no moves available! Press pass to turn control to other player";
+          game.grabbedDisc.disc = clickedDisc;
+          game.grabbedDisc.type = "mover";
+        } else if (game.movers.length === 0 && game.captors.length === 0) {
+          game.msg = "You have no moves available! Press pass to turn control to other player";
         } else {
-          gameState.msg = "This disc cannot move!";
+          game.msg = "This disc cannot move!";
         }
       }
       if (!isMover && !isCaptor) {
-        gameState.msg = "This disc has no moves available";
+        game.msg = "This disc has no moves available";
       }
-    } else if (clickedDisc.color !== gameState.turnColor) {
-      gameState.msg = "That isn't your disc!";
+    } else if (clickedDisc.color !== game.turnColor) {
+      game.msg = "That isn't your disc!";
     }
   } else {
-    gameState.msg = "No disc clicked";
+    game.msg = "No disc clicked";
   }
 }
 
 // disc manager
 
 function handleMouseUp(e) {
-  // CSDR moving grabbedDisc to gameState
-  const grabbedDisc = gameState.discs.find(disc => disc.isGrabbed);
+  // CSDR moving grabbedDisc to game
+  const grabbedDisc = game.discs.find(disc => disc.isGrabbed);
   if (grabbedDisc) {
-    const isCaptor = gameState.captors.find(c => c === grabbedDisc); 
-    const isMover = gameState.movers.find(m => m === grabbedDisc);
+    const isCaptor = game.captors.find(c => c === grabbedDisc); 
+    const isMover = game.movers.find(m => m === grabbedDisc);
     
     // if is a captor and mouseupped on valid capture move
     if (isCaptor) {
-      const captureMoves = gameState.findCaptureMoves(grabbedDisc);
+      const captureMoves = game.findCaptureMoves(grabbedDisc);
       const validCaptureMove = captureMoves.find(move => 
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
@@ -72,10 +72,10 @@ function handleMouseUp(e) {
         capture(grabbedDisc, validCaptureMove);
         move(grabbedDisc, validCaptureMove);
       } else {
-        gameState.msg = "Not a valid capture move";
+        game.msg = "Not a valid capture move";
       }
     } else if (isMover) {
-      const nonCaptureMoves = gameState.findNonCaptureMoves(grabbedDisc);
+      const nonCaptureMoves = game.findNonCaptureMoves(grabbedDisc);
       const nonCaptureMove = nonCaptureMoves.find(move =>
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
@@ -84,13 +84,13 @@ function handleMouseUp(e) {
         nextTurn();
       }    
     } else {
-      gameState.msg = "Invalid move. Try again"
+      game.msg = "Invalid move. Try again"
     }
-    gameState.msg = "";
+    game.msg = "";
     grabbedDisc.toggleGrab();
-    gameState.grabbedDisc.disc = null;
-    gameState.grabbedDisc.type = null;
-    if (gameState.hasCaptureChainStarted && gameState.captors.length === 0) {
+    game.grabbedDisc.disc = null;
+    game.grabbedDisc.type = null;
+    if (game.hasCaptureChainStarted && game.captors.length === 0) {
       nextTurn();
     }
   }
@@ -100,35 +100,35 @@ function handleMouseUp(e) {
     }
 }
 function move(grabbedDisc, to) {
-  gameState.board[grabbedDisc.row][grabbedDisc.col] = 0;
-  gameState.board[to.row][to.col] = grabbedDisc.color;
+  game.board[grabbedDisc.row][grabbedDisc.col] = 0;
+  game.board[to.row][to.col] = grabbedDisc.color;
   grabbedDisc.row = to.row;
   grabbedDisc.col = to.col;
   if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
     grabbedDisc.direction *= -1;
   }
-  gameState.updateDiscActors();
+  game.updateDiscActors();
 }
 
 function capture(grabbedDisc, to) {
   const capturedDisc = findCaptured(grabbedDisc, to);
   if (capturedDisc.color === CONSTANTS.RED) {
-    gameState.captures.forBlack += 1;
+    game.captures.forBlack += 1;
   } else {
-    gameState.captures.forRed += 1;
+    game.captures.forRed += 1;
   }
-  gameState.board[capturedDisc.row][capturedDisc.col] = 0;
-  gameState.discs = gameState.discs.filter(disc => 
+  game.board[capturedDisc.row][capturedDisc.col] = 0;
+  game.discs = game.discs.filter(disc => 
     !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
   );
-  gameState.hasCaptureChainStarted = true;
+  game.hasCaptureChainStarted = true;
 
   function findCaptured(from, to) {
     let col = (to.col - from.col) / Math.abs(to.col - from.col);
     col += from.col;
     let row = (to.row - from.row) / Math.abs(to.row - from.row);
     row += from.row;
-    return gameState.discs.filter(disc => disc.col === col && disc.row === row)[0];
+    return game.discs.filter(disc => disc.col === col && disc.row === row)[0];
   }
 }
 
@@ -140,10 +140,10 @@ export function setupEventListeners() {
 }
 
 function toggleDebug(e) {
-  gameState.debug = !gameState.debug;
-  debugButton.innerText = gameState.debug 
+  game.debug = !game.debug;
+  debugButton.innerText = game.debug 
     ? 'turn debug off' 
     : 'turn debug on';
-  debugEle.style.display = gameState.debug ? 'block' : 'none';
-  boardStateEle.style.display = gameState.debug ? 'block' : 'none';
+  debugEle.style.display = game.debug ? 'block' : 'none';
+  boardStateEle.style.display = game.debug ? 'block' : 'none';
 }

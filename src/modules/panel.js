@@ -1,6 +1,6 @@
 import { CONSTANTS } from '../main';
 
-// TODO Panel instances need access to gameState red and black captures
+// TODO Panel instances need access to game red and black captures
 export default class Panel {
   constructor (width, height) {
     this.width = width;     // pixels
@@ -13,7 +13,7 @@ export default class Panel {
     this.blackJailY = 790;
   }
 
-  draw(ctx, gameState) {
+  draw(ctx, game) {
     ctx.beginPath();
     // WARN hardcoded position
     ctx.lineWidth = 1;
@@ -28,14 +28,14 @@ export default class Panel {
     ctx.font = '16px serif';
     // Draw red's jail
     ctx.strokeText(
-      `Blacks captured: ${gameState.captures.forRed}`, 
+      `Blacks captured: ${game.captures.forRed}`, 
       this.redJailX, 
       this.redJailY
     );
 
     // Draw black's jail
     ctx.strokeText(
-      `Reds captured: ${gameState.captures.forBlack}`, 
+      `Reds captured: ${game.captures.forBlack}`, 
       this.blackJailX, 
       this.blackJailY
     );
@@ -49,7 +49,7 @@ export default class Panel {
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    if (gameState.turnColor === CONSTANTS.RED) {
+    if (game.turnColor === CONSTANTS.RED) {
       ctx.beginPath();
       // ctx.moveTo(this.centerX - 20, this.centerY + 20);
       ctx.arc(this.centerX - 125, this.centerY - 25, 15, 0, 2*Math.PI);

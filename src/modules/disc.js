@@ -1,5 +1,5 @@
 import { CONSTANTS } from '../main';
-import { ctx, gameState } from '../main';
+import { ctx, game } from '../main';
 import { mouseX, mouseY } from './listeners.js';
 
 export default class Disc {
@@ -27,22 +27,22 @@ export default class Disc {
   //   if (this.row + this.direction >= 0 && 
   //       this.row + this.direction < 8) {
   //     if ((this.col + 1 < 8) && 
-  //         (gameState.board[this.row + this.direction][this.col + 1] === 0)) {
+  //         (game.board[this.row + this.direction][this.col + 1] === 0)) {
   //       possibleMoves.push({row: this.row + this.direction, col: this.col + 1 })
   //     }
   //     if ((this.col - 1 >= 0) && 
-  //         (gameState.board[this.row + this.direction][this.col - 1] === 0)) {
+  //         (game.board[this.row + this.direction][this.col - 1] === 0)) {
   //       possibleMoves.push({ row: this.row + this.direction, col: this.col - 1 })
   //     }
   //   }
   //   if (this.row + (2*this.direction) >= 0 &&
   //       this.row + (2*this.direction) < 8) {
-  //     if ((gameState.board[this.row + this.direction][this.col - 1] === this.opposite) && 
-  //       (gameState.board[this.row + (2*this.direction)][this.col - 2] === 0)) {
+  //     if ((game.board[this.row + this.direction][this.col - 1] === this.opposite) && 
+  //       (game.board[this.row + (2*this.direction)][this.col - 2] === 0)) {
   //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col - 2 });
   //     }
-  //     if ((gameState.board[this.row + this.direction][this.col + 1] === this.opposite) &&
-  //       (gameState.board[this.row + (2*this.direction)][this.col + 2] === 0)) {
+  //     if ((game.board[this.row + this.direction][this.col + 1] === this.opposite) &&
+  //       (game.board[this.row + (2*this.direction)][this.col + 2] === 0)) {
   //         possibleMoves.push({ row: this.row + (2*this.direction), col: this.col + 2 });
   //     }
   //   }

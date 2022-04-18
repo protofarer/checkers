@@ -69,7 +69,7 @@ export function setupGame() {
   //     [0,1,0,1,0,1,0,1],
   //     [1,0,1,0,1,0,1,0],
   //   ];
-  // let gameState = {
+  // let game = {
   //   board: structuredClone(initBoard),
   //   boardToHTML: function() {
   //     let s = '';
@@ -132,7 +132,7 @@ export function setupGame() {
   //     console.log('captors', this.captors)
   //     function findPotentialCaptors(discs) {
   //       const potentialCaptors = discs.filter(d => 
-  //         gameState.findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
+  //         game.findCaptureMoves(d).length > 0 && d.color === game.turnColor
   //       );
   //       // console.log('potentialCaptors', potentialCaptors)
   //       return potentialCaptors;
@@ -140,7 +140,7 @@ export function setupGame() {
     
   //     function findPotentialMovers(discs) {
   //       const potentialMovers = discs.filter(d =>
-  //         gameState.findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
+  //         game.findNonCaptureMoves(d).length > 0 && d.color === game.turnColor);
   //       return potentialMovers;
   //     }
   //   },

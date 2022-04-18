@@ -25,15 +25,15 @@ export let {
   rect, panel
 } = setupApp('app');
 
-export let gameState = setupGame();
+export let game = setupGame();
 
 function main() {
 
   function draw() {
     clr(canvas, ctx);
     Board.draw(ctx);
-    panel.draw(ctx, gameState);
-    drawDiscs(ctx, gameState.discs);
+    panel.draw(ctx, game);
+    drawDiscs(ctx, game.discs);
     drawPossibleMoves();
     drawStatus();
     drawDebugEle(debugEle, rect, canvas);
@@ -46,15 +46,15 @@ main();
 
 function drawPossibleMoves() {
   // When disc is grabbed, show available moves
-  if (gameState.grabbedDisc.disc) {
-    if (gameState.grabbedDisc.type === 'captor') {
-      const captureMoves = gameState.findCaptureMoves(gameState.grabbedDisc.disc); 
+  if (game.grabbedDisc.disc) {
+    if (game.grabbedDisc.type === 'captor') {
+      const captureMoves = game.findCaptureMoves(game.grabbedDisc.disc); 
       for (let m of captureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.draw(ctx);
       }
-    } else if (gameState.grabbedDisc.type === 'mover') {
-      const nonCaptureMoves = gameState.findNonCaptureMoves(gameState.grabbedDisc.disc);
+    } else if (game.grabbedDisc.type === 'mover') {
+      const nonCaptureMoves = game.findNonCaptureMoves(game.grabbedDisc.disc);
       for (let m of nonCaptureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.draw(ctx);
@@ -97,27 +97,27 @@ export function drawDebugEle(debugEle, rect, canvas) {
 export function drawStatus() {
   statusEle.innerHTML = `\
     <strong>Status:</strong> <br />
-    message: ${gameState.msg} <br />
-    turnColor: ${gameState.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
-    turnCount: ${gameState.turnCount} <br />
-    Captures for red: ${gameState.captures.forRed} <br />
-    Captures for black: ${gameState.captures.forBlack}\
+    message: ${game.msg} <br />
+    turnColor: ${game.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
+    turnCount: ${game.turnCount} <br />
+    Captures for red: ${game.captures.forRed} <br />
+    Captures for black: ${game.captures.forBlack}\
   `;
 }
 
 export function drawBoardStateEle(boardStateEle) {
   boardStateEle.innerHTML = `\
-    <span>${gameState.boardToHTML()}</span>\
+    <span>${game.boardToHTML()}</span>\
   `;
 }
 
 export function nextTurn() {
-  gameState.turnCount++;
-  gameState.turnColor = gameState.turnColor === CONSTANTS.RED 
+  game.turnCount++;
+  game.turnColor = game.turnColor === CONSTANTS.RED 
     ? CONSTANTS.BLACK 
     : CONSTANTS.RED;
-  gameState.msg = "";
-  gameState.hasCaptureChainStarted = false;
-  gameState.updateDiscActors();
+  game.msg = "";
+  game.hasCaptureChainStarted = false;
+  game.updateDiscActors();
 }
 
