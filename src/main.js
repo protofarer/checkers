@@ -31,6 +31,14 @@ export let {
 
 
 function main() {
+  // whenever a disc moves, recalc gameState, specifically
+  // captors and movers
+  // boardstate, aka captors and movers, changes whenever
+  // mouseup results in a change... 
+  // IOW, monitor changes in gameState.board
+  // one way to do it is whenever the move fn is invoked
+  gameState.updateDiscActors();
+
   function draw() {
     clr(canvas, ctx);
     Board.draw(ctx);
@@ -104,20 +112,6 @@ export function findCaptureMoves(disc) {
   return captureMoves;
 }
 
-// disc manager
-export function findPotentialCaptors(discs) {
-  const potentialCaptors = discs.filter(d => 
-    findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
-  );
-  // console.log('potentialCaptors', potentialCaptors)
-  return potentialCaptors;
-}
-
-export function findPotentialMovers(discs) {
-  const potentialMovers = discs.filter(d =>
-    findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
-  return potentialMovers;
-}
 
 
 function getSquareFromMouse() {
@@ -165,5 +159,6 @@ export function nextTurn() {
     : CONSTANTS.RED;
   gameState.msg = "";
   gameState.hasCaptureChainStarted = false;
+  gameState.updateDiscActors();
 }
 

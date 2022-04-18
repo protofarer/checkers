@@ -4,6 +4,7 @@ import Disc from './modules/disc';
 import Board from './modules/board';
 import Panel from './modules/panel';
 import { setupEventListeners } from './modules/listeners';
+import { findCaptureMoves, findNonCaptureMoves } from './main';
 
 const boardWidth = 800;
 const boardHeight = 800;
@@ -90,6 +91,27 @@ export function setupGame() {
       disc: null,
       type: null,
     },
+    updateDiscActors: function() {
+      this.movers = findPotentialMovers(this.discs);
+      this.captors = findPotentialCaptors(this.discs);
+      console.log('movers',this.movers)
+      console.log('captors', this.captors)
+      function findPotentialCaptors(discs) {
+        const potentialCaptors = discs.filter(d => 
+          findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
+        );
+        // console.log('potentialCaptors', potentialCaptors)
+        return potentialCaptors;
+      }
+
+      function findPotentialMovers(discs) {
+        const potentialMovers = discs.filter(d =>
+          findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
+        return potentialMovers;
+      }
+    },
+    movers: {},
+    captors: {},
     hasCaptureChainStarted: false,
   }
   setupEventListeners();

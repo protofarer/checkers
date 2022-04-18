@@ -1,6 +1,6 @@
 import { canvas, rect, gameState, nextTurn, CONSTANTS, ctx, 
-  findNonCaptureMoves, findCaptureMoves, findPotentialCaptors,
-  findPotentialMovers, debugEle, boardStateEle
+  findNonCaptureMoves, findCaptureMoves,
+  debugEle, boardStateEle
 } from "../main";
 import Disc from "./disc";
 export let mouseX, mouseY, cX, cY;
@@ -23,12 +23,9 @@ function handleMouseDown(e) {
     disc.isClicked(mouseX, mouseY));
   if (clickedDisc) {
     if (clickedDisc.color === gameState.turnColor) {
-      const captors = findPotentialCaptors(gameState.discs);
-      console.log('captors', captors)
-      const isCaptor = captors.find(c => c === clickedDisc);
-      const movers = findPotentialMovers(gameState.discs);
-      const isMover = movers.find(m => m === clickedDisc);
-      if (captors.length > 0) {
+      const isCaptor = gameState.captors.find(c => c === clickedDisc);
+      const isMover = gameState.movers.find(m => m === clickedDisc);
+      if (gameState.captors.length > 0) {
         if (isCaptor) {
           clickedDisc.toggleGrab();
           gameState.grabbedDisc.disc = clickedDisc;
@@ -36,12 +33,12 @@ function handleMouseDown(e) {
         } else if (isMover) {
           gameState.msg = "You must capture when possible.";
         }
-      } else if (movers.length > 0) {
+      } else if (gameState.movers.length > 0) {
         if (isMover) {
           clickedDisc.toggleGrab();
           gameState.grabbedDisc.disc = clickedDisc;
           gameState.grabbedDisc.type = "mover";
-        } else if (movers.length === 0 && captors.length === 0) {
+        } else if (gameState.movers.length === 0 && gameState.captors.length === 0) {
           gameState.msg = "You have no moves available! Press pass to turn control to other player";
         } else {
           gameState.msg = "This disc cannot move!";
@@ -64,10 +61,8 @@ function handleMouseUp(e) {
   // CSDR moving grabbedDisc to gameState
   const grabbedDisc = gameState.discs.find(disc => disc.isGrabbed);
   if (grabbedDisc) {
-    const captors = findPotentialCaptors(gameState.discs);
-    const isCaptor = captors.find(c => c === grabbedDisc); 
-    const movers = findPotentialMovers(gameState.discs);
-    const isMover = movers.find(m => m === grabbedDisc);
+    const isCaptor = gameState.captors.find(c => c === grabbedDisc); 
+    const isMover = gameState.movers.find(m => m === grabbedDisc);
     
     // if is a captor and mouseupped on valid capture move
     if (isCaptor) {
@@ -97,6 +92,9 @@ function handleMouseUp(e) {
     grabbedDisc.toggleGrab();
     gameState.grabbedDisc.disc = null;
     gameState.grabbedDisc.type = null;
+    if (gameState.hasCaptureChainStarted && gameState.captors.length === 0) {
+      nextTurn();
+    }
   }
   
   function isMouseInSquare(x, y, r, c) {
@@ -111,6 +109,7 @@ function move(grabbedDisc, to) {
   if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
     grabbedDisc.direction *= -1;
   }
+  gameState.updateDiscActors();
 }
 
 function capture(grabbedDisc, to) {
@@ -122,7 +121,8 @@ function capture(grabbedDisc, to) {
   }
   gameState.board[capturedDisc.row][capturedDisc.col] = 0;
   gameState.discs = gameState.discs.filter(disc => 
-    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col));
+    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
+  );
   gameState.hasCaptureChainStarted = true;
 
   function findCaptured(from, to) {
