@@ -36,7 +36,7 @@ export default class Disc {
   makeKing() {
     this.isKing = true;
   }
-
+  
   draw(ctx) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed

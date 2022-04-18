@@ -45,13 +45,17 @@ export function setupApp(id) {
   boardStateEle.style.fontSize = '12px';
   infoWrapper.appendChild(boardStateEle);
 
+  const resetButton = document.createElement('button');
+  resetButton.innerText = 'reset';
+  infoWrapper.appendChild(resetButton);
+
   const rect = canvas.getBoundingClientRect();
 
-  let panel = new Panel(panelWidth, panelHeight);
+  let panel = new Panel(panelWidth, panelHeight, ctx);
 
   return { 
     canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-    rect, panel 
+    rect, panel, resetButton
   };
 }
 

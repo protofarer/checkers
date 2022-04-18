@@ -34,24 +34,24 @@ export default class Game {
     this.updateDiscActors();
   }
   initDiscs() {
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      switch(this.board[i][j]) {
-        case CONSTANTS.RED:
-          this.discs.push(new Disc(i, j, CONSTANTS.RED));
-          break;
-        case CONSTANTS.BLACK:
-          this.discs.push(new Disc(i, j, CONSTANTS.BLACK));
-          break;
-        case CONSTANTS.BLANK:
-          break;
-        default:
-          console.log('unhandled board object render');
-          debug.innerText += 'error rendering board object';
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        switch(this.board[i][j]) {
+          case CONSTANTS.RED:
+            this.discs.push(new Disc(i, j, CONSTANTS.RED));
+            break;
+          case CONSTANTS.BLACK:
+            this.discs.push(new Disc(i, j, CONSTANTS.BLACK));
+            break;
+          case CONSTANTS.BLANK:
+            break;
+          default:
+            console.log('unhandled board object render');
+            debug.innerText += 'error rendering board object';
+        }
       }
     }
   }
-}
   boardToHTML() {
     let s = '';
     for (let r of this.board) {
@@ -93,15 +93,16 @@ export default class Game {
     this.movers = this.findPotentialMovers(this.discs);
     this.captors = this.findPotentialCaptors(this.discs);
   }
+  // WARNING till function from disc class called
   findPotentialCaptors(discs) {
-    const potentialCaptors = discs.filter(d => 
-      this.findCaptureMoves(d).length > 0 && d.color === this.turnColor
+    const potentialCaptors = discs.filter(disc => 
+      this.findCaptureMoves(disc).length > 0 && disc.color === this.turnColor
     );
     return potentialCaptors;
   }
   findPotentialMovers(discs) {
-    const potentialMovers = discs.filter(d =>
-      this.findNonCaptureMoves(d).length > 0 && d.color === this.turnColor);
+    const potentialMovers = discs.filter(disc =>
+      this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor);
     return potentialMovers;
   }
   move(grabbedDisc, to) {

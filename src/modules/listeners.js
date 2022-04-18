@@ -1,9 +1,7 @@
-import { canvas, rect, game, nextTurn, CONSTANTS, ctx, 
+import { canvas, rect, game, nextTurn,
   debugEle, boardStateEle
 } from "../main";
 export let mouseX, mouseY, cX, cY;
-
-document.addEventListener('mousemove', handleMouseMove);
 
 function handleMouseMove(e) {
   mouseX = e.clientX - rect.left; //window.scrollX

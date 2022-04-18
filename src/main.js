@@ -8,6 +8,7 @@ import {
   cX, cY,
 } from './modules/listeners.js';
 import Disc from './modules/disc.js';
+import Game from './modules/game.js';
 
 export const CONSTANTS = {
   BLANK: 0,
@@ -18,7 +19,7 @@ export const CONSTANTS = {
 
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  rect, panel
+  rect, panel, resetButton
 } = setupApp('app');
 
 export let game = setupGame();
@@ -28,8 +29,8 @@ function main() {
   function draw() {
     clr(canvas, ctx);
     drawBoard(ctx);
-    panel.draw(ctx, game);
     drawDiscs(ctx, game.discs);
+    panel.draw(game);
     drawPossibleMoves();
     drawStatus();
     drawDebugEle(debugEle, rect, canvas);
@@ -39,6 +40,12 @@ function main() {
   draw();
 }
 main();
+
+resetButton.addEventListener('click', resetGame);
+
+function resetGame() {
+  game = new Game();
+}
 
 function drawBoard(ctx) {
   const boardHue = 45;
