@@ -1,5 +1,5 @@
 import { CONSTANTS } from '../main';
-import { ctx, game } from '../main';
+import { ctx } from '../main';
 import { mouseX, mouseY } from './listeners.js';
 
 export default class Disc {

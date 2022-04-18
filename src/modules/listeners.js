@@ -93,6 +93,7 @@ function handleMouseUp(e) {
     return (Math.floor(x/100) === c && Math.floor(y/100) === r)
     }
 }
+
 function move(grabbedDisc, to) {
   game.board[grabbedDisc.row][grabbedDisc.col] = 0;
   game.board[to.row][to.col] = grabbedDisc.color;
@@ -126,13 +127,6 @@ function capture(grabbedDisc, to) {
   }
 }
 
-export function setupEventListeners() {
-  document.addEventListener('mousemove', handleMouseMove);
-  canvas.addEventListener('mousedown', handleMouseDown); 
-  canvas.addEventListener('mouseup', handleMouseUp); 
-  debugButton.addEventListener('click', toggleDebug);
-}
-
 function toggleDebug(e) {
   game.debug = !game.debug;
   debugButton.innerText = game.debug 
@@ -140,4 +134,11 @@ function toggleDebug(e) {
     : 'turn debug on';
   debugEle.style.display = game.debug ? 'block' : 'none';
   boardStateEle.style.display = game.debug ? 'block' : 'none';
+}
+
+export function setupEventListeners() {
+  document.addEventListener('mousemove', handleMouseMove);
+  canvas.addEventListener('mousedown', handleMouseDown); 
+  canvas.addEventListener('mouseup', handleMouseUp); 
+  debugButton.addEventListener('click', toggleDebug);
 }
