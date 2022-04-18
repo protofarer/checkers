@@ -4,7 +4,6 @@ import Disc from './modules/disc';
 import Board from './modules/board';
 import Panel from './modules/panel';
 import { setupEventListeners } from './modules/listeners';
-import { findCaptureMoves, findNonCaptureMoves } from './main';
 
 const boardWidth = 800;
 const boardHeight = 800;
@@ -50,15 +49,15 @@ export function setupApp(id) {
 
   const rect = canvas.getBoundingClientRect();
 
+  let panel = new Panel(panelWidth, panelHeight);
 
   return { 
     canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-    rect 
+    rect, panel 
   };
 }
 
 export function setupGame() {
-  let panel = new Panel(panelWidth, panelHeight);
   const initBoard = [
       [0,2,0,2,0,2,0,2],
       [2,0,2,0,2,0,2,0],
@@ -91,6 +90,40 @@ export function setupGame() {
       disc: null,
       type: null,
     },
+    movers: {},
+    captors: {},
+    findNonCaptureMoves: function (disc) {
+      let nonCaptureMoves = [];
+      if (disc.row + disc.direction >= 0 && 
+          disc.row + disc.direction < 8) {
+        if ((disc.col + 1 < 8) && 
+            (this.board[disc.row + disc.direction][disc.col + 1] === 0)) {
+          nonCaptureMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
+        }
+        if ((disc.col - 1 >= 0) && 
+            (this.board[disc.row + disc.direction][disc.col - 1] === 0)) {
+          nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
+        }
+      }
+      return nonCaptureMoves;
+    },
+    findCaptureMoves: function (disc) {
+      let captureMoves = [];
+      if (disc.row + (2*disc.direction) >= 0 &&
+          disc.row + (2*disc.direction) < 8) {
+        if ((this.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
+          (this.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
+            captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
+        }
+        if ((this.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
+          (this.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
+            captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
+        }
+      }
+      // console.log('capmoves', captureMoves)
+      return captureMoves;
+    },
+    hasCaptureChainStarted: false,
     updateDiscActors: function() {
       this.movers = findPotentialMovers(this.discs);
       this.captors = findPotentialCaptors(this.discs);
@@ -98,23 +131,21 @@ export function setupGame() {
       console.log('captors', this.captors)
       function findPotentialCaptors(discs) {
         const potentialCaptors = discs.filter(d => 
-          findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
+          gameState.findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
         );
         // console.log('potentialCaptors', potentialCaptors)
         return potentialCaptors;
       }
-
+    
       function findPotentialMovers(discs) {
         const potentialMovers = discs.filter(d =>
-          findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
+          gameState.findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
         return potentialMovers;
       }
     },
-    movers: {},
-    captors: {},
-    hasCaptureChainStarted: false,
   }
   setupEventListeners();
+  gameState.updateDiscActors();
   return { gameState, panel };
 }
 

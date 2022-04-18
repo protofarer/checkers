@@ -22,11 +22,11 @@ export const CONSTANTS = {
 
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  rect,
+  rect, panel
 } = setupApp('app');
 
 export let {
-  gameState, panel
+  gameState, 
 } = setupGame();
 
 
@@ -37,7 +37,6 @@ function main() {
   // mouseup results in a change... 
   // IOW, monitor changes in gameState.board
   // one way to do it is whenever the move fn is invoked
-  gameState.updateDiscActors();
 
   function draw() {
     clr(canvas, ctx);
@@ -58,13 +57,13 @@ function drawPossibleMoves() {
   // When disc is grabbed, show available moves
   if (gameState.grabbedDisc.disc) {
     if (gameState.grabbedDisc.type === 'captor') {
-      const captureMoves = findCaptureMoves(gameState.grabbedDisc.disc); 
+      const captureMoves = gameState.findCaptureMoves(gameState.grabbedDisc.disc); 
       for (let m of captureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.draw(ctx);
       }
     } else if (gameState.grabbedDisc.type === 'mover') {
-      const nonCaptureMoves = findNonCaptureMoves(gameState.grabbedDisc.disc);
+      const nonCaptureMoves = gameState.findNonCaptureMoves(gameState.grabbedDisc.disc);
       for (let m of nonCaptureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
         ghostDisc.draw(ctx);
@@ -79,38 +78,7 @@ function drawDiscs(ctx, discs) {
   }
 }
 
-export function findNonCaptureMoves(disc) {
-    let nonCaptureMoves = [];
-    if (disc.row + disc.direction >= 0 && 
-        disc.row + disc.direction < 8) {
-      if ((disc.col + 1 < 8) && 
-          (gameState.board[disc.row + disc.direction][disc.col + 1] === 0)) {
-        nonCaptureMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
-      }
-      if ((disc.col - 1 >= 0) && 
-          (gameState.board[disc.row + disc.direction][disc.col - 1] === 0)) {
-        nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
-      }
-    }
-    return nonCaptureMoves;
-}
 
-export function findCaptureMoves(disc) {
-  let captureMoves = [];
-  if (disc.row + (2*disc.direction) >= 0 &&
-      disc.row + (2*disc.direction) < 8) {
-    if ((gameState.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
-      (gameState.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
-        captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
-    }
-    if ((gameState.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
-      (gameState.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
-        captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
-    }
-  }
-  // console.log('capmoves', captureMoves)
-  return captureMoves;
-}
 
 
 

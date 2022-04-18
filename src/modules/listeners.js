@@ -1,5 +1,4 @@
 import { canvas, rect, gameState, nextTurn, CONSTANTS, ctx, 
-  findNonCaptureMoves, findCaptureMoves,
   debugEle, boardStateEle
 } from "../main";
 import Disc from "./disc";
@@ -66,7 +65,7 @@ function handleMouseUp(e) {
     
     // if is a captor and mouseupped on valid capture move
     if (isCaptor) {
-      const captureMoves = findCaptureMoves(grabbedDisc);
+      const captureMoves = gameState.findCaptureMoves(grabbedDisc);
       const validCaptureMove = captureMoves.find(move => 
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
@@ -77,7 +76,7 @@ function handleMouseUp(e) {
         gameState.msg = "Not a valid capture move";
       }
     } else if (isMover) {
-      const nonCaptureMoves = findNonCaptureMoves(grabbedDisc);
+      const nonCaptureMoves = gameState.findNonCaptureMoves(grabbedDisc);
       const nonCaptureMove = nonCaptureMoves.find(move =>
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
