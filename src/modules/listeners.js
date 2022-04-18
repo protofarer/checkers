@@ -1,7 +1,6 @@
 import { canvas, rect, gameState, nextTurn, CONSTANTS, ctx, 
   debugEle, boardStateEle
 } from "../main";
-import Disc from "./disc";
 export let mouseX, mouseY, cX, cY;
 
 document.addEventListener('mousemove', handleMouseMove);

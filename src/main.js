@@ -25,18 +25,9 @@ export let {
   rect, panel
 } = setupApp('app');
 
-export let {
-  gameState, 
-} = setupGame();
-
+export let gameState = setupGame();
 
 function main() {
-  // whenever a disc moves, recalc gameState, specifically
-  // captors and movers
-  // boardstate, aka captors and movers, changes whenever
-  // mouseup results in a change... 
-  // IOW, monitor changes in gameState.board
-  // one way to do it is whenever the move fn is invoked
 
   function draw() {
     clr(canvas, ctx);

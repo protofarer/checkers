@@ -1,9 +1,10 @@
-import './style.css'
+import Game from './modules/game';
 import { CONSTANTS } from './main';
 import Disc from './modules/disc';
 import Board from './modules/board';
 import Panel from './modules/panel';
 import { setupEventListeners } from './modules/listeners';
+import './style.css'
 
 const boardWidth = 800;
 const boardHeight = 800;
@@ -58,95 +59,95 @@ export function setupApp(id) {
 }
 
 export function setupGame() {
-  const initBoard = [
-      [0,2,0,2,0,2,0,2],
-      [2,0,2,0,2,0,2,0],
-      [0,2,0,2,0,2,0,2],
-      [0,0,0,0,0,0,0,0],
-      [0,0,0,0,0,0,0,0],
-      [1,0,1,0,1,0,1,0],
-      [0,1,0,1,0,1,0,1],
-      [1,0,1,0,1,0,1,0],
-    ];
-  let gameState = {
-    board: structuredClone(initBoard),
-    boardToHTML: function() {
-      let s = '';
-      for (let r of this.board) {
-        s += `${r.join(' ')}<br />`;
-      }
-      return s;
-    },
-    discs: initDiscs(initBoard),
-    turnColor: CONSTANTS.BLACK,
-    turnCount: 0,
-    captures: {
-      forRed: 0,
-      forBlack: 0
-    },
-    msg: "",
-    debug: true,
-    grabbedDisc: {
-      disc: null,
-      type: null,
-    },
-    movers: {},
-    captors: {},
-    findNonCaptureMoves: function (disc) {
-      let nonCaptureMoves = [];
-      if (disc.row + disc.direction >= 0 && 
-          disc.row + disc.direction < 8) {
-        if ((disc.col + 1 < 8) && 
-            (this.board[disc.row + disc.direction][disc.col + 1] === 0)) {
-          nonCaptureMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
-        }
-        if ((disc.col - 1 >= 0) && 
-            (this.board[disc.row + disc.direction][disc.col - 1] === 0)) {
-          nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
-        }
-      }
-      return nonCaptureMoves;
-    },
-    findCaptureMoves: function (disc) {
-      let captureMoves = [];
-      if (disc.row + (2*disc.direction) >= 0 &&
-          disc.row + (2*disc.direction) < 8) {
-        if ((this.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
-          (this.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
-            captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
-        }
-        if ((this.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
-          (this.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
-            captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
-        }
-      }
-      // console.log('capmoves', captureMoves)
-      return captureMoves;
-    },
-    hasCaptureChainStarted: false,
-    updateDiscActors: function() {
-      this.movers = findPotentialMovers(this.discs);
-      this.captors = findPotentialCaptors(this.discs);
-      console.log('movers',this.movers)
-      console.log('captors', this.captors)
-      function findPotentialCaptors(discs) {
-        const potentialCaptors = discs.filter(d => 
-          gameState.findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
-        );
-        // console.log('potentialCaptors', potentialCaptors)
-        return potentialCaptors;
-      }
+  // const initBoard = [
+  //     [0,2,0,2,0,2,0,2],
+  //     [2,0,2,0,2,0,2,0],
+  //     [0,2,0,2,0,2,0,2],
+  //     [0,0,0,0,0,0,0,0],
+  //     [0,0,0,0,0,0,0,0],
+  //     [1,0,1,0,1,0,1,0],
+  //     [0,1,0,1,0,1,0,1],
+  //     [1,0,1,0,1,0,1,0],
+  //   ];
+  // let gameState = {
+  //   board: structuredClone(initBoard),
+  //   boardToHTML: function() {
+  //     let s = '';
+  //     for (let r of this.board) {
+  //       s += `${r.join(' ')}<br />`;
+  //     }
+  //     return s;
+  //   },
+  //   discs: initDiscs(initBoard),
+  //   turnColor: CONSTANTS.BLACK,
+  //   turnCount: 0,
+  //   captures: {
+  //     forRed: 0,
+  //     forBlack: 0
+  //   },
+  //   msg: "",
+  //   debug: true,
+  //   grabbedDisc: {
+  //     disc: null,
+  //     type: null,
+  //   },
+  //   movers: {},
+  //   captors: {},
+  //   findNonCaptureMoves: function (disc) {
+  //     let nonCaptureMoves = [];
+  //     if (disc.row + disc.direction >= 0 && 
+  //         disc.row + disc.direction < 8) {
+  //       if ((disc.col + 1 < 8) && 
+  //           (this.board[disc.row + disc.direction][disc.col + 1] === 0)) {
+  //         nonCaptureMoves.push({row: disc.row + disc.direction, col: disc.col + 1 })
+  //       }
+  //       if ((disc.col - 1 >= 0) && 
+  //           (this.board[disc.row + disc.direction][disc.col - 1] === 0)) {
+  //         nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
+  //       }
+  //     }
+  //     return nonCaptureMoves;
+  //   },
+  //   findCaptureMoves: function (disc) {
+  //     let captureMoves = [];
+  //     if (disc.row + (2*disc.direction) >= 0 &&
+  //         disc.row + (2*disc.direction) < 8) {
+  //       if ((this.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
+  //         (this.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
+  //           captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
+  //       }
+  //       if ((this.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
+  //         (this.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
+  //           captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
+  //       }
+  //     }
+  //     // console.log('capmoves', captureMoves)
+  //     return captureMoves;
+  //   },
+  //   hasCaptureChainStarted: false,
+  //   updateDiscActors: function() {
+  //     this.movers = findPotentialMovers(this.discs);
+  //     this.captors = findPotentialCaptors(this.discs);
+  //     console.log('movers',this.movers)
+  //     console.log('captors', this.captors)
+  //     function findPotentialCaptors(discs) {
+  //       const potentialCaptors = discs.filter(d => 
+  //         gameState.findCaptureMoves(d).length > 0 && d.color === gameState.turnColor
+  //       );
+  //       // console.log('potentialCaptors', potentialCaptors)
+  //       return potentialCaptors;
+  //     }
     
-      function findPotentialMovers(discs) {
-        const potentialMovers = discs.filter(d =>
-          gameState.findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
-        return potentialMovers;
-      }
-    },
-  }
+  //     function findPotentialMovers(discs) {
+  //       const potentialMovers = discs.filter(d =>
+  //         gameState.findNonCaptureMoves(d).length > 0 && d.color === gameState.turnColor);
+  //       return potentialMovers;
+  //     }
+  //   },
+  // }
+  const game = new Game();
   setupEventListeners();
-  gameState.updateDiscActors();
-  return { gameState };
+  return game;
 }
 
 export function clr(canvas, ctx) {
@@ -154,24 +155,24 @@ export function clr(canvas, ctx) {
 }
 
 // Initialize discs
-export function initDiscs(board) {
-  let discs = [];
-  for (let i = 0; i < 8; i++) {
-    for (let j = 0; j < 8; j++) {
-      switch(board[i][j]) {
-        case CONSTANTS.RED:
-          discs.push(new Disc(i, j, CONSTANTS.RED));
-          break;
-        case CONSTANTS.BLACK:
-          discs.push(new Disc(i, j, CONSTANTS.BLACK));
-          break;
-        case CONSTANTS.BLANK:
-          break;
-        default:
-          console.log('unhandled board object render');
-          debug.innerText += 'error rendering board object';
-      }
-    }
-  }
-  return discs;
-}
+// export function initDiscs(board) {
+//   let discs = [];
+//   for (let i = 0; i < 8; i++) {
+//     for (let j = 0; j < 8; j++) {
+//       switch(board[i][j]) {
+//         case CONSTANTS.RED:
+//           discs.push(new Disc(i, j, CONSTANTS.RED));
+//           break;
+//         case CONSTANTS.BLACK:
+//           discs.push(new Disc(i, j, CONSTANTS.BLACK));
+//           break;
+//         case CONSTANTS.BLANK:
+//           break;
+//         default:
+//           console.log('unhandled board object render');
+//           debug.innerText += 'error rendering board object';
+//       }
+//     }
+//   }
+//   return discs;
+// }
