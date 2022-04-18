@@ -104,4 +104,35 @@ export default class Game {
       this.findNonCaptureMoves(d).length > 0 && d.color === this.turnColor);
     return potentialMovers;
   }
+  move(grabbedDisc, to) {
+    this.board[grabbedDisc.row][grabbedDisc.col] = 0;
+    this.board[to.row][to.col] = grabbedDisc.color;
+    grabbedDisc.row = to.row;
+    grabbedDisc.col = to.col;
+    if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
+      grabbedDisc.direction *= -1;
+    }
+    this.updateDiscActors();
+  }
+  capture(grabbedDisc, to) {
+    const capturedDisc = this.findCaptured(grabbedDisc, to);
+    if (capturedDisc.color === CONSTANTS.RED) {
+      this.captures.forBlack += 1;
+    } else {
+      this.captures.forRed += 1;
+    }
+    this.board[capturedDisc.row][capturedDisc.col] = 0;
+    this.discs = this.discs.filter(disc => 
+      !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
+    );
+    this.hasCaptureChainStarted = true;
+
+  }
+  findCaptured(from, to) {
+    let col = (to.col - from.col) / Math.abs(to.col - from.col);
+    col += from.col;
+    let row = (to.row - from.row) / Math.abs(to.row - from.row);
+    row += from.row;
+    return this.discs.filter(disc => disc.col === col && disc.row === row)[0];
+  }
 }

@@ -63,8 +63,8 @@ function handleMouseUp(e) {
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
       if (validCaptureMove) {
-        capture(grabbedDisc, validCaptureMove);
-        move(grabbedDisc, validCaptureMove);
+        game.capture(grabbedDisc, validCaptureMove);
+        game.move(grabbedDisc, validCaptureMove);
       } else {
         game.msg = "Not a valid capture move";
       }
@@ -74,7 +74,7 @@ function handleMouseUp(e) {
         isMouseInSquare(mouseX, mouseY, move.row, move.col)
       );
       if (nonCaptureMove) {
-        move(grabbedDisc, nonCaptureMove);
+        game.move(grabbedDisc, nonCaptureMove);
         nextTurn();
       }    
     } else {
@@ -91,39 +91,6 @@ function handleMouseUp(e) {
   
   function isMouseInSquare(x, y, r, c) {
     return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-    }
-}
-
-function move(grabbedDisc, to) {
-  game.board[grabbedDisc.row][grabbedDisc.col] = 0;
-  game.board[to.row][to.col] = grabbedDisc.color;
-  grabbedDisc.row = to.row;
-  grabbedDisc.col = to.col;
-  if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
-    grabbedDisc.direction *= -1;
-  }
-  game.updateDiscActors();
-}
-
-function capture(grabbedDisc, to) {
-  const capturedDisc = findCaptured(grabbedDisc, to);
-  if (capturedDisc.color === CONSTANTS.RED) {
-    game.captures.forBlack += 1;
-  } else {
-    game.captures.forRed += 1;
-  }
-  game.board[capturedDisc.row][capturedDisc.col] = 0;
-  game.discs = game.discs.filter(disc => 
-    !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
-  );
-  game.hasCaptureChainStarted = true;
-
-  function findCaptured(from, to) {
-    let col = (to.col - from.col) / Math.abs(to.col - from.col);
-    col += from.col;
-    let row = (to.row - from.row) / Math.abs(to.row - from.row);
-    row += from.row;
-    return game.discs.filter(disc => disc.col === col && disc.row === row)[0];
   }
 }
 
