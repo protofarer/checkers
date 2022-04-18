@@ -1,5 +1,6 @@
-import { canvas, rect, game, panel, nextTurn, ctx, resetGame,
-  debugEle, boardStateEle
+import { 
+  canvas, rect, ctx, debugEle, boardStateEle, 
+  game, panel, nextTurn, resetGame, CONSTANTS
 } from "../main";
 export let mouseX, mouseY, cX, cY;
 
@@ -43,13 +44,20 @@ function handleMouseDown(e) {
     } else if (clickedDisc.color !== game.turnColor) {
       game.msg = "That isn't your disc!";
     }
-  } else {
-    game.msg = "No disc clicked";
-  }
+  } 
 
   const isResetClicked = panel.isResetClicked(mouseX, mouseY);
   if (isResetClicked) {
     resetGame();
+  }
+
+  const isRedPassClicked = panel.isRedPassClicked(mouseX, mouseY);
+  if (isRedPassClicked && game.turnColor === CONSTANTS.RED) {
+    nextTurn();
+  }
+  const isBlackPassClicked = panel.isBlackPassClicked(mouseX, mouseY);
+  if (isBlackPassClicked && game.turnColor === CONSTANTS.BLACK) {
+    nextTurn();
   }
 }
 

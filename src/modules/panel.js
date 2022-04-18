@@ -35,8 +35,8 @@ export default class Panel {
     this.#redPassButtonY = this.centerY - 90;
     this.#redPassButtonPath = new Path2D();
     this.#redPassButtonPath.rect(
-      this.redPassButtonX, 
-      this.redPassButtonY,
+      this.#redPassButtonX, 
+      this.#redPassButtonY,
       70, 30
     );
 
@@ -44,8 +44,8 @@ export default class Panel {
     this.#blackPassButtonY = this.centerY + 60;
     this.#blackPassButtonPath = new Path2D();
     this.#blackPassButtonPath.rect(
-      this.blackPassButtonX, 
-      this.blackPassButtonY,
+      this.#blackPassButtonX, 
+      this.#blackPassButtonY,
       70, 30
     );
   }
