@@ -17,6 +17,9 @@ export default class Panel {
     this.blackJailX = 815;
     this.blackJailY = 790;
     
+    this.resetButtonX = this.centerX + 65;
+    this.resetButtonY = this.centerY - 15;
+
     this.#resetButtonPath = new Path2D();
     this.#resetButtonPath.rect(
       this.centerX + 65, 
@@ -48,17 +51,17 @@ export default class Panel {
 
   drawResetButton() {
     this.ctx.beginPath();
-
+    const x = this.resetButtonX;
+    const y = this.resetButtonY;
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'black';
     this.ctx.fillStyle = 'hsl(0,0%,80%)';
-    this.ctx.fillRect(this.centerX + 65, this.centerY - 35, 70, 30);
+    this.ctx.fillRect(x, y, 70, 30);
     
     
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'black';
-    this.ctx.fillText('Reset', this.centerX + 80, this.centerY - 15);
-    
+    this.ctx.fillText('Reset', x + 13, y + 20);
   }
 
   isResetClicked(x, y) {
@@ -68,7 +71,7 @@ export default class Panel {
   }
 
   draw() {
-    this.drawResetButton(this.game);
+    this.drawResetButton()
     this.drawPassButton(this.centerX - 95, this.centerY - 90);
     this.drawPassButton(this.centerX - 95, this.centerY + 60);
     this.ctx.beginPath();
