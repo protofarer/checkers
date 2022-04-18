@@ -146,7 +146,7 @@ export function setupGame() {
   }
   setupEventListeners();
   gameState.updateDiscActors();
-  return { gameState, panel };
+  return { gameState };
 }
 
 export function clr(canvas, ctx) {
