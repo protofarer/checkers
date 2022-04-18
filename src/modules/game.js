@@ -72,6 +72,19 @@ export default class Game {
         nonCaptureMoves.push({ row: disc.row + disc.direction, col: disc.col - 1 })
       }
     }
+    if (disc.isKing) {
+      if (disc.row - disc.direction >= 0 && 
+          disc.row - disc.direction < 8) {
+        if ((disc.col + 1 < 8) && 
+            (this.board[disc.row - disc.direction][disc.col + 1] === 0)) {
+          nonCaptureMoves.push({row: disc.row - disc.direction, col: disc.col + 1 })
+        }
+        if ((disc.col - 1 >= 0) && 
+            (this.board[disc.row - disc.direction][disc.col - 1] === 0)) {
+          nonCaptureMoves.push({ row: disc.row - disc.direction, col: disc.col - 1 })
+        }
+      }
+    }
     return nonCaptureMoves;
   }
   findCaptureMoves(disc) {

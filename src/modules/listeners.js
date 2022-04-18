@@ -88,17 +88,19 @@ function handleMouseUp(e) {
       if (nonCaptureMove) {
         game.move(grabbedDisc, nonCaptureMove);
         nextTurn();
-      }    
-    } else {
-      game.msg = "Invalid move. Try again"
+      } else {
+        game.msg = "Invalid move. Try again"
+      }
     }
-    game.msg = "";
+    if (game.hasCaptureChainStarted && game.captors.length === 0
+      || (grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+      || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+      grabbedDisc.isKing = true;
+      nextTurn();
+    }
     grabbedDisc.toggleGrab();
     game.grabbedDisc.disc = null;
     game.grabbedDisc.type = null;
-    if (game.hasCaptureChainStarted && game.captors.length === 0) {
-      nextTurn();
-    }
   }
   
   function isMouseInSquare(x, y, r, c) {
