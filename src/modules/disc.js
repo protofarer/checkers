@@ -24,16 +24,18 @@ export default class Disc {
   }
 
   animateStep() {
-    if (this.animateFrame === 45*60) this.animateFrame = 0;
+    // animateFrame, the *2*2.85 is to give high enough animate frame to reach 
+    // full range of desired colors in periodicColor
+    if (this.animateFrame === 45*60*2*2.85) this.animateFrame = 0;
     return this.animateFrame++;
   }
 
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
-        this.kingColor = `hsl(${Math.random() * 206 + 50}, 100%, 40%)`;
+        this.kingColor = `hsl(${(Math.floor(this.animateFrame / 30) % 186) + 70}, 100%, 40%)`;
       } else {
-        this.kingColor = `hsl(${Math.random() * 185}, 100%, 70%)`;
+        this.kingColor = `hsl(${Math.floor(this.animateFrame / 30) % 256}, 100%, 70%)`;
       }
     }
     return this.kingColor;
@@ -122,17 +124,6 @@ export default class Disc {
       ctx.moveTo(23, 0);
       ctx.arc(21, 0, 2, 0, 2*Math.PI);
       
-      // Arc encompassing disc center
-      ctx.save();
-      if (this.isKing) {
-        ctx.rotate(Math.floor(this.animateStep() / 60) * 2 * Math.PI / 180);
-        }
-      ctx.translate(9, 0);
-      ctx.rotate(Math.PI*3/12);
-      ctx.moveTo(11,0);
-      ctx.arc(0, 0, 11, 0, Math.PI*18/12);
-      // ctx.stroke();
-      ctx.restore();
       
       // Arc outer to small circle
       ctx.save();
@@ -143,7 +134,7 @@ export default class Disc {
       ctx.restore();
       // ctx.moveTo(20 + 9*Math.cos(-Math.PI*6/12), 9*Math.sin(-Math.PI*6/12));
       // ctx.arc(20, 0, 9, -Math.PI*6/12, Math.PI*6/12);
-
+      
       // Line details 'round small circle
       ctx.save();
       ctx.translate(21, 0);
@@ -168,7 +159,23 @@ export default class Disc {
       ctx.lineTo(30, 0);
       ctx.restore();
     }
-    // ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    // ctx.stroke();
+    
+    // Arc encompassing disc center
+    for (let i = 0; i < numInlays; i++) {
+      ctx.rotate(2*Math.PI/numInlays);
+      ctx.save();
+      if (this.isKing) {
+        ctx.rotate(Math.floor(this.animateStep() / 60) * 2 * Math.PI / 180);
+        }
+      ctx.translate(9, 0);
+      ctx.rotate(Math.PI*3/12);
+      ctx.moveTo(11,0);
+      ctx.arc(0, 0, 11, 0, Math.PI*18/12);
+      // ctx.stroke();
+      ctx.restore();
+    }
     if (this.isKing) {
       ctx.strokeStyle = this.periodicColor();
     }
