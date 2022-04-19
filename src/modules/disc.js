@@ -18,7 +18,19 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isKing = false;
+    this.isKing = true;
+    this.animateFrame = 0;
+    this.kingColor = `hsl(0, 0%, 0%)`;
+  }
+
+  animateStep() {
+    if (this.animateFrame === 45*60) this.animateFrame = 0;
+    return this.animateFrame++;
+  }
+
+  periodicColor() {
+    if (this.animateFrame % 60 === 0) this.kingColor = `hsl(${Math.random() * 256}, 50%, 50%)`;
+    return this.kingColor;
   }
   isClicked(x, y) {
     const isInPath = ctx.isPointInPath(this.#path, x, y);
@@ -106,10 +118,14 @@ export default class Disc {
       
       // Arc encompassing disc center
       ctx.save();
+      if (this.isKing) {
+        ctx.rotate(Math.floor(this.animateStep() / 60) * 2 * Math.PI / 180);
+        }
       ctx.translate(9, 0);
       ctx.rotate(Math.PI*3/12);
       ctx.moveTo(11,0);
       ctx.arc(0, 0, 11, 0, Math.PI*18/12);
+      // ctx.stroke();
       ctx.restore();
       
       // Arc outer to small circle
@@ -145,6 +161,10 @@ export default class Disc {
       ctx.moveTo(29, 0);
       ctx.lineTo(30, 0);
       ctx.restore();
+    }
+    // ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    if (this.isKing) {
+      ctx.strokeStyle = this.periodicColor();
     }
     ctx.stroke();
     ctx.restore();
