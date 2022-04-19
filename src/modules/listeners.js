@@ -98,10 +98,9 @@ function handleMouseUp(e) {
     if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
     || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
       grabbedDisc.isKing = true;
-      nextTurn();
     }
   }
-  grabbedDisc.toggleGrab();
+  grabbedDisc?.toggleGrab();
   game.grabbedDisc.disc = null;
   game.grabbedDisc.type = null;
   

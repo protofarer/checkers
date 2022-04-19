@@ -89,17 +89,37 @@ export default class Game {
   }
   findCaptureMoves(disc) {
     let captureMoves = [];
-    if (disc.row + (2*disc.direction) >= 0 &&
-        disc.row + (2*disc.direction) < 8) {
-      if ((this.board[disc.row + disc.direction][disc.col - 1] === disc.opposite) && 
-        (this.board[disc.row + (2*disc.direction)][disc.col - 2] === 0)) {
-          captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col - 2 });
-      }
-      if ((this.board[disc.row + disc.direction][disc.col + 1] === disc.opposite) &&
-        (this.board[disc.row + (2*disc.direction)][disc.col + 2] === 0)) {
-          captureMoves.push({ row: disc.row + (2*disc.direction), col: disc.col + 2 });
+    captureByDirection(1, this.board);
+    if (disc.isKing) {
+      captureByDirection(-1, this.board);
+    }
+    function captureByDirection(direction, board) {
+      // CSDR somehow binding board to this.board of Game
+      if (disc.row + (2*disc.direction * direction) >= 0 &&
+          disc.row + (2*disc.direction * direction) < 8) {
+        if ((board[disc.row + disc.direction * direction][disc.col - 1] === disc.opposite) && 
+          (board[disc.row + (2*disc.direction * direction)][disc.col - 2] === 0)) {
+            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col - 2 });
+        }
+        if ((board[disc.row + disc.direction * direction * direction][disc.col + 1] === disc.opposite) &&
+          (board[disc.row + (2*disc.direction * direction)][disc.col + 2] === 0)) {
+            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col + 2 });
+        }
       }
     }
+    // if (disc.isKing) {
+    //   if (disc.row - (2*disc.direction) >= 0 &&
+    //       disc.row - (2*disc.direction) < 8) {
+    //     if ((this.board[disc.row - disc.direction][disc.col - 1] === disc.opposite) && 
+    //       (this.board[disc.row - (2*disc.direction)][disc.col - 2] === 0)) {
+    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col - 2 });
+    //     }
+    //     if ((this.board[disc.row - disc.direction][disc.col + 1] === disc.opposite) &&
+    //       (this.board[disc.row - (2*disc.direction)][disc.col + 2] === 0)) {
+    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col + 2 });
+    //     }
+    //   }
+    // }
     return captureMoves;
   }
   updateDiscActors() {
