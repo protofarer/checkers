@@ -63,7 +63,7 @@ function handleMouseDown(e) {
 
 function handleMouseUp(e) {
   // CSDR moving grabbedDisc to game
-  const grabbedDisc = game.discs.find(disc => disc.isGrabbed);
+  const grabbedDisc = game.grabbedDisc.disc;
   if (grabbedDisc) {
     const isCaptor = game.captors.find(c => c === grabbedDisc); 
     const isMover = game.movers.find(m => m === grabbedDisc);
@@ -92,16 +92,18 @@ function handleMouseUp(e) {
         game.msg = "Invalid move. Try again"
       }
     }
-    if (game.hasCaptureChainStarted && game.captors.length === 0
-      || (grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
-      || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+    if (game.hasCaptureChainStarted && game.captors.length === 0) {
+      nextTurn();
+    }
+    if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+    || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
       grabbedDisc.isKing = true;
       nextTurn();
     }
-    grabbedDisc.toggleGrab();
-    game.grabbedDisc.disc = null;
-    game.grabbedDisc.type = null;
   }
+  grabbedDisc.toggleGrab();
+  game.grabbedDisc.disc = null;
+  game.grabbedDisc.type = null;
   
   function isMouseInSquare(x, y, r, c) {
     return (Math.floor(x/100) === c && Math.floor(y/100) === r)
