@@ -18,7 +18,7 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isKing = false;
+    this.isKing = true;
     this.animateFrame = 0;
     this.kingColor = `hsl(0, 0%, 0%)`;
   }
@@ -29,7 +29,13 @@ export default class Disc {
   }
 
   periodicColor() {
-    if (this.animateFrame % 60 === 0) this.kingColor = `hsl(${Math.random() * 256}, 50%, 50%)`;
+    if (this.animateFrame % 60 === 0) {
+      if (this.color === CONSTANTS.RED) {
+        this.kingColor = `hsl(${Math.random() * 206 + 50}, 100%, 40%)`;
+      } else {
+        this.kingColor = `hsl(${Math.random() * 185}, 100%, 70%)`;
+      }
+    }
     return this.kingColor;
   }
   isClicked(x, y) {
