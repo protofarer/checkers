@@ -18,7 +18,7 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isKing = true;
+    this.isKing = false;
     this.animateFrame = 0;
     this.kingColor = `hsl(0, 0%, 0%)`;
   }
