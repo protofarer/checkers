@@ -17,12 +17,19 @@ export const CONSTANTS = {
   GHOST: 3,
 }
 
+const containerDims = {
+  boardWidth: 800,
+  boardHeight: 800,
+  panelWidth: 200,
+  panelHeight: 800
+};
+
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  rect, resetButton
-} = setupApp('app');
+  rect, resetButton, debugResetButton
+} = setupApp('app', containerDims);
 
-export let { game, panel } = setupGame(ctx);
+export let { game, panel } = setupGame(ctx, true, containerDims);
 
 function main() {
 
@@ -42,11 +49,19 @@ function main() {
 main();
 
 resetButton.addEventListener('click', () => {
-  ({game,panel}=setupGame(ctx));
+  resetGame();
+});
+
+debugResetButton.addEventListener('click', () => {
+  debugResetGame();
 });
 
 export function resetGame() {
-  ({ game, panel } = setupGame(ctx));
+  ({ game, panel } = setupGame(ctx, false, containerDims));
+}
+
+export function debugResetGame() {
+ ({ game, panel } = setupGame(ctx, true, containerDims));
 }
 
 function drawBoard(ctx) {
