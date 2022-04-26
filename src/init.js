@@ -1,8 +1,7 @@
 import Game from './modules/game';
 import Panel from './modules/panel';
 import { setupEventListeners } from './modules/listeners';
-import './style.css'
-
+// import './style.css';
 
 export function setupApp(id, dims) {
 
@@ -59,10 +58,10 @@ export function setupApp(id, dims) {
 }
 
 export function setupGame(ctx, debug, dims) {
-  const game = new Game(debug);
+  const newgame = new Game(debug);
   const panel = new Panel(dims.panelWidth, dims.panelHeight, ctx, game);
   setupEventListeners();
-  return { game, panel };
+  return { newgame, panel };
 }
 
 export function clr(canvas, ctx) {

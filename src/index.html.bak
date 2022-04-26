@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game Lobby</title>
+    <style>
+      #container {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 5px;
+      }
+      #sidebar {
+        padding: 5px;
+        width: 170px;
+        display: flex;
+        flex-flow: column nowrap;
+        border: 1px solid blue;
+      }
+      #chatInput {
+        width: 140px;
+      }
+      #checkersGame {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="sidebar">
+        <h1>Games:</h1>
+          <ul>
+            <li>Tic-tac-toe</li>
+            <li>Checkers</li>
+            <li>Chess</li>
+          </ul>
+        Chat
+        <form id="chat">
+          <textarea
+            rows="15"
+            cols="20"
+          >
+          ...
+          </textarea>
+            <input
+              id="chatInput"
+              type="text"
+            />
+            <button
+              id="chatSend"
+              type="submit"
+              >
+              Send
+            </button>
+          </form>
+      </div>
+      <iframe
+        id="checkersGame"
+        title="Checkers Game"
+        src="checkers.html"
+        width="1200"
+        height="1000"
+      >
+      </iframe>
+    </div>
+  </body>
+</html>

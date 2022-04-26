@@ -3,12 +3,15 @@ import {
   setupGame, 
   clr, 
  } from './init.js';
+
+
 import {
-  mouseX, mouseY,
-  cX, cY,
+  // mouseX, mouseY,
+  // cX, cY, 
+  setupEventListeners,
 } from './modules/listeners.js';
+
 import Disc from './modules/disc.js';
-import Game from './modules/game.js';
 
 export const CONSTANTS = {
   BLANK: 0,
@@ -32,6 +35,19 @@ export let {
 export let { game, panel } = setupGame(ctx, true, containerDims);
 
 function main() {
+  let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
+  setupEventListeners({
+    canvas,
+    rect,
+    debugEle,
+    boardStateEle,
+    game,
+    panel,
+    nextTurn,
+    resetGame,
+    CONSTANTS,
+    mouseCoords
+  });
 
   function draw() {
     clr(canvas, ctx);
