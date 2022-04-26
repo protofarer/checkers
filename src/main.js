@@ -3,7 +3,6 @@ import {
   clr, 
  } from './init.js';
 import Game from './modules/game.js';
-import setupEventListeners from './modules/listeners.js';
 import Disc from './modules/disc.js';
 
 export const CONSTANTS = {
@@ -14,44 +13,18 @@ export const CONSTANTS = {
 }
 
 let ui = setupApp('app')
-let game = new Game(ui.canvas, true);
-let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
-
-setupEventListeners({ 
-  ui,
-  game,
-  CONSTANTS,
-  mouseCoords 
-});
+let game = new Game(ui, true);
 
 ui.resetButton.addEventListener('click', () => {
-  game = new Game(ui.canvas, false);
-setupEventListeners({ 
-  ui,
-  game,
-  CONSTANTS,
-  mouseCoords 
-});
+  game = new Game(ui, false);
 });
 
 ui.debugResetButton.addEventListener('click', () => {
-  game = new Game(ui.canvas, true);
-setupEventListeners({ 
-  ui,
-  game,
-  CONSTANTS,
-  mouseCoords 
-});
+  game = new Game(ui, true);
 });
 
 export function resetGame() {
-  game = new Game(ui.canvas, false);
-  setupEventListeners({ 
-    ui,
-    game,
-    CONSTANTS,
-    mouseCoords 
-  });
+  game = new Game(ui, false);
 }
 
 function draw() {
@@ -106,16 +79,16 @@ function drawPossibleMoves() {
 
 function drawDiscs(ctx, discs) {
   for (let disc of discs) {
-    disc.draw(ctx, mouseCoords.mouseX, mouseCoords.mouseY);
+    disc.draw(ctx, game.mouseCoords.mouseX, game.mouseCoords.mouseY);
   }
 }
 
 export function drawDebugEle(debugEle, rect, canvas) {
   debugEle.innerHTML = `\
     <span>
-      client: ${mouseCoords.cX},${mouseCoords.cY} <br />
-      mouse: ${Math.floor(mouseCoords.mouseX)},${Math.floor(mouseCoords.mouseY)}<br />
-      row,col: ${Math.floor(parseFloat((mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
+      client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
+      mouse: ${Math.floor(game.mouseCoords.mouseX)},${Math.floor(game.mouseCoords.mouseY)}<br />
+      row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
       rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}<br />
       canvas: ${canvas.width},${canvas.height}<br />
     </span>

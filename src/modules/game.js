@@ -3,9 +3,9 @@ import { CONSTANTS } from '../main';
 import Panel from './panel';
 
 export default class Game {
-  constructor (canvas, debugBoard=false) {
-    console.log('debugboard', debugBoard)
-    this.board = debugBoard
+  constructor (ui, debugMode=false) {
+    this.ui = ui;
+    this.board = debugMode
       ? [ 
           [0,0,0,0,0,0,0,0],
           [0,0,2,0,0,0,0,0],
@@ -42,27 +42,27 @@ export default class Game {
     };
     this.hasCaptureChainStarted = false;
     this.debug = true;
+    this.mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
 
     this.initDiscs();
     this.updateDiscActors();
 
-    this.ctx = canvas.getContext('2d');
-    this.rect = canvas.getBoundingClientRect();
+    this.ctx = this.ui.canvas.getContext('2d');
     
     this.boardHeight = 800;
     this.boardWidth = 800;
     this.panelWidth = 200;
     this.panelHeight = this.boardHeight;
-    
-    canvas.width = this.boardWidth + this.panelWidth + 15;
-    canvas.height = this.boardHeight;
-    console.log('IN game canvas', canvas)
+    this.ui.canvas.width = this.boardWidth + this.panelWidth + 15;
+    this.ui.canvas.height = this.boardHeight;
+    this.rect = this.ui.canvas.getBoundingClientRect();
 
     this.panel = new Panel(this.panelWidth, this.panelHeight, this.ctx)
+
+    this.setupEventListeners();
   }
 
   initDiscs() {
-    console.log('discs inited')
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
         switch(this.board[i][j]) {
@@ -207,4 +207,125 @@ export default class Game {
     this.hasCaptureChainStarted = false;
     this.updateDiscActors();
   }
+
+  setupEventListeners() {
+  document.addEventListener('mousemove', handleMouseMove.bind(this));
+  this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
+  this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
+  this.ui.debugButton.addEventListener('click', toggleDebug.bind(this));
+
+  function handleMouseMove(e) {
+    this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
+    this.mouseCoords.mouseY = e.clientY - this.rect.top;
+    this.mouseCoords.cX = e.clientX;
+    this.mouseCoords.cY = e.clientY;
+  }
+
+  function handleMouseDown(e) {
+    const clickedDisc = this.discs.find(disc =>
+      disc.isClicked(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY));
+
+    if (clickedDisc) {
+      if (clickedDisc.color === this.turnColor) {
+        const isCaptor = this.captors.find(c => c === clickedDisc);
+        const isMover = this.movers.find(m => m === clickedDisc);
+        if (this.captors.length > 0) {
+          if (isCaptor) {
+            clickedDisc.toggleGrab();
+            this.grabbedDisc.disc = clickedDisc;
+            this.grabbedDisc.type = "captor";
+          } else if (isMover) {
+            this.msg = "You must capture when possible.";
+          }
+        } else if (this.movers.length > 0) {
+          if (isMover) {
+            clickedDisc.toggleGrab();
+            this.grabbedDisc.disc = clickedDisc;
+            this.grabbedDisc.type = "mover";
+          } else if (this.movers.length === 0 && this.captors.length === 0) {
+            this.msg = "You have no moves available! Press pass to turn control to other player";
+          } else {
+            this.msg = "This disc cannot move!";
+          }
+        }
+        if (!isMover && !isCaptor) {
+          this.msg = "This disc has no moves available";
+        }
+      } else if (clickedDisc.color !== this.turnColor) {
+        this.msg = "That isn't your disc!";
+      }
+    } 
+
+    const isResetClicked = this.panel.isResetClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+    if (isResetClicked) {
+      resetthis();
+    }
+
+    const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+    if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
+      this.nextTurn();
+    }
+    const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+    if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
+      this.nextTurn();
+    }
+  }
+
+  function handleMouseUp(e) {
+    // CSDR moving grabbedDisc to this
+    const grabbedDisc = this.grabbedDisc.disc;
+    if (grabbedDisc) {
+      const isCaptor = this.captors.find(c => c === grabbedDisc); 
+      const isMover = this.movers.find(m => m === grabbedDisc);
+      
+      // if is a captor and mouseupped on valid capture move
+      if (isCaptor) {
+        const captureMoves = this.findCaptureMoves(grabbedDisc);
+        const validCaptureMove = captureMoves.find(move => 
+          isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
+        );
+        if (validCaptureMove) {
+          this.capture(grabbedDisc, validCaptureMove);
+          this.move(grabbedDisc, validCaptureMove);
+        } else {
+          this.msg = "Not a valid capture move";
+        }
+      } else if (isMover) {
+        const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+        const nonCaptureMove = nonCaptureMoves.find(move =>
+          isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
+        );
+        if (nonCaptureMove) {
+          this.move(grabbedDisc, nonCaptureMove);
+          this.nextTurn();
+        } else {
+          this.msg = "Invalid move. Try again"
+        }
+      }
+      if (this.hasCaptureChainStarted && this.captors.length === 0) {
+        this.nextTurn();
+      }
+      if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+      || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+        grabbedDisc.isKing = true;
+      }
+    }
+    grabbedDisc?.toggleGrab();
+    this.grabbedDisc.disc = null;
+    this.grabbedDisc.type = null;
+    
+    function isMouseInSquare(x, y, r, c) {
+      return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+    }
+  }
+
+  function toggleDebug(e) {
+    this.debug = !this.debug;
+    this.ui.debugButton.innerText = this.debug 
+      ? 'turn debug off' 
+      : 'turn debug on';
+    this.ui.debugEle.style.display = this.debug ? 'block' : 'none';
+    this.ui.boardStateEle.style.display = this.debug ? 'block' : 'none';
+  }
+}
 }
