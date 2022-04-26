@@ -1,9 +1,8 @@
 import { 
   setupApp, 
-  setupGame, 
   clr, 
  } from './init.js';
-
+import Game from './modules/game.js';
 import setupEventListeners from './modules/listeners.js';
 import Disc from './modules/disc.js';
 
@@ -15,19 +14,45 @@ export const CONSTANTS = {
 }
 
 let ui = setupApp('app')
-
-let { newgame: game } = setupGame(ui.canvas, true);
-
+let game = new Game(ui.canvas, true);
 let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
 
 setupEventListeners({ 
   ui,
   game,
-  nextTurn,
-  resetGame,
   CONSTANTS,
   mouseCoords 
 });
+
+ui.resetButton.addEventListener('click', () => {
+  game = new Game(ui.canvas, false);
+setupEventListeners({ 
+  ui,
+  game,
+  CONSTANTS,
+  mouseCoords 
+});
+});
+
+ui.debugResetButton.addEventListener('click', () => {
+  game = new Game(ui.canvas, true);
+setupEventListeners({ 
+  ui,
+  game,
+  CONSTANTS,
+  mouseCoords 
+});
+});
+
+export function resetGame() {
+  game = new Game(ui.canvas, false);
+  setupEventListeners({ 
+    ui,
+    game,
+    CONSTANTS,
+    mouseCoords 
+  });
+}
 
 function draw() {
   clr(ui.canvas, game.ctx);
@@ -42,21 +67,7 @@ function draw() {
 }
 draw();
 
-ui.resetButton.addEventListener('click', () => {
-  resetGame();
-});
 
-ui.debugResetButton.addEventListener('click', () => {
-  debugResetGame();
-});
-
-export function resetGame() {
-  ({ game } = setupGame(ui.canvas, false));
-}
-
-export function debugResetGame() {
- ({ game } = setupGame(ui.canvas, true));
-}
 
 function drawBoard(ctx) {
   const boardHue = 45;
@@ -128,12 +139,3 @@ export function drawBoardStateEle(boardStateEle) {
   `;
 }
 
-export function nextTurn() {
-  game.turnCount++;
-  game.turnColor = game.turnColor === CONSTANTS.RED 
-    ? CONSTANTS.BLACK 
-    : CONSTANTS.RED;
-  game.msg = "";
-  game.hasCaptureChainStarted = false;
-  game.updateDiscActors();
-}

@@ -51,12 +51,6 @@ export function setupApp(id) {
   };
 }
 
-export function setupGame(canvas, debug) {
-  const newgame = new Game(canvas, debug);
-  // const panel = new Panel(dims.panelWidth, dims.panelHeight, ctx, newgame);
-  return { newgame };
-}
-
 export function clr(canvas, ctx) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }

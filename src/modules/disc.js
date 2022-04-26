@@ -39,6 +39,7 @@ export default class Disc {
     return this.kingColor;
   }
   isClicked(ctx, x, y) {
+    console.log('disc clicked')
     const isInPath = ctx.isPointInPath(this.#path, x, y);
     return isInPath;
   }

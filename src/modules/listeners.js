@@ -1,10 +1,9 @@
 // export let mouseX, mouseY, cX, cY;
+import {resetGame} from '../main.js';
 
 export default function setupEventListeners({
     ui,
     game,
-    nextTurn,
-    resetGame,
     CONSTANTS,
     mouseCoords,
   }) {
@@ -37,6 +36,7 @@ export default function setupEventListeners({
   }
 
   function handleMouseDown(e) {
+    console.log('mousedown')
     const clickedDisc = game.discs.find(disc =>
       disc.isClicked(game.ctx, mouseCoords.mouseX, mouseCoords.mouseY));
 
@@ -78,15 +78,16 @@ export default function setupEventListeners({
 
     const isRedPassClicked = game.panel.isRedPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isRedPassClicked && game.turnColor === CONSTANTS.RED) {
-      nextTurn();
+      game.nextTurn();
     }
     const isBlackPassClicked = game.panel.isBlackPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isBlackPassClicked && game.turnColor === CONSTANTS.BLACK) {
-      nextTurn();
+      game.nextTurn();
     }
   }
 
   function handleMouseUp(e) {
+    console.log('mouseup')
     // CSDR moving grabbedDisc to game
     const grabbedDisc = game.grabbedDisc.disc;
     if (grabbedDisc) {
@@ -112,13 +113,13 @@ export default function setupEventListeners({
         );
         if (nonCaptureMove) {
           game.move(grabbedDisc, nonCaptureMove);
-          nextTurn();
+          game.nextTurn();
         } else {
           game.msg = "Invalid move. Try again"
         }
       }
       if (game.hasCaptureChainStarted && game.captors.length === 0) {
-        nextTurn();
+        game.nextTurn();
       }
       if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
       || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {

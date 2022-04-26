@@ -60,7 +60,9 @@ export default class Game {
 
     this.panel = new Panel(this.panelWidth, this.panelHeight, this.ctx)
   }
+
   initDiscs() {
+    console.log('discs inited')
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
         switch(this.board[i][j]) {
@@ -195,5 +197,14 @@ export default class Game {
     let row = (to.row - from.row) / Math.abs(to.row - from.row);
     row += from.row;
     return this.discs.filter(disc => disc.col === col && disc.row === row)[0];
+  }
+  nextTurn() {
+    this.turnCount++;
+    this.turnColor = this.turnColor === CONSTANTS.RED 
+      ? CONSTANTS.BLACK 
+      : CONSTANTS.RED;
+    this.msg = "";
+    this.hasCaptureChainStarted = false;
+    this.updateDiscActors();
   }
 }
