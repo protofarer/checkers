@@ -331,4 +331,50 @@ export default class Game {
   clr() {
     this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height);
   }
+  drawBoard() {
+    const boardHue = 45;
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        this.ctx.beginPath();
+        if (( row + col) % 2 === 0) {
+          this.ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
+          this.ctx.fillRect(col * 100, row * 100, 100, 100);
+        } else {
+          this.ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
+          this.ctx.fillRect(col * 100, row * 100, 100, 100);
+        }
+      }
+    }
+  }
+drawPossibleMoves() {
+  // When disc is grabbed, show available moves
+  if (this.grabbedDisc.disc) {
+    if (this.grabbedDisc.type === 'captor') {
+      const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc); 
+      for (let m of captureMoves) {
+        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+        ghostDisc.draw(this.ctx);
+      }
+    } else if (this.grabbedDisc.type === 'mover') {
+      const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
+      for (let m of nonCaptureMoves) {
+        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+        ghostDisc.draw(this.ctx);
+      }
+    }
+  }
+}
+drawDiscs() {
+  for (let disc of this.discs) {
+    disc.draw(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+  }
+}
+drawAll() {
+  this.drawBoard();
+  this.drawDiscs();
+  this.panel.draw(this.captures, this.turnColor);
+  this.drawPossibleMoves();
+}
+
+
 }

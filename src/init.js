@@ -1,3 +1,5 @@
+import { CONSTANTS } from './main.js';
+
 export default function setupExternalUI(id) {
   const container = document.createElement('div');
   container.id = id;
@@ -40,27 +42,46 @@ export default function setupExternalUI(id) {
   debugResetButton.innerText = 'debug\nreset\nboard';
   infoWrapper.appendChild(debugResetButton);
 
-function drawDebugEle(game) {
-  debugEle.innerHTML = `\
-    <span>
-      client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
-      mouse: ${Math.floor(game.mouseCoords.mouseX)},${Math.floor(game.mouseCoords.mouseY)}<br />
-      row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
-      rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
-      canvas: ${canvas.width},${canvas.height}<br />
-    </span>
-  `;
-}
-function drawBoardStateEle(game) {
-  boardStateEle.innerHTML = `\
-    <span>${game.boardToHTML()}</span>\
-  `;
-}
+
+  function drawAll(game) {
+    function drawDebugEle() {
+      debugEle.innerHTML = `\
+        <span>
+          client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
+          mouse: ${Math.floor(game.mouseCoords.mouseX)},${Math.floor(game.mouseCoords.mouseY)}<br />
+          row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
+          rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
+          canvas: ${canvas.width},${canvas.height}<br />
+        </span>
+      `;
+    }
+
+    function drawBoardStateEle() {
+      boardStateEle.innerHTML = `\
+        <span>${game.boardToHTML()}</span>\
+      `;
+    }
+
+    function drawStatus() {
+      statusEle.innerHTML = `\
+        <strong>Status:</strong> <br />
+        message: ${game.msg} <br />
+        turnColor: ${game.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
+        turnCount: ${game.turnCount} <br />
+        Captures for red: ${game.captures.forRed} <br />
+        Captures for black: ${game.captures.forBlack}\
+      `;
+    }
+
+    drawStatus();
+    drawDebugEle();
+    drawBoardStateEle()
+  }
 
   return {
     canvas,
     statusEle, debugEle, boardStateEle, 
     debugButton,resetButton, debugResetButton,
-    drawDebugEle, drawBoardStateEle
+    drawAll
   };
 }
