@@ -1,4 +1,4 @@
-import { CONSTANTS, resetGame, debugResetGame } from './main.js';
+import { CONSTANTS, resetGame } from './main.js';
 
 export default function setupExternalUI(id) {
   const container = document.createElement('div');
@@ -47,7 +47,7 @@ export default function setupExternalUI(id) {
   });
   
   debugResetButton.addEventListener('click', () => {
-    debugResetGame();
+    resetGame(true);
   });
 
   function updateAll(game) {

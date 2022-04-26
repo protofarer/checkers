@@ -38,8 +38,16 @@ export default class Disc {
     }
     return this.kingColor;
   }
+
+  setClickArea() {
+    const x = ((this.col) * 100) + 50;
+    const y = ((this.row) * 100) + 50;
+    this.#path = new Path2D();
+    this.#path.arc(x, y+3, 42, 0, 2*Math.PI);
+  }
+
   isClicked(ctx, x, y) {
-    const isInPath = ctx.isPointInPath(this.#path, x, y);
+    const isInPath = ctx.isPointInPath(this.#path, x, y, 'nonzero');
     return isInPath;
   }
 
@@ -58,21 +66,26 @@ export default class Disc {
   draw(ctx, mouseX, mouseY) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed
-    let x, y;
+    let x = ((this.col) * 100) + 50;
+    let y = ((this.row) * 100) + 50;
+
     if (this.isGrabbed) {
       x = mouseX;
       y = mouseY;
     } else {
-      x = ((this.col) * 100) + 50;
-      y = ((this.row) * 100) + 50;
-
     // Register path for click detection
     // Divergent dimensions from draw compensating for unknown
     // differences between rendered disc and click event coordinates
     // This click path valid only for when disc is at rest and ungrabbed state
     // CSDR: The y offset for the path's center is off by ~3 pixels
-      this.#path = new Path2D();
-      this.#path.arc(x, y+3, 42, 0, 2*Math.PI);
+    
+    // TODO x,y as instance variable
+      this.setClickArea()
+      // x = ((this.col) * 100) + 50;
+      // y = ((this.row) * 100) + 50;
+
+      // this.#path = new Path2D();
+      // this.#path.arc(x, y+3, 42, 0, 2*Math.PI);
     }
     
     if (this.color === CONSTANTS.GHOST) {
