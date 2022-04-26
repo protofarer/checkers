@@ -1,5 +1,5 @@
 import Disc from './disc';
-import { CONSTANTS } from '../main';
+import { CONSTANTS, resetGame } from '../main';
 import Panel from './panel';
 
 export default class Game {
@@ -258,7 +258,7 @@ export default class Game {
 
     const isResetClicked = this.panel.isResetClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
     if (isResetClicked) {
-      resetthis();
+      resetGame();
     }
 
     const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
@@ -322,10 +322,13 @@ export default class Game {
   function toggleDebug(e) {
     this.debug = !this.debug;
     this.ui.debugButton.innerText = this.debug 
-      ? 'turn debug off' 
-      : 'turn debug on';
+      ? 'turn\ndebugMode\noff' 
+      : 'turn\ndebugMode\non';
     this.ui.debugEle.style.display = this.debug ? 'block' : 'none';
     this.ui.boardStateEle.style.display = this.debug ? 'block' : 'none';
   }
 }
+  clr() {
+    this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height);
+  }
 }

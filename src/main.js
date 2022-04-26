@@ -1,7 +1,4 @@
-import { 
-  setupApp, 
-  clr, 
- } from './init.js';
+import setupExternalUI from './init.js';
 import Game from './modules/game.js';
 import Disc from './modules/disc.js';
 
@@ -12,7 +9,7 @@ export const CONSTANTS = {
   GHOST: 3,
 }
 
-let ui = setupApp('app')
+let ui = setupExternalUI('html')
 let game = new Game(ui, true);
 
 ui.resetButton.addEventListener('click', () => {
@@ -28,14 +25,14 @@ export function resetGame() {
 }
 
 function draw() {
-  clr(ui.canvas, game.ctx);
+  game.clr();
   drawBoard(game.ctx);
   drawDiscs(game.ctx, game.discs);
   game.panel.draw(game.captures, game.turnColor);
   drawPossibleMoves();
   drawStatus();
-  drawDebugEle(ui.debugEle, game.rect, ui.canvas);
-  drawBoardStateEle(ui.boardStateEle);
+  ui.drawDebugEle(game);
+  ui.drawBoardStateEle(game);
   requestAnimationFrame(draw);
 }
 draw();
@@ -83,17 +80,6 @@ function drawDiscs(ctx, discs) {
   }
 }
 
-export function drawDebugEle(debugEle, rect, canvas) {
-  debugEle.innerHTML = `\
-    <span>
-      client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
-      mouse: ${Math.floor(game.mouseCoords.mouseX)},${Math.floor(game.mouseCoords.mouseY)}<br />
-      row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
-      rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}<br />
-      canvas: ${canvas.width},${canvas.height}<br />
-    </span>
-  `;
-}
 
 export function drawStatus() {
   ui.statusEle.innerHTML = `\
@@ -105,10 +91,3 @@ export function drawStatus() {
     Captures for black: ${game.captures.forBlack}\
   `;
 }
-
-export function drawBoardStateEle(boardStateEle) {
-  boardStateEle.innerHTML = `\
-    <span>${game.boardToHTML()}</span>\
-  `;
-}
-
