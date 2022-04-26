@@ -1,31 +1,31 @@
 // export let mouseX, mouseY, cX, cY;
 
-// export function setupEventListeners({
-//     canvas, 
-//     rect, 
-//     debugEle, 
-//     boardStateEle,
-//     game,
-//     panel,
-//     nextTurn,
-//     resetGame,
-//     CONSTANTS,
-//     // mouseCoords,
-//   }) {
+export default function setupEventListeners({
+    canvas, ctx,
+    rect, 
+    ui,
+    game,
+    panel,
+    nextTurn,
+    resetGame,
+    CONSTANTS,
+    mouseCoords,
+  }) {
 
-export function setupEventListeners(props) {
-  // console.log(...props)
-  let canvas = props.canvas
-  let rect = props.rect;
-  let debugEle = props.debugEle
-  let boardStateEle = props.boardStateEle
-  let game = props.game
-  let panel = props.panel
-  let nextTurn = props.nextTurn
-  let CONSTANTS = props.CONSTANTS
-  let mouseCoords = props.mouseCoords
+// export function setupEventListeners(props) {
+//   // console.log(...props)
+//   let canvas = props.canvas
+//   let rect = props.rect;
+//   let debugEle = props.debugEle
+//   let boardStateEle = props.boardStateEle
+//   let game = props.game
+//   let panel = props.panel
+//   let nextTurn = props.nextTurn
+//   let CONSTANTS = props.CONSTANTS
+//   let mouseCoords = props.mouseCoords
 
-
+  let boardStateEle = ui.boardStateEle;
+  let debugEle = ui.debugEle;
 
   document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 
@@ -41,7 +41,7 @@ export function setupEventListeners(props) {
 
   function handleMouseDown(e) {
     const clickedDisc = game.discs.find(disc =>
-      disc.isClicked(mouseCoords.mouseX, mouseCoords.mouseY));
+      disc.isClicked(ctx, mouseCoords.mouseX, mouseCoords.mouseY));
 
     if (clickedDisc) {
       if (clickedDisc.color === game.turnColor) {

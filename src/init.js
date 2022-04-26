@@ -50,8 +50,11 @@ export function setupApp(id, dims) {
   const rect = canvas.getBoundingClientRect();
 
   return { 
-    canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-    rect, resetButton, debugResetButton
+    canvas, ctx, rect, 
+    ui: {
+      statusEle, debugEle, boardStateEle, 
+      debugButton,resetButton, debugResetButton
+    }
   };
 }
 

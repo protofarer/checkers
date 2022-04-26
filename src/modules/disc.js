@@ -1,5 +1,4 @@
 import { CONSTANTS } from '../main';
-import { ctx } from '../main';
 
 export default class Disc {
   #path;
@@ -39,7 +38,7 @@ export default class Disc {
     }
     return this.kingColor;
   }
-  isClicked(x, y) {
+  isClicked(ctx, x, y) {
     const isInPath = ctx.isPointInPath(this.#path, x, y);
     return isInPath;
   }

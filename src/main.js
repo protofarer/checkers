@@ -4,13 +4,7 @@ import {
   clr, 
  } from './init.js';
 
-
-import {
-  // mouseX, mouseY,
-  // cX, cY, 
-  setupEventListeners,
-} from './modules/listeners.js';
-
+import setupEventListeners from './modules/listeners.js';
 import Disc from './modules/disc.js';
 
 export const CONSTANTS = {
@@ -27,21 +21,16 @@ const containerDims = {
   panelHeight: 800
 };
 
-export let { 
-  canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
-  rect, resetButton, debugResetButton
+let { 
+  canvas, ctx, rect, ui
 } = setupApp('app', containerDims)
 
-console.log(canvas)
-
-export let { newgame: game, panel } = setupGame(ctx, true, containerDims);
+let { newgame: game, panel } = setupGame(ctx, true, containerDims);
 
 let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
-// console.log(canvas, ctx, statusEle,debugEle, debugButton,boardStateEle, rect, resetButton,debugResetButton)
-setupEventListeners({ canvas,
+setupEventListeners({ canvas, ctx,
   rect,
-  debugEle,
-  boardStateEle,
+  ui,
   game,
   panel,
   nextTurn,
@@ -57,17 +46,17 @@ function draw() {
   panel.draw(game);
   drawPossibleMoves();
   drawStatus();
-  drawDebugEle(debugEle, rect, canvas);
-  drawBoardStateEle(boardStateEle);
+  drawDebugEle(ui.debugEle, rect, canvas);
+  drawBoardStateEle(ui.boardStateEle);
   requestAnimationFrame(draw);
 }
 draw();
 
-resetButton.addEventListener('click', () => {
+ui.resetButton.addEventListener('click', () => {
   resetGame();
 });
 
-debugResetButton.addEventListener('click', () => {
+ui.debugResetButton.addEventListener('click', () => {
   debugResetGame();
 });
 
@@ -133,7 +122,7 @@ export function drawDebugEle(debugEle, rect, canvas) {
 }
 
 export function drawStatus() {
-  statusEle.innerHTML = `\
+  ui.statusEle.innerHTML = `\
     <strong>Status:</strong> <br />
     message: ${game.msg} <br />
     turnColor: ${game.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
