@@ -9,28 +9,25 @@ export const CONSTANTS = {
   GHOST: 3,
 }
 
+const initDebugMode = true;
+
 let ui = setupExternalUI('html')
-let game = new Game(ui, true);
-
-ui.resetButton.addEventListener('click', () => {
-  game = new Game(ui, false);
-});
-
-ui.debugResetButton.addEventListener('click', () => {
-  game = new Game(ui, true);
-});
+let game = new Game(ui, initDebugMode);
 
 export function resetGame() {
   game = new Game(ui, false);
 }
 
-function draw() {
+export function debugResetGame() {
+  game = new Game(ui, true);
+}
+
+(function draw() {
   game.clr();
   game.drawAll();
-  ui.drawAll(game);
+  ui.updateAll(game);
   requestAnimationFrame(draw);
-}
-draw();
+}())
 
 
 

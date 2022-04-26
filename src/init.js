@@ -1,4 +1,4 @@
-import { CONSTANTS } from './main.js';
+import { CONSTANTS, resetGame, debugResetGame } from './main.js';
 
 export default function setupExternalUI(id) {
   const container = document.createElement('div');
@@ -41,9 +41,16 @@ export default function setupExternalUI(id) {
   const debugResetButton = document.createElement('button');
   debugResetButton.innerText = 'debug\nreset\nboard';
   infoWrapper.appendChild(debugResetButton);
+  
+  resetButton.addEventListener('click', () => {
+    resetGame();
+  });
+  
+  debugResetButton.addEventListener('click', () => {
+    debugResetGame();
+  });
 
-
-  function drawAll(game) {
+  function updateAll(game) {
     function drawDebugEle() {
       debugEle.innerHTML = `\
         <span>
@@ -82,6 +89,6 @@ export default function setupExternalUI(id) {
     canvas,
     statusEle, debugEle, boardStateEle, 
     debugButton,resetButton, debugResetButton,
-    drawAll
+    updateAll
   };
 }
