@@ -32,11 +32,11 @@ export default class Disc {
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
-        let colorFrequency = (Math.floor(this.animateFrame / 15) % 300) + 30;
-        // if (colorFrequency === 256)
-        this.kingColor = `hsl(${colorFrequency}, 100%, 40%)`;
+        const colorAngle = (Math.floor(this.animateFrame / 15) % 300) + 30;
+        this.kingColor = `hsl(${colorAngle}, 100%, 40%)`;
       } else {
-        this.kingColor = `hsl(${Math.floor(this.animateFrame / 15) % 360}, 100%, 70%)`;
+        const colorAngle = Math.floor(this.animateFrame / 15) % 360;
+        this.kingColor = `hsl(${colorAngle}, 100%, 70%)`;
       }
     }
     return this.kingColor;
