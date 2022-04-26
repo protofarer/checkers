@@ -1,4 +1,4 @@
-import setupExternalUI from './init.js';
+import setupExternalUI from './modules/init.js';
 import Game from './modules/game.js';
 
 export const CONSTANTS = {
@@ -23,9 +23,3 @@ export function resetGame(debug=false) {
   ui.updateAll(game);
   requestAnimationFrame(draw);
 }())
-
-
-
-
-
-

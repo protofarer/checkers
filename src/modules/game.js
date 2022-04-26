@@ -81,6 +81,7 @@ export default class Game {
       }
     }
   }
+
   boardToHTML() {
     let s = '';
     for (let r of this.board) {
@@ -88,6 +89,7 @@ export default class Game {
     }
     return s;
   }
+
   findNonCaptureMoves(disc) {
     let nonCaptureMoves = [];
     if (disc.row + disc.direction >= 0 && 
@@ -116,6 +118,7 @@ export default class Game {
     }
     return nonCaptureMoves;
   }
+
   findCaptureMoves(disc) {
     let captureMoves = [];
     captureByDirection(1, this.board);
@@ -151,19 +154,21 @@ export default class Game {
     // }
     return captureMoves;
   }
+
   updateDiscActors() {
-    this.movers = this.findPotentialMovers(this.discs);
-    this.captors = this.findPotentialCaptors(this.discs);
+    this.movers = this.findPotentialMovers();
+    this.captors = this.findPotentialCaptors();
   }
+
   // WARNING till function from disc class called
-  findPotentialCaptors(discs) {
-    const potentialCaptors = discs.filter(disc => 
+  findPotentialCaptors() {
+    const potentialCaptors = this.discs.filter(disc => 
       this.findCaptureMoves(disc).length > 0 && disc.color === this.turnColor
     );
     return potentialCaptors;
   }
-  findPotentialMovers(discs) {
-    const potentialMovers = discs.filter(disc =>
+  findPotentialMovers() {
+    const potentialMovers = this.discs.filter(disc =>
       this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor);
     return potentialMovers;
   }
@@ -209,128 +214,158 @@ export default class Game {
   }
 
   setupEventListeners() {
-  document.addEventListener('mousemove', handleMouseMove.bind(this));
-  this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
-  this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
-  this.ui.debugButton.addEventListener('click', toggleDebug.bind(this));
+    document.addEventListener('mousemove', handleMouseMove.bind(this));
+    this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
+    this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
+    this.ui.debugButton.addEventListener('click', toggleDebug.bind(this));
 
-  function handleMouseMove(e) {
-    this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
-    this.mouseCoords.mouseY = e.clientY - this.rect.top;
-    this.mouseCoords.cX = e.clientX;
-    this.mouseCoords.cY = e.clientY;
-  }
+    function handleMouseMove(e) {
+      this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
+      this.mouseCoords.mouseY = e.clientY - this.rect.top;
+      this.mouseCoords.cX = e.clientX;
+      this.mouseCoords.cY = e.clientY;
+    }
 
-  function handleMouseDown(e) {
-    const clickedDisc = this.discs.find(disc =>
-      disc.isClicked(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY));
+    function handleMouseDown(e) {
+      const clickedDisc = this.discs.find(disc =>
+        disc.isClicked(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY));
 
-    if (clickedDisc) {
-      if (clickedDisc.color === this.turnColor) {
-        const isCaptor = this.captors.find(c => c === clickedDisc);
-        const isMover = this.movers.find(m => m === clickedDisc);
-        if (this.captors.length > 0) {
-          if (isCaptor) {
-            clickedDisc.toggleGrab();
-            this.grabbedDisc.disc = clickedDisc;
-            this.grabbedDisc.type = "captor";
-          } else if (isMover) {
-            this.msg = "You must capture when possible.";
+      if (clickedDisc) {
+        if (clickedDisc.color === this.turnColor) {
+          const isCaptor = this.captors.find(c => c === clickedDisc);
+          const isMover = this.movers.find(m => m === clickedDisc);
+          if (this.captors.length > 0) {
+            if (isCaptor) {
+              // DISPATCH successful grab of a captor
+              clickedDisc.toggleGrab();
+              this.grabbedDisc.disc = clickedDisc;
+              this.grabbedDisc.type = "captor";
+            } else if (isMover) {
+              // DISPATCH must-capture msg
+              this.msg = "You must capture when possible.";
+            }
+          } else if (this.movers.length > 0) {
+            if (isMover) {
+              // DISPATCH successful grab of a mover
+              clickedDisc.toggleGrab();
+              this.grabbedDisc.disc = clickedDisc;
+              this.grabbedDisc.type = "mover";
+            } else if (this.movers.length === 0 && this.captors.length === 0) {
+              // DISPATCH no-moves-avail msg
+              this.msg = "You have no moves available! Press pass to turn control to other player";
+            } else {
+              // WARN this may be unreachable block
+              // DISPATCH cannot-move-this-disc msg
+              this.msg = "This disc cannot move!";
+            }
           }
-        } else if (this.movers.length > 0) {
-          if (isMover) {
-            clickedDisc.toggleGrab();
-            this.grabbedDisc.disc = clickedDisc;
-            this.grabbedDisc.type = "mover";
-          } else if (this.movers.length === 0 && this.captors.length === 0) {
-            this.msg = "You have no moves available! Press pass to turn control to other player";
-          } else {
-            this.msg = "This disc cannot move!";
+          if (!isMover && !isCaptor) {
+            // DISPATCH no-moves-disc msg
+            this.msg = "This disc has no moves available";
           }
+        } else if (clickedDisc.color !== this.turnColor) {
+          // DISPATCH not-your-disc msg
+          this.msg = "That isn't your disc!";
         }
-        if (!isMover && !isCaptor) {
-          this.msg = "This disc has no moves available";
-        }
-      } else if (clickedDisc.color !== this.turnColor) {
-        this.msg = "That isn't your disc!";
+      } 
+
+      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+      if (isResetClicked) {
+        // DISPATCH resetGame
+        resetGame();
       }
-    } 
 
-    const isResetClicked = this.panel.isResetClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
-    if (isResetClicked) {
-      resetGame();
-    }
-
-    const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
-    if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
-      this.nextTurn();
-    }
-    const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
-    if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
-      this.nextTurn();
-    }
-  }
-
-  function handleMouseUp(e) {
-    // CSDR moving grabbedDisc to this
-    const grabbedDisc = this.grabbedDisc.disc;
-    if (grabbedDisc) {
-      const isCaptor = this.captors.find(c => c === grabbedDisc); 
-      const isMover = this.movers.find(m => m === grabbedDisc);
-      
-      // if is a captor and mouseupped on valid capture move
-      if (isCaptor) {
-        const captureMoves = this.findCaptureMoves(grabbedDisc);
-        const validCaptureMove = captureMoves.find(move => 
-          isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
-        );
-        if (validCaptureMove) {
-          this.capture(grabbedDisc, validCaptureMove);
-          this.move(grabbedDisc, validCaptureMove);
-        } else {
-          this.msg = "Not a valid capture move";
-        }
-      } else if (isMover) {
-        const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
-        const nonCaptureMove = nonCaptureMoves.find(move =>
-          isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
-        );
-        if (nonCaptureMove) {
-          this.move(grabbedDisc, nonCaptureMove);
-          this.nextTurn();
-        } else {
-          this.msg = "Invalid move. Try again"
-        }
-      }
-      if (this.hasCaptureChainStarted && this.captors.length === 0) {
+      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+      if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
+        // DISPATCH nextTurn
         this.nextTurn();
       }
-      if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
-      || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
-        grabbedDisc.isKing = true;
+      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+      if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
+        // DISPATCH nextTurn
+        this.nextTurn();
       }
     }
-    grabbedDisc?.toggleGrab();
-    this.grabbedDisc.disc = null;
-    this.grabbedDisc.type = null;
-    
-    function isMouseInSquare(x, y, r, c) {
-      return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+
+    function handleMouseUp(e) {
+      // CSDR moving grabbedDisc to this
+      const grabbedDisc = this.grabbedDisc.disc;
+      if (grabbedDisc) {
+        const isCaptor = this.captors.find(c => c === grabbedDisc); 
+        const isMover = this.movers.find(m => m === grabbedDisc);
+        
+        // if is a captor and mouseupped on valid capture move
+        if (isCaptor) {
+          const captureMoves = this.findCaptureMoves(grabbedDisc);
+          const validCaptureMove = captureMoves.find(move => 
+            isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
+          );
+          if (validCaptureMove) {
+            // DISPATCH valid capture move
+            this.capture(grabbedDisc, validCaptureMove);
+            this.move(grabbedDisc, validCaptureMove);
+          } else {
+            // DISPATCH not-valid-capture msg
+            this.msg = "Not a valid capture move";
+          }
+        } else if (isMover) {
+          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+          const nonCaptureMove = nonCaptureMoves.find(move =>
+            isMouseInSquare(this.mouseCoords.mouseX, this.mouseCoords.mouseY, move.row, move.col)
+          );
+          if (nonCaptureMove) {
+            // DISPATCH valid mover move
+            this.move(grabbedDisc, nonCaptureMove);
+            this.nextTurn();
+          } else {
+            // DISPATCH invalid-mover-move msg
+            this.msg = "Invalid move. Try again"
+          }
+        }
+        if (this.hasCaptureChainStarted && this.captors.length === 0) {
+          // DISPATCH nextTurn
+          this.nextTurn();
+        }
+        if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+        || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+          // DISPATCH makeKing
+          grabbedDisc.isKing = true;
+        }
+      }
+      // DISPATCH drop disc
+      grabbedDisc?.toggleGrab();
+      this.grabbedDisc.disc = null;
+      this.grabbedDisc.type = null;
+      
+      function isMouseInSquare(x, y, r, c) {
+        return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+      }
+
+      if (discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+        // DISPATCH RED WINS
+        // TODO show win dialog
+        //    add point to winner
+        //    exclamation
+        //    show new game button
+        //    reset game
+      } else if (discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
+        // DISPATCH BLACK WINS
+      }
+    }
+
+    function toggleDebug(e) {
+      this.debug = !this.debug;
+      this.ui.debugButton.innerText = this.debug 
+        ? 'turn\ndebugMode\noff' 
+        : 'turn\ndebugMode\non';
+      this.ui.debugEle.style.display = this.debug ? 'block' : 'none';
+      this.ui.boardStateEle.style.display = this.debug ? 'block' : 'none';
     }
   }
-
-  function toggleDebug(e) {
-    this.debug = !this.debug;
-    this.ui.debugButton.innerText = this.debug 
-      ? 'turn\ndebugMode\noff' 
-      : 'turn\ndebugMode\non';
-    this.ui.debugEle.style.display = this.debug ? 'block' : 'none';
-    this.ui.boardStateEle.style.display = this.debug ? 'block' : 'none';
-  }
-}
   clr() {
     this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height);
   }
+
   drawBoard() {
     const boardHue = 45;
     for (let row = 0; row < 8; row++) {
@@ -346,35 +381,39 @@ export default class Game {
       }
     }
   }
-drawPossibleMoves() {
-  // When disc is grabbed, show available moves
-  if (this.grabbedDisc.disc) {
-    if (this.grabbedDisc.type === 'captor') {
-      const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc); 
-      for (let m of captureMoves) {
-        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.draw(this.ctx);
-      }
-    } else if (this.grabbedDisc.type === 'mover') {
-      const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
-      for (let m of nonCaptureMoves) {
-        const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.draw(this.ctx);
+
+  drawPossibleMoves() {
+    // When disc is grabbed, show available moves
+    if (this.grabbedDisc.disc) {
+      if (this.grabbedDisc.type === 'captor') {
+        const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc); 
+        for (let m of captureMoves) {
+          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+          ghostDisc.draw(this.ctx);
+        }
+      } else if (this.grabbedDisc.type === 'mover') {
+        const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
+        for (let m of nonCaptureMoves) {
+          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
+          ghostDisc.draw(this.ctx);
+        }
       }
     }
   }
-}
-drawDiscs() {
-  for (let disc of this.discs) {
-    disc.draw(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+
+  drawDiscs() {
+    for (let disc of this.discs) {
+      disc.draw(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+    }
   }
-}
-drawAll() {
-  this.drawBoard();
-  this.drawDiscs();
-  this.panel.draw(this.captures, this.turnColor);
-  this.drawPossibleMoves();
-}
 
-
+  drawAll() {
+    this.drawBoard();
+    this.drawDiscs();
+    this.panel.draw({ 
+      captures: this.captures, 
+      turnColor: this.turnColor 
+    });
+    this.drawPossibleMoves();
+  }
 }

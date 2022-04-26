@@ -1,6 +1,5 @@
 import { CONSTANTS } from '../main';
 
-// TODO Panel instances need access to game red and black captures
 export default class Panel {
   #resetButtonPath;
   #redPassButtonPath;
@@ -20,8 +19,10 @@ export default class Panel {
 
     this.separatorUpperY = this.centerY - 38;
     this.separatorLowerY = this.centerY + 38;
+    
     this.redJailX = 815;
     this.redJailY = 20;
+
     this.blackJailX = 815;
     this.blackJailY = 790;
 
@@ -56,7 +57,7 @@ export default class Panel {
     );
   }
   
-  drawPassButton(x, y) {
+  drawPassButton(x, y, playerColor, turnColor) {
     this.ctx.beginPath();
 
     this.ctx.lineWidth = 1;
@@ -66,7 +67,9 @@ export default class Panel {
     
     
     this.ctx.font = '16px Arial';
-    this.ctx.fillStyle = 'black';
+    turnColor === playerColor
+      ? this.ctx.fillStyle = 'blue'
+      : this.ctx.fillStyle = 'grey'
     this.ctx.fillText('Pass', x + 17, y + 21);
   }
 
@@ -74,11 +77,11 @@ export default class Panel {
     this.ctx.beginPath();
     const x = this.resetButtonX;
     const y = this.resetButtonY;
+
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'black';
     this.ctx.fillStyle = 'hsl(0,0%,80%)';
     this.ctx.fillRect(x, y, 70, 30);
-    
     
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'black';
@@ -86,28 +89,33 @@ export default class Panel {
   }
 
   isResetClicked(x, y) {
-    const isInPath = this.ctx.isPointInPath(this.#resetButtonPath, x , y);
-    return isInPath;
+    return this.ctx.isPointInPath(this.#resetButtonPath, x , y);
   }
 
   isRedPassClicked(x, y) {
-    const isInPath = this.ctx.isPointInPath(this.#redPassButtonPath, x, y);
-    return isInPath;
+    return this.ctx.isPointInPath(this.#redPassButtonPath, x, y);
   }
   
   isBlackPassClicked(x, y) {
-    const isInPath = this.ctx.isPointInPath(this.#blackPassButtonPath, x, y);
-    return isInPath;
+    return this.ctx.isPointInPath(this.#blackPassButtonPath, x, y);
   }
 
-  draw(captures, turnColor) {
+  draw({ captures, turnColor }) {
     this.drawResetButton()
-    this.drawPassButton(this.#redPassButtonX, this.#redPassButtonY);
-    this.drawPassButton(this.#blackPassButtonX, this.#blackPassButtonY);
+    this.drawPassButton(
+      this.#redPassButtonX, this.#redPassButtonY, 
+      CONSTANTS.RED, turnColor
+    );
+    this.drawPassButton(
+      this.#blackPassButtonX, this.#blackPassButtonY, 
+      CONSTANTS.BLACK, turnColor
+    );
+
+    // Topmost panel container
     this.ctx.beginPath();
-    // WARN hardcoded position
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'rgb(0,0,0,0.5)';
+    // WARN hardcoded position
     this.ctx.strokeRect(805, 0, this.width, this.height);
 
     // Dividing line between players' respective info subpanels
@@ -117,9 +125,9 @@ export default class Panel {
     this.ctx.lineTo(815 + this.width - 20, this.separatorLowerY);
     this.ctx.stroke();
 
+    // Draw red's jail
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'black';
-    // Draw red's jail
     this.ctx.fillText(
       `Blacks captured: ${captures.forRed}`, 
       this.redJailX, 
@@ -140,6 +148,7 @@ export default class Panel {
       this.turnIndicatorY - 75, 
       16, 0, 2*Math.PI
     );
+
     // Black's empty turn indicator
     this.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorY + 75);
     this.ctx.arc(
@@ -148,18 +157,11 @@ export default class Panel {
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
 
-    if (turnColor === CONSTANTS.RED) {
-      this.ctx.beginPath();
-      // this.ctx.moveTo(this.centerX - 20, this.centerY + 20);
-      this.ctx.arc(this.turnIndicatorX, this.centerY - 75, 15, 0, 2*Math.PI);
-      this.ctx.fillStyle = 'hsl(100, 50%, 50%)';
-      this.ctx.fill();
-    } else {
-      this.ctx.beginPath();
-      // this.ctx.moveTo(this.centerX - 20, this.centerY + 200);
-      this.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI);
-      this.ctx.fillStyle = 'hsl(100, 50%, 50%)';
-      this.ctx.fill();
-    }
+    this.ctx.beginPath();
+    turnColor === CONSTANTS.RED
+      ? this.ctx.arc(this.turnIndicatorX, this.centerY - 75, 15, 0, 2*Math.PI)
+      : this.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI)
+    this.ctx.fillStyle = 'hsl(100, 50%, 50%)';
+    this.ctx.fill();
   }
 }

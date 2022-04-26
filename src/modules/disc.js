@@ -3,7 +3,6 @@ import { CONSTANTS } from '../main';
 export default class Disc {
   #path;
   constructor(row, col, color) {
-    console.log('row',row)
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row must be initialized`);
     }
@@ -17,7 +16,7 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isKing = true;
+    this.isKing = false;
     this.animateFrame = 0;
     this.kingColor = `hsl(0, 0%, 0%)`;
   }
@@ -32,7 +31,7 @@ export default class Disc {
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
-        const colorAngle = (Math.floor(this.animateFrame / 15) % 300) + 30;
+        const colorAngle = (Math.floor(this.animateFrame / 15) % 290) + 30;
         this.kingColor = `hsl(${colorAngle}, 100%, 40%)`;
       } else {
         const colorAngle = Math.floor(this.animateFrame / 15) % 360;
@@ -50,8 +49,7 @@ export default class Disc {
   }
 
   isClicked(ctx, x, y) {
-    const isInPath = ctx.isPointInPath(this.#path, x, y, 'nonzero');
-    return isInPath;
+    return ctx.isPointInPath(this.#path, x, y, 'nonzero');
   }
 
   toString() {
@@ -60,10 +58,12 @@ export default class Disc {
 
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
+    return this.isGrabbed;
   }
 
   makeKing() {
     this.isKing = true;
+    return this.isKing;
   }
   
   draw(ctx, mouseX, mouseY) {
@@ -138,7 +138,6 @@ export default class Disc {
       ctx.moveTo(23, 0);
       ctx.arc(21, 0, 2, 0, 2*Math.PI);
       
-      
       // Arc outer to small circle
       ctx.save();
       ctx.translate(20, 0);
@@ -146,8 +145,6 @@ export default class Disc {
       ctx.moveTo(9, 0);
       ctx.arc(0, 0, 9, 0, Math.PI);
       ctx.restore();
-      // ctx.moveTo(20 + 9*Math.cos(-Math.PI*6/12), 9*Math.sin(-Math.PI*6/12));
-      // ctx.arc(20, 0, 9, -Math.PI*6/12, Math.PI*6/12);
       
       // Line details 'round small circle
       ctx.save();
@@ -174,7 +171,6 @@ export default class Disc {
       ctx.restore();
     }
     ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
-    // ctx.stroke();
     
     // Arc encompassing disc center
     for (let i = 0; i < numInlays; i++) {
@@ -187,12 +183,13 @@ export default class Disc {
       ctx.rotate(Math.PI*3/12);
       ctx.moveTo(11,0);
       ctx.arc(0, 0, 11, 0, Math.PI*18/12);
-      // ctx.stroke();
       ctx.restore();
     }
+
     if (this.isKing) {
       ctx.strokeStyle = this.periodicColor();
     }
+
     ctx.stroke();
     ctx.restore();
     ctx.restore();
