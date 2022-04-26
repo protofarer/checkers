@@ -10,9 +10,8 @@ export default class Panel {
   #blackPassButtonX;
   #blackPassButtonY;
   
-  constructor (width, height, ctx, game) {
+  constructor (width, height, ctx) {
     this.ctx = ctx;
-    this.game = game;
 
     this.width = width;     // pixels
     this.height = height;   // pixels
@@ -101,7 +100,7 @@ export default class Panel {
     return isInPath;
   }
 
-  draw() {
+  draw(captures, turnColor) {
     this.drawResetButton()
     this.drawPassButton(this.#redPassButtonX, this.#redPassButtonY);
     this.drawPassButton(this.#blackPassButtonX, this.#blackPassButtonY);
@@ -122,14 +121,14 @@ export default class Panel {
     this.ctx.fillStyle = 'black';
     // Draw red's jail
     this.ctx.fillText(
-      `Blacks captured: ${this.game.captures.forRed}`, 
+      `Blacks captured: ${captures.forRed}`, 
       this.redJailX, 
       this.redJailY
     );
 
     // Draw black's jail
     this.ctx.fillText(
-      `Reds captured: ${this.game.captures.forBlack}`, 
+      `Reds captured: ${captures.forBlack}`, 
       this.blackJailX, 
       this.blackJailY
     );
@@ -149,7 +148,7 @@ export default class Panel {
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
 
-    if (this.game.turnColor === CONSTANTS.RED) {
+    if (turnColor === CONSTANTS.RED) {
       this.ctx.beginPath();
       // this.ctx.moveTo(this.centerX - 20, this.centerY + 20);
       this.ctx.arc(this.turnIndicatorX, this.centerY - 75, 15, 0, 2*Math.PI);

@@ -1,11 +1,8 @@
 // export let mouseX, mouseY, cX, cY;
 
 export default function setupEventListeners({
-    canvas, ctx,
-    rect, 
     ui,
     game,
-    panel,
     nextTurn,
     resetGame,
     CONSTANTS,
@@ -28,20 +25,20 @@ export default function setupEventListeners({
   let debugEle = ui.debugEle;
 
   document.addEventListener('mousemove', handleMouseMove);
-  canvas.addEventListener('mousedown', handleMouseDown); 
-  canvas.addEventListener('mouseup', handleMouseUp); 
+  ui.canvas.addEventListener('mousedown', handleMouseDown); 
+  ui.canvas.addEventListener('mouseup', handleMouseUp); 
   debugButton.addEventListener('click', toggleDebug);
 
   function handleMouseMove(e) {
-    mouseCoords.mouseX = e.clientX - rect.left; //window.scrollX
-    mouseCoords.mouseY = e.clientY - rect.top;
+    mouseCoords.mouseX = e.clientX - game.rect.left; //window.scrollX
+    mouseCoords.mouseY = e.clientY - game.rect.top;
     mouseCoords.cX = e.clientX;
     mouseCoords.cY = e.clientY;
   }
 
   function handleMouseDown(e) {
     const clickedDisc = game.discs.find(disc =>
-      disc.isClicked(ctx, mouseCoords.mouseX, mouseCoords.mouseY));
+      disc.isClicked(game.ctx, mouseCoords.mouseX, mouseCoords.mouseY));
 
     if (clickedDisc) {
       if (clickedDisc.color === game.turnColor) {
@@ -74,16 +71,16 @@ export default function setupEventListeners({
       }
     } 
 
-    const isResetClicked = panel.isResetClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isResetClicked = ui.panel.isResetClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isResetClicked) {
       resetGame();
     }
 
-    const isRedPassClicked = panel.isRedPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isRedPassClicked = ui.panel.isRedPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isRedPassClicked && game.turnColor === CONSTANTS.RED) {
       nextTurn();
     }
-    const isBlackPassClicked = panel.isBlackPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isBlackPassClicked = ui.panel.isBlackPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isBlackPassClicked && game.turnColor === CONSTANTS.BLACK) {
       nextTurn();
     }

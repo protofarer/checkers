@@ -1,8 +1,9 @@
 import Disc from './disc';
 import { CONSTANTS } from '../main';
+import Panel from './panel';
 
 export default class Game {
-  constructor (debugBoard=false) {
+  constructor (canvas, debugBoard=false) {
     console.log('debugboard', debugBoard)
     this.board = debugBoard
       ? [ 
@@ -44,6 +45,18 @@ export default class Game {
 
     this.initDiscs();
     this.updateDiscActors();
+
+    this.ctx = canvas.getContext('2d');
+    this.rect = canvas.getBoundingClientRect();
+
+    this.boardHeight = 800;
+    this.boardWidth = 800;
+    canvas.width = this.boardWidth + this.panelWidth + 15;
+    canvas.height = this.boardHeight;
+
+    this.panelWidth = 200;
+    this.panelHeight = this.boardHeight;
+    this.panel = new Panel(this.panelWidth, this.panelHeight, this.ctx)
   }
   initDiscs() {
     for (let i = 0; i < 8; i++) {

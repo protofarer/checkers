@@ -21,18 +21,15 @@ const containerDims = {
   panelHeight: 800
 };
 
-let { 
-  canvas, ctx, rect, ui
-} = setupApp('app', containerDims)
+let ui = setupApp('app')
 
-let { newgame: game, panel } = setupGame(ctx, true, containerDims);
+let { newgame: game } = setupGame(ui.canvas, true);
 
 let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
-setupEventListeners({ canvas, ctx,
-  rect,
+
+setupEventListeners({ 
   ui,
   game,
-  panel,
   nextTurn,
   resetGame,
   CONSTANTS,
@@ -40,13 +37,13 @@ setupEventListeners({ canvas, ctx,
 });
 
 function draw() {
-  clr(canvas, ctx);
-  drawBoard(ctx);
-  drawDiscs(ctx, game.discs);
-  panel.draw(game);
+  clr(ui.canvas, game.ctx);
+  drawBoard(game.ctx);
+  drawDiscs(game.ctx, game.discs);
+  game.panel.draw(game.captures, game.turnColor);
   drawPossibleMoves();
   drawStatus();
-  drawDebugEle(ui.debugEle, rect, canvas);
+  drawDebugEle(ui.debugEle, game.rect, ui.canvas);
   drawBoardStateEle(ui.boardStateEle);
   requestAnimationFrame(draw);
 }
@@ -61,11 +58,11 @@ ui.debugResetButton.addEventListener('click', () => {
 });
 
 export function resetGame() {
-  ({ game, panel } = setupGame(ctx, false, containerDims));
+  ({ game } = setupGame(ui.canvas, false));
 }
 
 export function debugResetGame() {
- ({ game, panel } = setupGame(ctx, true, containerDims));
+ ({ game } = setupGame(ui.canvas, true));
 }
 
 function drawBoard(ctx) {

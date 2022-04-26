@@ -1,17 +1,14 @@
 import Game from './modules/game';
 import Panel from './modules/panel';
 
-export function setupApp(id, dims) {
+export function setupApp(id) {
 
   const container = document.createElement('div');
   container.id = id;
   document.body.appendChild(container);
 
   const canvas = document.createElement('canvas');
-  canvas.width = dims.boardWidth + dims.panelWidth + 15;
-  canvas.height = dims.boardHeight;
   container.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
 
   container.appendChild(document.createElement('hr'));
   
@@ -47,21 +44,17 @@ export function setupApp(id, dims) {
   debugResetButton.innerText = 'debug\nreset';
   infoWrapper.appendChild(debugResetButton);
 
-  const rect = canvas.getBoundingClientRect();
-
-  return { 
-    canvas, ctx, rect, 
-    ui: {
-      statusEle, debugEle, boardStateEle, 
-      debugButton,resetButton, debugResetButton
-    }
+  return {
+    canvas,
+    statusEle, debugEle, boardStateEle, 
+    debugButton,resetButton, debugResetButton
   };
 }
 
-export function setupGame(ctx, debug, dims) {
-  const newgame = new Game(debug);
-  const panel = new Panel(dims.panelWidth, dims.panelHeight, ctx, newgame);
-  return { newgame, panel };
+export function setupGame(canvas, debug) {
+  const newgame = new Game(canvas, debug);
+  // const panel = new Panel(dims.panelWidth, dims.panelHeight, ctx, newgame);
+  return { newgame };
 }
 
 export function clr(canvas, ctx) {
