@@ -14,7 +14,7 @@ const initDebugMode = true;
 let ui = setupExternalUI('html')
 let game = new Game(ui, initDebugMode);
 
-export function resetGame() {
+export function resetGame(debug=false) {
   game = new Game(ui, false);
 }
 
