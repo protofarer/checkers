@@ -71,16 +71,16 @@ export default function setupEventListeners({
       }
     } 
 
-    const isResetClicked = ui.panel.isResetClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isResetClicked = game.panel.isResetClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isResetClicked) {
       resetGame();
     }
 
-    const isRedPassClicked = ui.panel.isRedPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isRedPassClicked = game.panel.isRedPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isRedPassClicked && game.turnColor === CONSTANTS.RED) {
       nextTurn();
     }
-    const isBlackPassClicked = ui.panel.isBlackPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
+    const isBlackPassClicked = game.panel.isBlackPassClicked(mouseCoords.mouseX, mouseCoords.mouseY);
     if (isBlackPassClicked && game.turnColor === CONSTANTS.BLACK) {
       nextTurn();
     }

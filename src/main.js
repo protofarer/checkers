@@ -14,13 +14,6 @@ export const CONSTANTS = {
   GHOST: 3,
 }
 
-const containerDims = {
-  boardWidth: 800,
-  boardHeight: 800,
-  panelWidth: 200,
-  panelHeight: 800
-};
-
 let ui = setupApp('app')
 
 let { newgame: game } = setupGame(ui.canvas, true);
@@ -88,13 +81,13 @@ function drawPossibleMoves() {
       const captureMoves = game.findCaptureMoves(game.grabbedDisc.disc); 
       for (let m of captureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.draw(ctx);
+        ghostDisc.draw(game.ctx);
       }
     } else if (game.grabbedDisc.type === 'mover') {
       const nonCaptureMoves = game.findNonCaptureMoves(game.grabbedDisc.disc);
       for (let m of nonCaptureMoves) {
         const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-        ghostDisc.draw(ctx);
+        ghostDisc.draw(game.ctx);
       }
     }
   }

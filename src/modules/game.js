@@ -48,14 +48,16 @@ export default class Game {
 
     this.ctx = canvas.getContext('2d');
     this.rect = canvas.getBoundingClientRect();
-
+    
     this.boardHeight = 800;
     this.boardWidth = 800;
-    canvas.width = this.boardWidth + this.panelWidth + 15;
-    canvas.height = this.boardHeight;
-
     this.panelWidth = 200;
     this.panelHeight = this.boardHeight;
+    
+    canvas.width = this.boardWidth + this.panelWidth + 15;
+    canvas.height = this.boardHeight;
+    console.log('IN game canvas', canvas)
+
     this.panel = new Panel(this.panelWidth, this.panelHeight, this.ctx)
   }
   initDiscs() {
