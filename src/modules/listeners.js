@@ -1,17 +1,31 @@
 // export let mouseX, mouseY, cX, cY;
 
-export function setupEventListeners({
-    canvas, 
-    rect, 
-    debugEle, 
-    boardStateEle,
-    game,
-    panel,
-    nextTurn,
-    resetGame,
-    CONSTANTS,
-    mouseCoords,
-  }) {
+// export function setupEventListeners({
+//     canvas, 
+//     rect, 
+//     debugEle, 
+//     boardStateEle,
+//     game,
+//     panel,
+//     nextTurn,
+//     resetGame,
+//     CONSTANTS,
+//     // mouseCoords,
+//   }) {
+
+export function setupEventListeners(props) {
+  // console.log(...props)
+  let canvas = props.canvas
+  let rect = props.rect;
+  let debugEle = props.debugEle
+  let boardStateEle = props.boardStateEle
+  let game = props.game
+  let panel = props.panel
+  let nextTurn = props.nextTurn
+  let CONSTANTS = props.CONSTANTS
+  let mouseCoords = props.mouseCoords
+
+
 
   document.addEventListener('mousemove', handleMouseMove);
   canvas.addEventListener('mousedown', handleMouseDown); 

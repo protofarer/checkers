@@ -30,39 +30,38 @@ const containerDims = {
 export let { 
   canvas, ctx, statusEle, debugEle, debugButton, boardStateEle, 
   rect, resetButton, debugResetButton
-} = setupApp('app', containerDims);
+} = setupApp('app', containerDims)
 
-export let { game, panel } = setupGame(ctx, true, containerDims);
+console.log(canvas)
 
-function main() {
-  let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
-  setupEventListeners({
-    canvas,
-    rect,
-    debugEle,
-    boardStateEle,
-    game,
-    panel,
-    nextTurn,
-    resetGame,
-    CONSTANTS,
-    mouseCoords
-  });
+export let { newgame: game, panel } = setupGame(ctx, true, containerDims);
 
-  function draw() {
-    clr(canvas, ctx);
-    drawBoard(ctx);
-    drawDiscs(ctx, game.discs);
-    panel.draw(game);
-    drawPossibleMoves();
-    drawStatus();
-    drawDebugEle(debugEle, rect, canvas);
-    drawBoardStateEle(boardStateEle);
-    requestAnimationFrame(draw);
-  }
-  draw();
+let mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
+// console.log(canvas, ctx, statusEle,debugEle, debugButton,boardStateEle, rect, resetButton,debugResetButton)
+setupEventListeners({ canvas,
+  rect,
+  debugEle,
+  boardStateEle,
+  game,
+  panel,
+  nextTurn,
+  resetGame,
+  CONSTANTS,
+  mouseCoords 
+});
+
+function draw() {
+  clr(canvas, ctx);
+  drawBoard(ctx);
+  drawDiscs(ctx, game.discs);
+  panel.draw(game);
+  drawPossibleMoves();
+  drawStatus();
+  drawDebugEle(debugEle, rect, canvas);
+  drawBoardStateEle(boardStateEle);
+  requestAnimationFrame(draw);
 }
-main();
+draw();
 
 resetButton.addEventListener('click', () => {
   resetGame();
@@ -117,16 +116,16 @@ function drawPossibleMoves() {
 
 function drawDiscs(ctx, discs) {
   for (let disc of discs) {
-    disc.draw(ctx);
+    disc.draw(ctx, mouseCoords.mouseX, mouseCoords.mouseY);
   }
 }
 
 export function drawDebugEle(debugEle, rect, canvas) {
   debugEle.innerHTML = `\
     <span>
-      client: ${cX},${cY} <br />
-      mouse: ${Math.floor(mouseX)},${Math.floor(mouseY)}<br />
-      row,col: ${Math.floor(parseFloat((mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((mouseX)/100,2).toFixed(2))) }<br />
+      client: ${mouseCoords.cX},${mouseCoords.cY} <br />
+      mouse: ${Math.floor(mouseCoords.mouseX)},${Math.floor(mouseCoords.mouseY)}<br />
+      row,col: ${Math.floor(parseFloat((mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
       rectpos: ${Math.floor(rect.left)},${Math.floor(rect.top)}<br />
       canvas: ${canvas.width},${canvas.height}<br />
     </span>

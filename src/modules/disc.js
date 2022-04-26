@@ -1,6 +1,5 @@
 import { CONSTANTS } from '../main';
 import { ctx } from '../main';
-import { mouseX, mouseY } from './listeners.js';
 
 export default class Disc {
   #path;
@@ -57,7 +56,7 @@ export default class Disc {
     this.isKing = true;
   }
   
-  draw(ctx) {
+  draw(ctx, mouseX, mouseY) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed
     let x, y;
