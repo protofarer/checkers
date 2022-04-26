@@ -3,6 +3,7 @@ import { CONSTANTS } from '../main';
 export default class Disc {
   #path;
   constructor(row, col, color) {
+    console.log('row',row)
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row must be initialized`);
     }
@@ -16,7 +17,7 @@ export default class Disc {
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.isGrabbed = false;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isKing = false;
+    this.isKing = true;
     this.animateFrame = 0;
     this.kingColor = `hsl(0, 0%, 0%)`;
   }
@@ -31,9 +32,11 @@ export default class Disc {
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
-        this.kingColor = `hsl(${(Math.floor(this.animateFrame / 30) % 186) + 70}, 100%, 40%)`;
+        let colorFrequency = (Math.floor(this.animateFrame / 15) % 300) + 30;
+        // if (colorFrequency === 256)
+        this.kingColor = `hsl(${colorFrequency}, 100%, 40%)`;
       } else {
-        this.kingColor = `hsl(${Math.floor(this.animateFrame / 30) % 256}, 100%, 70%)`;
+        this.kingColor = `hsl(${Math.floor(this.animateFrame / 15) % 360}, 100%, 70%)`;
       }
     }
     return this.kingColor;
