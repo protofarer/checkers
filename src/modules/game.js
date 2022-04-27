@@ -33,16 +33,28 @@ export default class Game {
     this.msg = "";
     this.turnCount = 0;
     this.turnColor = CONSTANTS.BLACK;
-    this.captures = {
-      forRed: 0,
-      forBlack: 0,
-    };
     this.grabbedDisc = {
       disc: null,
       type: null,
     };
     this.hasCaptureChainStarted = false;
     this.mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
+    this.phase = CONSTANTS.PHASE_PLAY;    // new, playing, end
+
+    this.captures = {
+      forRed: 0,
+      forBlack: 0,
+    };
+
+    this.match = {
+      count: 0,
+      red: {
+        wins: 0
+      },
+      black: {
+        wins: 0
+      }
+    }
 
     this.initDiscs();
     this.updateDiscActors();
@@ -422,6 +434,10 @@ export default class Game {
     }
   }
 
+  drawEndDialog() {
+    
+  }
+
   drawAll() {
     this.drawBoard();
     this.drawDiscs();
@@ -430,5 +446,8 @@ export default class Game {
       turnColor: this.turnColor 
     });
     this.drawPossibleMoves();
+    if (this.phase === CONSTANTS.END) {
+
+    }
   }
 }

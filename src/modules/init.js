@@ -77,11 +77,11 @@ export default function setupExternalUI(id) {
     function drawStatus() {
       statusEle.innerHTML = `\
         <strong>Status:</strong> <br />
-        message: ${game.msg} <br />
-        <strong>Match</strong> <br />
-        Red: pts <br />
-        Black: pts <br />
-        turnCount: ${game.turnCount} <br />
+        Message: ${game.msg} <br />
+        Turns: ${game.turnCount} <br />
+        <strong>Match:</strong> <br />
+        Red victories: ${game.match.red.wins} <br />
+        Black victories: ${game.match.black.wins} <br />
         \
       `;
     }
