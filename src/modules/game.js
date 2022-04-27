@@ -355,9 +355,9 @@ export default class Game {
     function handleDebugClick() {
       this.debugMode = !this.debugMode;
       debugButton.innerText = this.debugMode
-        ? 'turn\ndebugMode\noff' 
-        : 'turn\ndebugMode\non';
-      this.ui.debugEle.style.display = game.debugMode ? 'block' : 'none';
+        ? 'turn\ndebug\noff' 
+        : 'turn\ndebug\non';
+      this.ui.debugEle.style.display = this.debugMode ? 'block' : 'none';
       this.ui.boardStateEle.style.display = this.debugMode ? 'block' : 'none';
     }
   }
