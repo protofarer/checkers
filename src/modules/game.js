@@ -4,8 +4,9 @@ import Panel from './panel';
 
 export default class Game {
   constructor (ui, debugMode=false) {
+    this.debugMode = debugMode;
     this.ui = ui;
-    this.board = debugMode
+    this.board = this.debugMode
       ? [ 
           [0,0,0,0,0,0,0,0],
           [0,0,2,0,0,0,0,0],
@@ -41,7 +42,6 @@ export default class Game {
       type: null,
     };
     this.hasCaptureChainStarted = false;
-    this.debug = true;
     this.mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
 
     this.initDiscs();
@@ -217,7 +217,7 @@ export default class Game {
     document.addEventListener('mousemove', handleMouseMove.bind(this));
     this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
-    this.ui.debugButton.addEventListener('click', toggleDebug.bind(this));
+    this.ui.debugButton.addEventListener('click', handleDebugClick.bind(this));
 
     function handleMouseMove(e) {
       this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
@@ -351,17 +351,17 @@ export default class Game {
       } else if (discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
         // DISPATCH BLACK WINS
       }
-    }
-
-    function toggleDebug(e) {
-      this.debug = !this.debug;
-      this.ui.debugButton.innerText = this.debug 
+    } 
+    function handleDebugClick() {
+      this.debugMode = !this.debugMode;
+      debugButton.innerText = this.debugMode
         ? 'turn\ndebugMode\noff' 
         : 'turn\ndebugMode\non';
-      this.ui.debugEle.style.display = this.debug ? 'block' : 'none';
-      this.ui.boardStateEle.style.display = this.debug ? 'block' : 'none';
+      this.ui.debugEle.style.display = game.debugMode ? 'block' : 'none';
+      this.ui.boardStateEle.style.display = this.debugMode ? 'block' : 'none';
     }
   }
+
   clr() {
     this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height);
   }
