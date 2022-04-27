@@ -218,6 +218,7 @@ export default class Game {
     this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
     this.ui.debugButton.addEventListener('click', handleDebugClick.bind(this));
+    this.ui.kingButton.addEventListener('click', handleKingClick.bind(this));
 
     function handleMouseMove(e) {
       this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
@@ -354,11 +355,25 @@ export default class Game {
     } 
     function handleDebugClick() {
       this.debugMode = !this.debugMode;
-      debugButton.innerText = this.debugMode
-        ? 'turn\ndebug\noff' 
-        : 'turn\ndebug\non';
-      this.ui.debugEle.style.display = this.debugMode ? 'block' : 'none';
-      this.ui.boardStateEle.style.display = this.debugMode ? 'block' : 'none';
+      if (this.debugMode) {
+        debugButton.innerText = 'turn\ndebug\noff';
+        this.ui.debugEle.style.display = 'block';
+        this.ui.boardStateEle.style.display = 'block';
+        this.ui.resetButton.style.display = 'block';
+        this.ui.debugResetButton.style.display = 'block';
+        this.ui.kingButton.style.display = 'block';
+      } else {
+        debugButton.innerText =  'turn\ndebug\non';
+        this.ui.debugEle.style.display = 'none';
+        this.ui.boardStateEle.style.display = 'none';
+        this.ui.resetButton.style.display = 'none';
+        this.ui.debugResetButton.style.display = 'none';
+        this.ui.kingButton.style.display = 'none';
+      }
+    }
+
+    function handleKingClick() {
+      this.discs.forEach(disc => { disc.isKing = !disc.isKing });
     }
   }
 

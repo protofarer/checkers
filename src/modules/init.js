@@ -17,6 +17,7 @@ export default function setupExternalUI(id) {
   
   const statusEle = document.createElement('div');
   statusEle.id = 'status';
+  statusEle.style.width = '300px';
   infoWrapper.appendChild(statusEle);
   
   const debugButton = document.createElement('button');
@@ -41,6 +42,10 @@ export default function setupExternalUI(id) {
   const debugResetButton = document.createElement('button');
   debugResetButton.innerText = 'debug\nreset\nboard';
   infoWrapper.appendChild(debugResetButton);
+
+  const kingButton = document.createElement('button');
+  kingButton.innerText = 'toggle\nkings';
+  infoWrapper.appendChild(kingButton);
   
   resetButton.addEventListener('click', () => {
     resetGame();
@@ -73,10 +78,11 @@ export default function setupExternalUI(id) {
       statusEle.innerHTML = `\
         <strong>Status:</strong> <br />
         message: ${game.msg} <br />
-        turnColor: ${game.turnColor === CONSTANTS.BLACK ? 'black' : 'red'} <br />
+        <strong>Match</strong> <br />
+        Red: pts <br />
+        Black: pts <br />
         turnCount: ${game.turnCount} <br />
-        Captures for red: ${game.captures.forRed} <br />
-        Captures for black: ${game.captures.forBlack}\
+        \
       `;
     }
 
@@ -88,7 +94,7 @@ export default function setupExternalUI(id) {
   return {
     canvas,
     statusEle, debugEle, boardStateEle, 
-    debugButton,resetButton, debugResetButton,
+    debugButton,resetButton, debugResetButton, kingButton,
     updateAll
   };
 }
