@@ -46,6 +46,10 @@ export default function setupExternalUI(id) {
   const kingButton = document.createElement('button');
   kingButton.innerText = 'toggle\nkings';
   infoWrapper.appendChild(kingButton);
+
+  const victoryButton = document.createElement('button')
+  victoryButton.innerText = 'trigger victory';
+  infoWrapper.appendChild(victoryButton);
   
   resetButton.addEventListener('click', () => {
     resetGame();
@@ -64,6 +68,8 @@ export default function setupExternalUI(id) {
           row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
           rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
           canvas: ${canvas.width},${canvas.height}<br />
+          phase: ${game.phase}<br />
+          winner: ${game.winner}
         </span>
       `;
     }
@@ -80,10 +86,10 @@ export default function setupExternalUI(id) {
         Message: ${game.msg} <br />
         Turns: ${game.turnCount} <br />
         <strong>Match:</strong> <br />
-        Red victories: ${game.match.red.wins} <br />
-        Black victories: ${game.match.black.wins} <br />
         \
       `;
+        // Red victories: ${game.match.red.wins} <br />
+        // Black victories: ${game.match.black.wins} <br />
     }
 
     drawStatus();
@@ -94,7 +100,7 @@ export default function setupExternalUI(id) {
   return {
     canvas,
     statusEle, debugEle, boardStateEle, 
-    debugButton,resetButton, debugResetButton, kingButton,
+    debugButton,resetButton, debugResetButton, kingButton, victoryButton,
     updateAll
   };
 }

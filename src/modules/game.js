@@ -40,21 +40,22 @@ export default class Game {
     this.hasCaptureChainStarted = false;
     this.mouseCoords = { mouseX: 0, mouseY: 0, cX: 0, cY: 0 };
     this.phase = CONSTANTS.PHASE_PLAY;    // new, playing, end
+    this.winner = "";
 
     this.captures = {
       forRed: 0,
       forBlack: 0,
     };
 
-    this.match = {
-      count: 0,
-      red: {
-        wins: 0
-      },
-      black: {
-        wins: 0
-      }
-    }
+    // this.match = {
+    //   count: 0,
+    //   red: {
+    //     wins: 0
+    //   },
+    //   black: {
+    //     wins: 0
+    //   }
+    // }
 
     this.initDiscs();
     this.updateDiscActors();
@@ -230,7 +231,13 @@ export default class Game {
     this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
     this.ui.debugButton.addEventListener('click', handleDebugClick.bind(this));
-    this.ui.kingButton.addEventListener('click', handleKingClick.bind(this));
+    this.ui.kingButton.addEventListener('click', handleDebugKing.bind(this));
+    this.ui.victoryButton.addEventListener('click', handleDebugVictory.bind(this));
+
+    function handleDebugVictory() {
+      this.phase = CONSTANTS.PHASE_END;
+      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
+    }
 
     function handleMouseMove(e) {
       this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
@@ -354,14 +361,19 @@ export default class Game {
         return (Math.floor(x/100) === c && Math.floor(y/100) === r)
       }
 
-      if (discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+      if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+        this.phase = CONSTANTS.PHASE_END;
+        this.winner = CONSTANTS.BLACK;
+
         // DISPATCH RED WINS
         // TODO show win dialog
         //    add point to winner
         //    exclamation
         //    show new game button
         //    reset game
-      } else if (discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
+      } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
+        this.phase = CONSTANTS.PHASE_END;
+        this.winner = CONSTANTS.RED;
         // DISPATCH BLACK WINS
       }
     } 
@@ -384,7 +396,7 @@ export default class Game {
       }
     }
 
-    function handleKingClick() {
+    function handleDebugKing() {
       this.discs.forEach(disc => { disc.isKing = !disc.isKing });
     }
   }
@@ -434,20 +446,30 @@ export default class Game {
     }
   }
 
-  drawEndDialog() {
-    
+  drawVictoryDialog() {
+    this.ctx.beginPath()
+    this.ctx.fillStyle = 'hsla(0, 0%, 95%, 0.75)'
+    this.ctx.fillRect(100, 200, 600, 400);
+
+    this.ctx.fillStyle = this.winner === CONSTANTS.RED 
+      ? 'crimson'
+      : 'black';
+    this.ctx.font = 'bold 60px Arial';
+    this.ctx.fillText(
+      `${this.winner === CONSTANTS.RED ? 'RED' : 'BLACK'}`,
+      300, 350
+    )
+    this.ctx.fillStyle = 'green'
+    this.ctx.fillText(
+      'WINS!',
+      300, 425)
   }
 
   drawAll() {
     this.drawBoard();
     this.drawDiscs();
-    this.panel.draw({ 
-      captures: this.captures, 
-      turnColor: this.turnColor 
-    });
+    this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
     this.drawPossibleMoves();
-    if (this.phase === CONSTANTS.END) {
-
-    }
+    this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog();
   }
 }
