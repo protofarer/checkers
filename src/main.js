@@ -1,6 +1,10 @@
 import setupExternalUI from './modules/init.js';
 import Game from './modules/game.js';
 
+export const ENV = new (function() {
+  this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
+})()
+
 export const CONSTANTS = {
   BLANK: 0,
   BLACK: 1,
