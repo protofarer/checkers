@@ -57,15 +57,22 @@ export default class Game {
     //   }
     // }
 
-    this.initDiscs();
-    this.updateDiscActors();
-
     this.ctx = this.ui.canvas.getContext('2d');
     
-
     this.boardHeight = 800;
     this.boardWidth = 800;
     this.baseThickness = 50;      // decorative graphic around board
+    
+    // Play area is the active area of board, ie not including baseboard
+    // and defined as such to calculate based off coordinates relative to
+    // the interior of the board itself. The board's absolute position
+    // is modified by:
+    // canvas's offset in window (e.clientX,Y)
+    // board's offset in canvas (playAreaOffset.x,y)
+    this.playAreaOffset = {
+      x: this.baseThickness,
+      y: this.baseThickness,
+    }
 
     this.boardPanelGap = 15;
 
@@ -86,6 +93,8 @@ export default class Game {
 
     this.rect = this.ui.canvas.getBoundingClientRect();
 
+    this.initDiscs();
+    this.updateDiscActors();
     this.setupEventListeners();
   }
 
@@ -94,10 +103,10 @@ export default class Game {
       for (let j = 0; j < 8; j++) {
         switch(this.board[i][j]) {
           case CONSTANTS.RED:
-            this.discs.push(new Disc(i, j, CONSTANTS.RED));
+            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED));
             break;
           case CONSTANTS.BLACK:
-            this.discs.push(new Disc(i, j, CONSTANTS.BLACK));
+            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK));
             break;
           case CONSTANTS.BLANK:
             break;
@@ -254,15 +263,16 @@ export default class Game {
     }
 
     function handleMouseMove(e) {
-      this.mouseCoords.mouseX = e.clientX - this.rect.left; //window.scrollX
-      this.mouseCoords.mouseY = e.clientY - this.rect.top;
+      // mouseX,Y are the coordinates within the play area
+      this.mouseCoords.mouseX = e.clientX - this.rect.left - this.playAreaOffset.x; //window.scrollX
+      this.mouseCoords.mouseY = e.clientY - this.rect.top - this.playAreaOffset.y;
       this.mouseCoords.cX = e.clientX;
       this.mouseCoords.cY = e.clientY;
     }
 
     function handleMouseDown(e) {
       const clickedDisc = this.discs.find(disc =>
-        disc.isClicked(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY));
+        disc.isClicked(this.mouseCoords.mouseX, this.mouseCoords.mouseY));
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
@@ -390,7 +400,8 @@ export default class Game {
         this.winner = CONSTANTS.RED;
         // DISPATCH BLACK WINS
       }
-    } 
+    }
+
     function handleDebugClick() {
       this.debugMode = !this.debugMode;
       if (this.debugMode) {
@@ -422,7 +433,7 @@ export default class Game {
   drawBoard() {
     const boardHue = 45;
     this.ctx.save();
-    this.ctx.translate(this.baseThickness, this.baseThickness)
+    this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath();
@@ -440,18 +451,19 @@ export default class Game {
 
   drawPossibleMoves() {
     // When disc is grabbed, show available moves
+    // RFCT
     if (this.grabbedDisc.disc) {
       if (this.grabbedDisc.type === 'captor') {
         const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc); 
         for (let m of captureMoves) {
-          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-          ghostDisc.draw(this.ctx);
+          const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
+          ghostDisc.draw(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
         }
       } else if (this.grabbedDisc.type === 'mover') {
-        const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
+        const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc, this.playAreaOffset);
         for (let m of nonCaptureMoves) {
-          const ghostDisc = new Disc(m.row, m.col, CONSTANTS.GHOST)
-          ghostDisc.draw(this.ctx);
+          const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
+          ghostDisc.draw(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
         }
       }
     }
@@ -459,7 +471,7 @@ export default class Game {
 
   drawDiscs() {
     for (let disc of this.discs) {
-      disc.draw(this.ctx, this.mouseCoords.mouseX, this.mouseCoords.mouseY);
+      disc.draw(this.mouseCoords.mouseX, this.mouseCoords.mouseY);
     }
   }
 
@@ -486,7 +498,7 @@ export default class Game {
     this.drawBoard();
     this.drawDiscs();
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
-    this.drawPossibleMoves();
+    // this.drawPossibleMoves();
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog();
   }
 }
