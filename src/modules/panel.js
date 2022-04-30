@@ -9,22 +9,24 @@ export default class Panel {
   #blackPassButtonX;
   #blackPassButtonY;
   
-  constructor (width, height, ctx) {
+  constructor (offsetX, offsetY, width, height, ctx) {
     this.ctx = ctx;
 
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
     this.width = width;     // pixels
     this.height = height;   // pixels
-    this.centerX = 800 + 5 + width/2;
-    this.centerY = 800/2;
+    this.centerX =this.width / 2;
+    this.centerY = this.height / 2;
 
     this.separatorUpperY = this.centerY - 38;
     this.separatorLowerY = this.centerY + 38;
     
-    this.redJailX = 815;
-    this.redJailY = 20;
+    this.redJailOffsetX = 20;   // relative to panel
+    this.redJailOffsetY = 20;  // relative to panel
 
-    this.blackJailX = 815;
-    this.blackJailY = 790;
+    this.blackJailOffsetX = 20;
+    this.blackJailOffsetY = this.height - 20;
 
     this.turnIndicatorX = this.centerX - 75;
     this.turnIndicatorY = this.centerY;
@@ -101,44 +103,46 @@ export default class Panel {
   }
 
   draw({ captures, turnColor }) {
-    this.drawResetButton()
-    this.drawPassButton(
-      this.#redPassButtonX, this.#redPassButtonY, 
-      CONSTANTS.RED, turnColor
-    );
-    this.drawPassButton(
-      this.#blackPassButtonX, this.#blackPassButtonY, 
-      CONSTANTS.BLACK, turnColor
-    );
+    this.ctx.save();
+    this.ctx.translate(this.offsetX, this.offsetY)
+
+    // this.drawResetButton()
+    // this.drawPassButton(
+    //   this.#redPassButtonX, this.#redPassButtonY, 
+    //   CONSTANTS.RED, turnColor
+    // );
+    // this.drawPassButton(
+    //   this.#blackPassButtonX, this.#blackPassButtonY, 
+    //   CONSTANTS.BLACK, turnColor
+    // );
 
     // Topmost panel container
     this.ctx.beginPath();
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'rgb(0,0,0,0.5)';
     // WARN hardcoded position
-    this.ctx.strokeRect(805, 0, this.width, this.height);
+    this.ctx.strokeRect(0, 2, this.width - 2, this.height - 4);
 
     // Dividing line between players' respective info subpanels
-    this.ctx.moveTo(815, this.separatorUpperY);
-    this.ctx.lineTo(815 + this.width - 20, this.separatorUpperY);
-    this.ctx.moveTo(815, this.separatorLowerY);
-    this.ctx.lineTo(815 + this.width - 20, this.separatorLowerY);
-    this.ctx.stroke();
+    this.ctx.moveTo(15, this.separatorUpperY);
+    this.ctx.lineTo(15 + this.width - 30, this.separatorUpperY);
+    this.ctx.moveTo(15, this.separatorLowerY);
+    this.ctx.lineTo(15 + this.width - 30, this.separatorLowerY);
 
     // Draw red's jail
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'black';
     this.ctx.fillText(
       `Blacks captured: ${captures.forRed}`, 
-      this.redJailX, 
-      this.redJailY
+      this.redJailOffsetX, 
+      this.redJailOffsetY
     );
 
     // Draw black's jail
     this.ctx.fillText(
       `Reds captured: ${captures.forBlack}`, 
-      this.blackJailX, 
-      this.blackJailY
+      this.blackJailOffsetX, 
+      this.blackJailOffsetY
     );
 
     // Red's empty turn indicator
@@ -148,6 +152,7 @@ export default class Panel {
       this.turnIndicatorY - 75, 
       16, 0, 2*Math.PI
     );
+    this.ctx.stroke();
 
     // Black's empty turn indicator
     this.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorY + 75);
@@ -163,5 +168,7 @@ export default class Panel {
       : this.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI)
     this.ctx.fillStyle = 'hsl(100, 50%, 50%)';
     this.ctx.fill();
+
+    this.ctx.restore();
   }
 }

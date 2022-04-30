@@ -62,15 +62,29 @@ export default class Game {
 
     this.ctx = this.ui.canvas.getContext('2d');
     
+
     this.boardHeight = 800;
     this.boardWidth = 800;
-    this.panelWidth = 200;
-    this.panelHeight = this.boardHeight;
-    this.ui.canvas.width = this.boardWidth + this.panelWidth + 15;
-    this.ui.canvas.height = this.boardHeight;
-    this.rect = this.ui.canvas.getBoundingClientRect();
+    this.baseThickness = 50;      // decorative graphic around board
 
-    this.panel = new Panel(this.panelWidth, this.panelHeight, this.ctx)
+    this.boardPanelGap = 15;
+
+    const panelOffsetX = this.boardWidth + 2 * this.baseThickness + this.boardPanelGap
+    const panelOffsetY = 0;
+    const panelWidth = 200;
+    const panelHeight = this.boardHeight + 2 * this.baseThickness
+    this.panel = new Panel(
+      panelOffsetX, panelOffsetY,
+      panelWidth, panelHeight,
+      this.ctx
+    )
+    
+    this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
+      + this.boardPanelGap + panelWidth;
+    this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness;
+    this.ui.canvas.style.border = '1px solid red'
+
+    this.rect = this.ui.canvas.getBoundingClientRect();
 
     this.setupEventListeners();
   }
@@ -407,6 +421,8 @@ export default class Game {
 
   drawBoard() {
     const boardHue = 45;
+    this.ctx.save();
+    this.ctx.translate(this.baseThickness, this.baseThickness)
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath();
@@ -419,6 +435,7 @@ export default class Game {
         }
       }
     }
+    this.ctx.restore();
   }
 
   drawPossibleMoves() {
