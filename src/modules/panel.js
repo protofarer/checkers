@@ -67,7 +67,6 @@ export default class Panel {
     this.ctx.fillStyle = 'hsl(0,0%,80%)';
     this.ctx.fillRect(x, y, 70, 30);
     
-    
     this.ctx.font = '16px Arial';
     turnColor === playerColor
       ? this.ctx.fillStyle = 'blue'
@@ -106,21 +105,20 @@ export default class Panel {
     this.ctx.save();
     this.ctx.translate(this.offsetX, this.offsetY)
 
-    // this.drawResetButton()
-    // this.drawPassButton(
-    //   this.#redPassButtonX, this.#redPassButtonY, 
-    //   CONSTANTS.RED, turnColor
-    // );
-    // this.drawPassButton(
-    //   this.#blackPassButtonX, this.#blackPassButtonY, 
-    //   CONSTANTS.BLACK, turnColor
-    // );
+    this.drawResetButton()
+    this.drawPassButton(
+      this.#redPassButtonX, this.#redPassButtonY, 
+      CONSTANTS.RED, turnColor
+    );
+    this.drawPassButton(
+      this.#blackPassButtonX, this.#blackPassButtonY, 
+      CONSTANTS.BLACK, turnColor
+    );
 
     // Topmost panel container
     this.ctx.beginPath();
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'rgb(0,0,0,0.5)';
-    // WARN hardcoded position
     this.ctx.strokeRect(0, 2, this.width - 2, this.height - 4);
 
     // Dividing line between players' respective info subpanels
