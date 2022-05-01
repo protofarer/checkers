@@ -65,14 +65,19 @@ export default class Disc {
   setClickArea() {
     // const x = ((this.col) * 100) + 50 + this.offset.x;
     // const y = ((this.row) * 100) + 50 + this.offset.y;
+    // console.log(`setClickArea centx,y`, this.center.x, this.center.y)
+    // console.log(`in setClickArea, offsets`, this.offset)
+    
     this.#path = new Path2D();
     this.#path.arc(this.center.x, this.center.y + 3, 42, 0, 2 * Math.PI);
   }
 
   isClicked(x, y) {
-    console.log(`Disc ${this.row}, ${this.col} was clicked`)
-    console.log(`mousexy inside isclicked`, x, y)
-     
+    // WARN this if block causes massive performance issues, freezes UI
+    // if (this.ctx.isPointInPath(this.#path, x, y, 'nonzero')) {
+    //   console.log(`canvasxy inside isclicked`, x, y)
+    //   console.log(`Disc ${this.row}, ${this.col} was clicked`)
+    // }
     return this.ctx.isPointInPath(this.#path, x, y, 'nonzero');
   }
 
@@ -83,7 +88,7 @@ export default class Disc {
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
     // Only calculate click area when disc transitions to being at rest
-    !this.isGrabbed && this.setClickArea()
+    // !this.isGrabbed && this.setClickArea()
     return this.isGrabbed;
   }
 
@@ -92,14 +97,14 @@ export default class Disc {
     return this.isKing;
   }
   
-  draw(mouseX, mouseY) {
+  draw(canvasX, canvasY) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed
 
     if (this.isGrabbed) {
       this.center = {
-        x: mouseX,
-        y: mouseY
+        x: canvasX,
+        y: canvasY
       }
     } else {
       this.center = {
@@ -112,7 +117,8 @@ export default class Disc {
     // This click path valid only for when disc is at rest and ungrabbed state
     // CSDR: The y offset for the path's center is off by ~3 pixels
     
-    }
+  }
+  // this.setClickArea()
 
     this.ctx.save()      // save A - disc center
     this.ctx.translate(this.center.x, this.center.y)
@@ -199,6 +205,7 @@ export default class Disc {
     this.ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
     
     // Arc encompassing disc center
+    this.ctx.save()
     for (let i = 0; i < numInlays; i++) {
       this.ctx.rotate(2*Math.PI/numInlays);
       this.ctx.save();
@@ -211,6 +218,7 @@ export default class Disc {
       this.ctx.arc(0, 0, 11, 0, Math.PI*18/12);
       this.ctx.restore();
     }
+    this.ctx.restore()
 
     if (this.isKing) {
       this.ctx.strokeStyle = this.periodicColor();
@@ -218,5 +226,11 @@ export default class Disc {
 
     this.ctx.stroke();
     this.ctx.restore(); // restore A
+    
+    // console.debug(`this.center`, this.center)
+    // this.ctx.save()
+    // this.ctx.translate(this.center.x, this.center.y)
+    this.ctx.stroke(this.#path)
+    // this.ctx.restore()
   }
 }

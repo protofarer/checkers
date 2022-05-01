@@ -64,8 +64,9 @@ export default function setupExternalUI(id) {
       debugEle.innerHTML = `\
         <span>
           client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
-          mouse: ${Math.floor(game.mouseCoords.mouseX)},${Math.floor(game.mouseCoords.mouseY)}<br />
-          row,col: ${Math.floor(parseFloat((game.mouseCoords.mouseY)/100,2).toFixed(2))},${Math.floor((parseFloat((game.mouseCoords.mouseX)/100,2).toFixed(2))) }<br />
+          canvas: ${game.mouseCoords.canvasX},${game.mouseCoords.canvasY}<br />
+          board: ${Math.floor(parseFloat(game.mouseCoords.boardX))}, ${game.mouseCoords.boardY}<br />
+          col,row: ${Math.floor((parseFloat((game.mouseCoords.boardX)/100,2).toFixed(2))) }, ${Math.floor(parseFloat((game.mouseCoords.boardY)/100,2).toFixed(2))}<br />
           rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
           canvas: ${canvas.width},${canvas.height}<br />
           phase: ${game.phase}<br />
