@@ -65,7 +65,7 @@ export default class Game {
     
     this.boardHeight = 800;
     this.boardWidth = 800;
-    this.baseThickness = 50;      // decorative graphic around board
+    this.baseThickness = 75;      // decorative graphic around board
     
     // Play area is the active area of board, ie not including baseboard
     // and defined as such to calculate based off coordinates relative to
@@ -507,7 +507,30 @@ export default class Game {
       300, 425)
   }
 
+  drawBaseBoard() {
+    const origin = {
+      x: 5,
+      y: 5
+    }
+    this.ctx.beginPath()
+
+    // Filler
+    this.ctx.fillStyle = 'hsla(27, 75%, 30%, 1)'
+    this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness - 10, this.boardHeight + 2 * this.baseThickness - 10)
+
+    // Joints
+    this.ctx.strokeStyle = 'black'
+    this.ctx.moveTo(origin.x, origin.y)
+    this.ctx.lineTo(this.boardWidth + 2 * this.baseThickness - 10, this.boardHeight + 2 * this.baseThickness - 10)
+    this.ctx.moveTo(origin.x, origin.y + this.boardHeight + 2 * this.baseThickness - 10)
+    this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness - 10, origin.y)
+    this.ctx.stroke()
+    
+
+  }
+
   drawAll() {
+    this.drawBaseBoard()
     this.drawBoard();
     this.drawDiscs();
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
