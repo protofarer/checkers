@@ -226,11 +226,5 @@ export default class Disc {
 
     this.ctx.stroke();
     this.ctx.restore(); // restore A
-    
-    // console.debug(`this.center`, this.center)
-    // this.ctx.save()
-    // this.ctx.translate(this.center.x, this.center.y)
-    this.ctx.stroke(this.#path)
-    // this.ctx.restore()
   }
 }
