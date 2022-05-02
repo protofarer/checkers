@@ -444,17 +444,18 @@ export default class Game {
   }
 
   drawBoard() {
-    const boardHue = 45;
+    const darkHue = 18;
+    const lightHue = 45;
     this.ctx.save();
     this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath();
         if (( row + col) % 2 === 0) {
-          this.ctx.fillStyle = `hsl(${boardHue}, 100%, 85%)`;
+          this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
         } else {
-          this.ctx.fillStyle = `hsl(${boardHue}, 50%, 50%)`;
+          this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
         }
       }
@@ -508,14 +509,12 @@ export default class Game {
   }
 
   drawBaseBoard() {
-    const origin = {
-      x: 5,
-      y: 5
-    }
+    const origin = { x: 5, y: 5 }
+
     this.ctx.beginPath()
 
     // Filler
-    this.ctx.fillStyle = 'hsla(27, 75%, 30%, 1)'
+    this.ctx.fillStyle = 'hsla(27, 48%, 47%, 1)'
     this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness - 10, this.boardHeight + 2 * this.baseThickness - 10)
 
     // Joints
