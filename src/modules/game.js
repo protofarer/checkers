@@ -461,6 +461,8 @@ export default class Game {
       }
     }
     this.ctx.restore();
+
+
   }
 
   drawPossibleMoves() {
@@ -534,6 +536,7 @@ export default class Game {
     this.drawDiscs();
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
     // this.drawPossibleMoves();
+
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog();
   }
 }

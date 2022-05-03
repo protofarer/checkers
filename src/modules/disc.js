@@ -29,6 +29,7 @@ export default class Disc {
     //   y: ((this.row) * 100) + 50 + this.offset.y
     // }
 
+    this.radius = 40;
     this.color = color;
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
@@ -69,7 +70,7 @@ export default class Disc {
     // console.log(`in setClickArea, offsets`, this.offset)
     
     this.#path = new Path2D();
-    this.#path.arc(this.center.x, this.center.y + 3, 42, 0, 2 * Math.PI);
+    this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI);
   }
 
   isClicked(x, y) {
@@ -100,6 +101,9 @@ export default class Disc {
   draw(canvasX, canvasY) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed
+
+    // VIGIL possible floating point evaluation of (decimal) * radius
+    // may result in unexpected behavior.
 
     if (this.isGrabbed) {
       this.center = {
@@ -133,18 +137,56 @@ export default class Disc {
 
     // Fill disc
 
+    // Shadows for red (approach differently because of compositing problem)
+    // tmp draw disc shadow
+    // first circ offset y -15
+    // 2nd offset y +3
+    if (this.color === CONSTANTS.RED) {
+      if (this.isGrabbed) {
+
+      } else {
+        this.ctx.beginPath()
+        let grad = this.ctx.createRadialGradient(
+          0, 15, 10,
+          0, 3, 45)
+        grad.addColorStop(0,'black')
+        grad.addColorStop(0.8, 'rgba(0,0,0,.8')
+        grad.addColorStop(1, 'rgba(0,0,0,0)')
+        this.ctx.fillStyle = grad
+        this.ctx.fillRect(-50, -50, 100, 100)
+      }
+    }
+
     this.ctx.beginPath();
-    this.ctx.arc(0, 0, 40, 0, 2*Math.PI);
+    this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI);
+
+    
+    // Style and render according to disc type: ghost, red, or black
     if (this.color === CONSTANTS.GHOST) {
       this.ctx.stroke();
     } else {
-      this.ctx.fillStyle = this.color === CONSTANTS.RED ? 'crimson' : 'black';
+      if (this.color === CONSTANTS.RED) {
+
+        this.ctx.fillStyle = 'crimson';
+      } else if (this.color === CONSTANTS.BLACK) {
+        // Shadows for black
+        if (this.isGrabbed) {
+          this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.9)'
+          this.ctx.shadowBlur = 25;
+          this.ctx.shadowOffsetY = this.radius * 0.6
+        } else {
+          this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.8)'
+          this.ctx.shadowBlur = 6;
+          this.ctx.shadowOffsetY = this.radius * 0.07
+        }
+        this.ctx.fillStyle = 'black'
+      }
       this.ctx.fill();
     }
     
     // Inner circle detail
     this.ctx.beginPath();
-    this.ctx.arc(0, 0, 32, 0, 2*Math.PI);
+    this.ctx.arc(0, 0, 0.8 * this.radius, 0, 2*Math.PI);
     this.ctx.stroke();
     
     // Outer ridges
@@ -153,8 +195,8 @@ export default class Disc {
     this.ctx.beginPath();
     for (let i = 0; i < numRidges; i++) {
       this.ctx.rotate(2*Math.PI/numRidges);
-      this.ctx.moveTo(34, 0);
-      this.ctx.lineTo(38, 0);
+      this.ctx.moveTo(0.85 * this.radius, 0);
+      this.ctx.lineTo(0.95 * this.radius, 0);
     }
     this.ctx.stroke();
     this.ctx.restore();
@@ -166,41 +208,43 @@ export default class Disc {
       this.ctx.rotate(2*Math.PI/numInlays);
 
       // Outer and encircled small circle
-      this.ctx.moveTo(23, 0);
-      this.ctx.arc(21, 0, 2, 0, 2*Math.PI);
+      this.ctx.moveTo(0.575 * this.radius, 0);
+      this.ctx.arc(0.525 * this.radius, 0, 0.05 * this.radius, 0, 2*Math.PI);
       
       // Arc outer to small circle
       this.ctx.save();
-      this.ctx.translate(20, 0);
+      this.ctx.translate(0.5 * this.radius, 0);
       this.ctx.rotate(-Math.PI*6/12);
-      this.ctx.moveTo(9, 0);
-      this.ctx.arc(0, 0, 9, 0, Math.PI);
+      this.ctx.moveTo(0.225 * this.radius, 0);
+      this.ctx.arc(0, 0, 0.225 * this.radius, 0, Math.PI);
       this.ctx.restore();
       
       // Line details 'round small circle
       this.ctx.save();
-      this.ctx.translate(21, 0);
+      this.ctx.translate(0.525 * this.radius, 0);
       this.ctx.rotate(Math.PI*-10/12);
       for (let i = 0; i < 3; i++) {
         this.ctx.rotate(Math.PI*5/12);
-        this.ctx.moveTo(4, 0);
-        this.ctx.lineTo(6, 0);
+        this.ctx.moveTo(0.1 * this.radius, 0);
+        this.ctx.lineTo(0.15 * this.radius, 0);
       }
       this.ctx.restore();
       
       // Details just within solid outer circle
       this.ctx.save();
       this.ctx.rotate(Math.PI/numInlays);
-      this.ctx.moveTo(27, 0);
-      this.ctx.lineTo(30, 0);
+      this.ctx.moveTo(0.675 * this.radius, 0);
+      this.ctx.lineTo(0.75 * this.radius, 0);
       this.ctx.rotate(Math.PI/24);
-      this.ctx.moveTo(29, 0);
-      this.ctx.lineTo(30, 0);
+      this.ctx.moveTo(0.725 * this.radius, 0);
+      this.ctx.lineTo(0.75 * this.radius, 0);
       this.ctx.rotate(-2*Math.PI/24);
-      this.ctx.moveTo(29, 0);
-      this.ctx.lineTo(30, 0);
+      this.ctx.moveTo(0.725 * this.radius, 0);
+      this.ctx.lineTo(0.75 * this.radius, 0);
       this.ctx.restore();
     }
+
+
     this.ctx.restore()    
     this.ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
     
