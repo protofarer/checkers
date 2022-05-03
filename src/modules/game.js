@@ -388,6 +388,7 @@ export default class Game {
         }
       }
       // DISPATCH drop disc
+      grabbedDisc.setClickArea()
       grabbedDisc?.toggleGrab();
       this.grabbedDisc.disc = null;
       this.grabbedDisc.type = null;
@@ -455,14 +456,16 @@ export default class Game {
           this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
         } else {
+          // this.ctx.shadowColor = 'black';
+          // this.ctx.shadowBlur = 45;
+          // this.ctx.shadowOffsetY = 20;
           this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
+          // this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
         }
       }
     }
     this.ctx.restore();
-
-
   }
 
   drawPossibleMoves() {

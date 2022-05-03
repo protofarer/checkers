@@ -105,6 +105,10 @@ export default class Disc {
     // VIGIL possible floating point evaluation of (decimal) * radius
     // may result in unexpected behavior.
 
+    const getStrokeStyle = () => {
+      return this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    }
+    
     if (this.isGrabbed) {
       this.center = {
         x: canvasX,
@@ -130,59 +134,71 @@ export default class Disc {
     if (this.color === CONSTANTS.GHOST) {
       this.ctx.strokeStyle = 'hsl(250, 100%, 60%)';
     } else {
-      this.ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+      this.ctx.strokeStyle = getStrokeStyle(); 
       // Adjust for differential contrast between dark on light versus light on dark lines
       this.ctx.lineWidth = this.color === CONSTANTS.RED ? 1 : 0.9; 
     }
 
-    // Fill disc
-
+    // *********************************************
+    // *******    red shadow jank
+    // *********************************************
     // Shadows for red (approach differently because of compositing problem)
     // tmp draw disc shadow
     // first circ offset y -15
     // 2nd offset y +3
-    if (this.color === CONSTANTS.RED) {
-      if (this.isGrabbed) {
+    // if (this.color === CONSTANTS.RED) {
+    //   if (this.isGrabbed) {
+    //     this.ctx.beginPath()
+    //     let grad = this.ctx.createRadialGradient(
+    //       0, 28, 5,
+    //       0, 28, 53)
+    //     grad.addColorStop(0,'black')
+    //     grad.addColorStop(0.7, 'rgba(0,0,0,.5')
+    //     grad.addColorStop(1, 'rgba(0,0,0,0)')
+    //     this.ctx.fillStyle = grad
+    //     this.ctx.fillRect(-50, -50, 160, 160)
 
-      } else {
-        this.ctx.beginPath()
-        let grad = this.ctx.createRadialGradient(
-          0, 15, 10,
-          0, 3, 45)
-        grad.addColorStop(0,'black')
-        grad.addColorStop(0.8, 'rgba(0,0,0,.8')
-        grad.addColorStop(1, 'rgba(0,0,0,0)')
-        this.ctx.fillStyle = grad
-        this.ctx.fillRect(-50, -50, 100, 100)
-      }
-    }
+    //   } else {
+    //     this.ctx.beginPath()
+    //     let grad = this.ctx.createRadialGradient(
+    //       0, 15, 10,
+    //       0, 3, 45)
+    //     grad.addColorStop(0,'black')
+    //     grad.addColorStop(0.8, 'rgba(0,0,0,.8')
+    //     grad.addColorStop(1, 'rgba(0,0,0,0)')
+    //     this.ctx.fillStyle = grad
+    //     this.ctx.fillRect(-50, -50, 100, 100)
+    //   }
+    // }
+
+    // **************************************************************************
+    // **********************    Fill Disc and Shadow
+    // **************************************************************************
 
     this.ctx.beginPath();
     this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI);
-
     
-    // Style and render according to disc type: ghost, red, or black
+    // Style disc fill and shadow according to disc type: ghost, red, or black
+    if (this.isGrabbed) {
+      this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.9)'
+      this.ctx.shadowBlur = 25;
+      this.ctx.shadowOffsetY = this.radius * 0.6
+    } else {
+      this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.8)'
+      this.ctx.shadowBlur = 6;
+      this.ctx.shadowOffsetY = this.radius * 0.07
+    }
+
     if (this.color === CONSTANTS.GHOST) {
       this.ctx.stroke();
     } else {
-      if (this.color === CONSTANTS.RED) {
-
-        this.ctx.fillStyle = 'crimson';
-      } else if (this.color === CONSTANTS.BLACK) {
-        // Shadows for black
-        if (this.isGrabbed) {
-          this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.9)'
-          this.ctx.shadowBlur = 25;
-          this.ctx.shadowOffsetY = this.radius * 0.6
-        } else {
-          this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.8)'
-          this.ctx.shadowBlur = 6;
-          this.ctx.shadowOffsetY = this.radius * 0.07
-        }
-        this.ctx.fillStyle = 'black'
-      }
-      this.ctx.fill();
+      this.ctx.fillStyle = this.color === CONSTANTS.RED
+        ? 'crimson'
+        : 'black'
     }
+
+    this.ctx.fill();
+    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null;
     
     // Inner circle detail
     this.ctx.beginPath();
@@ -244,9 +260,8 @@ export default class Disc {
       this.ctx.restore();
     }
 
-
     this.ctx.restore()    
-    this.ctx.strokeStyle = this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    this.ctx.strokeStyle = getStrokeStyle();
     
     // Arc encompassing disc center
     this.ctx.save()
