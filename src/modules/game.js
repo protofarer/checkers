@@ -344,33 +344,32 @@ export default class Game {
 
     function handleMouseUp(e) {
       // CSDR moving grabbedDisc to this
-      const grabbedDisc = this.grabbedDisc.disc;
-      if (grabbedDisc) {
-        const isCaptor = this.captors.find(c => c === grabbedDisc); 
-        const isMover = this.movers.find(m => m === grabbedDisc);
+      if (this.grabbedDisc) {
+        const isCaptor = this.captors.find(c => c === this.grabbedDisc); 
+        const isMover = this.movers.find(m => m === this.grabbedDisc);
         
         // if is a captor and mouseupped on valid capture move
         if (isCaptor) {
-          const captureMoves = this.findCaptureMoves(grabbedDisc);
+          const captureMoves = this.findCaptureMoves(this.grabbedDisc);
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (validCaptureMove) {
             // DISPATCH valid capture move
-            this.capture(grabbedDisc, validCaptureMove);
-            this.move(grabbedDisc, validCaptureMove);
+            this.capture(this.grabbedDisc, validCaptureMove);
+            this.move(this.grabbedDisc, validCaptureMove);
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = "Not a valid capture move";
           }
         } else if (isMover) {
-          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+          const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc);
           const nonCaptureMove = nonCaptureMoves.find(move =>
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (nonCaptureMove) {
             // DISPATCH valid mover move
-            this.move(grabbedDisc, nonCaptureMove);
+            this.move(this.grabbedDisc, nonCaptureMove);
             this.nextTurn();
           } else {
             // DISPATCH invalid-mover-move msg
@@ -381,15 +380,15 @@ export default class Game {
           // DISPATCH nextTurn
           this.nextTurn();
         }
-        if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
-        || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+        if ((this.grabbedDisc.row === 0 && this.grabbedDisc.color === CONSTANTS.BLACK)
+        || (this.grabbedDisc.row === 7 && this.grabbedDisc.color === CONSTANTS.RED)) {
           // DISPATCH makeKing
-          grabbedDisc.isKing = true;
+          this.grabbedDisc.isKing = true;
         }
       }
       // DISPATCH drop disc
-      grabbedDisc.setClickArea()
-      grabbedDisc?.toggleGrab();
+      this.grabbedDisc.setClickArea()
+      this.grabbedDisc?.toggleGrab();
       this.grabbedDisc.disc = null;
       this.grabbedDisc.type = null;
       
