@@ -295,6 +295,8 @@ export default class Game {
               clickedDisc.toggleGrab();
               this.grabbedDisc.disc = clickedDisc;
               this.grabbedDisc.type = "captor";
+              console.log(`a captor was grabbed`, )
+              
             } else if (isMover) {
               // DISPATCH must-capture msg
               this.msg = "You must capture when possible.";
@@ -305,6 +307,7 @@ export default class Game {
               clickedDisc.toggleGrab();
               this.grabbedDisc.disc = clickedDisc;
               this.grabbedDisc.type = "mover";
+              console.log(`a mover was grabbed`)
             } else if (this.movers.length === 0 && this.captors.length === 0) {
               // DISPATCH no-moves-avail msg
               this.msg = "You have no moves available! Press pass to turn control to other player";
@@ -343,8 +346,16 @@ export default class Game {
     }
 
     function handleMouseUp(e) {
+
+      function isMouseInSquare(x, y, r, c) {
+        // console.debug(`isMouseInSquarexy`, x, y)
+        return (Math.floor(x/100) === c && Math.floor(y/100) === r)
+      }
+
       // CSDR moving grabbedDisc to this
       if (this.grabbedDisc) {
+        console.log(`grabbedDisc exists, in mouseup`, this.grabbedDisc)
+        
         const isCaptor = this.captors.find(c => c === this.grabbedDisc); 
         const isMover = this.movers.find(m => m === this.grabbedDisc);
         
@@ -385,18 +396,15 @@ export default class Game {
           // DISPATCH makeKing
           this.grabbedDisc.isKing = true;
         }
+        // DISPATCH drop disc
+        this.grabbedDisc.disc.setClickArea()
+        this.grabbedDisc.disc.toggleGrab();
+        this.grabbedDisc = {
+          type: null,
+          disc: null,
+        }
       }
-      // DISPATCH drop disc
-      this.grabbedDisc.setClickArea()
-      this.grabbedDisc?.toggleGrab();
-      this.grabbedDisc.disc = null;
-      this.grabbedDisc.type = null;
       
-      function isMouseInSquare(x, y, r, c) {
-        console.debug(`isMouseInSquarexy`, x, y)
-        
-        return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-      }
 
       if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
         this.phase = CONSTANTS.PHASE_END;

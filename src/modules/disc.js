@@ -13,7 +13,7 @@ export default class Disc {
       throw new TypeError(`A disc's offsets are not initialized`)
     }
     this.ctx = ctx;
-    this.id = `${parseInt(row)}${parseInt(col)}`;
+    this.id = `${parseInt(col)}${parseInt(row)}`;
     this.col = col;
     this.row = row;
     this.offset = offset;
