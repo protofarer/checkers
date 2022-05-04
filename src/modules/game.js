@@ -284,6 +284,8 @@ export default class Game {
       const clickedDisc = this.discs.find(disc =>
         disc.isClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY)
       );
+      console.log(`a disc was clicked`, clickedDisc)
+      
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
@@ -352,35 +354,36 @@ export default class Game {
         return (Math.floor(x/100) === c && Math.floor(y/100) === r)
       }
 
-      // CSDR moving grabbedDisc to this
-      if (this.grabbedDisc) {
-        console.log(`grabbedDisc exists, in mouseup`, this.grabbedDisc)
+      if (this.grabbedDisc.disc !== null && this.grabbedDisc.disc !== undefined) {
+        console.log(`grabbedDisc exists, in mouseup`, this.grabbedDisc.disc)
         
-        const isCaptor = this.captors.find(c => c === this.grabbedDisc); 
-        const isMover = this.movers.find(m => m === this.grabbedDisc);
+        const isCaptor = this.captors.find(c => c === this.grabbedDisc.disc); 
+        const isMover = this.movers.find(m => m === this.grabbedDisc.disc);
         
         // if is a captor and mouseupped on valid capture move
         if (isCaptor) {
-          const captureMoves = this.findCaptureMoves(this.grabbedDisc);
+          const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc);
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (validCaptureMove) {
             // DISPATCH valid capture move
-            this.capture(this.grabbedDisc, validCaptureMove);
-            this.move(this.grabbedDisc, validCaptureMove);
+            this.capture(this.grabbedDisc.disc, validCaptureMove);
+            this.move(this.grabbedDisc.disc, validCaptureMove);
+            this.grabbedDisc.disc?.setClickArea()
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = "Not a valid capture move";
           }
         } else if (isMover) {
-          const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc);
+          const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
           const nonCaptureMove = nonCaptureMoves.find(move =>
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (nonCaptureMove) {
             // DISPATCH valid mover move
-            this.move(this.grabbedDisc, nonCaptureMove);
+            this.move(this.grabbedDisc.disc, nonCaptureMove);
+            this.grabbedDisc.disc?.setClickArea()
             this.nextTurn();
           } else {
             // DISPATCH invalid-mover-move msg
@@ -391,18 +394,16 @@ export default class Game {
           // DISPATCH nextTurn
           this.nextTurn();
         }
-        if ((this.grabbedDisc.row === 0 && this.grabbedDisc.color === CONSTANTS.BLACK)
-        || (this.grabbedDisc.row === 7 && this.grabbedDisc.color === CONSTANTS.RED)) {
+        if ((this.grabbedDisc.disc.row === 0 && this.grabbedDisc.disc.color === CONSTANTS.BLACK)
+        || (this.grabbedDisc.disc.row === 7 && this.grabbedDisc.disc.color === CONSTANTS.RED)) {
           // DISPATCH makeKing
-          this.grabbedDisc.isKing = true;
+          this.grabbedDisc.disc.isKing = true;
         }
         // DISPATCH drop disc
-        this.grabbedDisc.disc.setClickArea()
-        this.grabbedDisc.disc.toggleGrab();
-        this.grabbedDisc = {
-          type: null,
-          disc: null,
-        }
+        // TODO move sertclickarea call after disc actually moves
+        this.grabbedDisc.disc?.toggleGrab();
+        // TODO remove reference to disc without making it null
+        // this.grabbedDisc = {}
       }
       
 
