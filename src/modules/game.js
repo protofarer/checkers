@@ -293,20 +293,28 @@ export default class Game {
     }
 
     function handleMouseDown(e) {
+      const pushGrabbedDisc = (disc) => {
+        this.discs = this.discs.filter(disc => disc !== clickedDisc)
+        this.discs.push(clickedDisc)
+      }
       const clickedDisc = this.discs.find(disc =>
         disc.isClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       );
+
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
           const actor = this.getActorType(clickedDisc)
           if (actor === 'enticed') {
             clickedDisc.toggleGrab()
+            pushGrabbedDisc(clickedDisc)
           } else if (actor === 'carefree') {
             if (this.enticed.length > 0) {
               this.msg = "You must make a capture when available"
             } else {
+              // RFCT
               clickedDisc.toggleGrab()
+              pushGrabbedDisc(clickedDisc)
             }
           } else {  // actor is null, neither carefree nor enticed
             this.msg = (this.enticed.length > 0 || this.carefrees.length > 0)
@@ -461,8 +469,11 @@ export default class Game {
 
 
   drawDiscs() {
-    for (let disc of this.discs) {
-      disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+    // for (let disc of this.discs) {
+    //   disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+    // }
+    for (let i = 0; i < this.discs.length; i++) {
+      this.discs[i].draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
     }
   }
 
