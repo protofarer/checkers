@@ -6,6 +6,8 @@ export default class Game {
   constructor (ui, debugMode=false) {
     this.debugMode = debugMode;
     this.ui = ui;
+    this.ctx = this.ui.canvas.getContext('2d');
+
     this.board = this.debugMode
       ? [ 
           [0,0,0,0,0,0,0,0],
@@ -27,8 +29,21 @@ export default class Game {
           [0,1,0,1,0,1,0,1],
           [1,0,1,0,1,0,1,0],
         ]
+
     this.discs = [];
     
+    this.mouseCoords = { 
+      canvas: {
+        x: 0, y: 0
+      },
+      board: {
+        x: 0, y: 0
+      },
+      client: {
+        x: 0, y: 0
+      }
+    };
+
     // Captors and Movers determined only after a disc has changed positions.
     this.carefrees = [];
     this.enticed = [];
@@ -36,33 +51,14 @@ export default class Game {
     this.msg = "";
     this.turnCount = 0;
     this.turnColor = CONSTANTS.BLACK;
-
-    this.hasCaptureChainStarted = false;
-    this.mouseCoords = { 
-      canvasX: 0, canvasY: 0, 
-      boardX: 0, boardY: 0,
-      cX: 0, cY: 0 
-    };
     this.phase = CONSTANTS.PHASE_PLAY;    // new, playing, end
     this.winner = "";
-
     this.captures = {
       forRed: 0,
       forBlack: 0,
     };
+    this.hasCaptureChainStarted = false;
 
-    // this.match = {
-    //   count: 0,
-    //   red: {
-    //     wins: 0
-    //   },
-    //   black: {
-    //     wins: 0
-    //   }
-    // }
-
-    this.ctx = this.ui.canvas.getContext('2d');
-    
     this.boardHeight = 800;
     this.boardWidth = 800;
     this.baseThickness = 40;      // decorative graphic around board
@@ -284,21 +280,21 @@ export default class Game {
 
     function handleMouseMove(e) {
       // Mouse coordinates relative to canvas
-      this.mouseCoords.canvasX = e.clientX - this.rect.left; //window.scrollX
-      this.mouseCoords.canvasY = e.clientY - this.rect.top;
+      this.mouseCoords.canvas.x = e.clientX - this.rect.left; //window.scrollX
+      this.mouseCoords.canvas.y = e.clientY - this.rect.top;
 
       // Mouse coordinates relative to play area
-      this.mouseCoords.boardX = e.clientX - this.rect.left - this.playAreaOffset.x
-      this.mouseCoords.boardY = e.clientY - this.rect.top - this.playAreaOffset.y
+      this.mouseCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x
+      this.mouseCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y
 
       // Mouse coordinates relative to window
-      this.mouseCoords.cX = e.clientX;
-      this.mouseCoords.cY = e.clientY;
+      this.mouseCoords.client.x = e.clientX;
+      this.mouseCoords.client.y = e.clientY;
     }
 
     function handleMouseDown(e) {
       const clickedDisc = this.discs.find(disc =>
-        disc.isClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY)
+        disc.isClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       );
 
       if (clickedDisc) {
@@ -323,20 +319,20 @@ export default class Game {
       }
 
       // TODO pass resetGame as a callback to a panel method instead
-      // this.panel.resetListener(this.mouseCoords.canvasX, this.mouseCoords.canvasY, resetGame)
-      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+      // this.panel.resetListener(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y, resetGame)
+      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
       if (isResetClicked) {
         resetGame();
       }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
       if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
         this.nextTurn();
       }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
       if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
         this.nextTurn();
       }
@@ -363,7 +359,7 @@ export default class Game {
         if (isEnticed) {
           const captureMoves = this.findCaptureMoves(grabbedDisc);
           const validCaptureMove = captureMoves.find(move => 
-            isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
+            isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
           );
           if (validCaptureMove) {
             // DISPATCH valid capture move
@@ -377,7 +373,7 @@ export default class Game {
         } else if (isCarefree) {
           const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
           const nonCaptureMove = nonCaptureMoves.find(move =>
-            isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
+            isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
           );
           if (nonCaptureMove) {
             // DISPATCH valid mover move
@@ -466,7 +462,7 @@ export default class Game {
 
   drawDiscs() {
     for (let disc of this.discs) {
-      disc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+      disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
     }
   }
 
@@ -517,13 +513,13 @@ export default class Game {
   //       const captureMoves = this.findCaptureMoves(grabbedDisc); 
   //       for (let m of captureMoves) {
   //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
   //       }
   //     } else if (actor === 'carefree') {
   //       const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
   //       for (let m of nonCaptureMoves) {
   //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
   //       }
   //     }
   //   }

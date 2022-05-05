@@ -63,10 +63,10 @@ export default function setupExternalUI(id) {
     function updateDebugEle() {
       debugEle.innerHTML = `\
         <span>
-          client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
-          canvas: ${game.mouseCoords.canvasX},${game.mouseCoords.canvasY}<br />
-          board: ${Math.floor(parseFloat(game.mouseCoords.boardX))}, ${game.mouseCoords.boardY}<br />
-          col,row: ${Math.floor((parseFloat((game.mouseCoords.boardX)/100,2).toFixed(2))) }, ${Math.floor(parseFloat((game.mouseCoords.boardY)/100,2).toFixed(2))}<br />
+          client: ${game.mouseCoords.client.x},${game.mouseCoords.client.y} <br />
+          canvas: ${game.mouseCoords.canvas.x},${game.mouseCoords.canvas.y}<br />
+          board: ${Math.floor(parseFloat(game.mouseCoords.board.x))}, ${game.mouseCoords.board.y}<br />
+          col,row: ${Math.floor((parseFloat((game.mouseCoords.board.x)/100,2).toFixed(2))) }, ${Math.floor(parseFloat((game.mouseCoords.board.y)/100,2).toFixed(2))}<br />
           rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
           canvas: ${canvas.width},${canvas.height}<br />
           phase: ${game.phase}<br />
