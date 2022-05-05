@@ -67,13 +67,13 @@ export default class Disc {
     this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI);
   }
 
-  isClicked(x, y) {
+  isClicked(mouseCanvasX, mouseCanvasY) {
     // WARN this if block causes massive performance issues, freezes UI
     // if (this.ctx.isPointInPath(this.#path, x, y, 'nonzero')) {
     //   console.log(`canvasxy inside isclicked`, x, y)
     //   console.log(`Disc ${this.row}, ${this.col} was clicked`)
     // }
-    return this.ctx.isPointInPath(this.#path, x, y, 'nonzero');
+    return this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero');
   }
 
   toString() {

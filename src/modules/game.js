@@ -296,8 +296,6 @@ export default class Game {
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
           const actor = this.getActorType(clickedDisc)
-          // const isCaptor = this.captors.find(c => c === clickedDisc);
-          // const isMover = this.movers.find(m => m === clickedDisc);
           if (actor === 'captor') {
             clickedDisc.toggleGrab()
           } else if (actor === 'mover') {
@@ -307,11 +305,9 @@ export default class Game {
               clickedDisc.toggleGrab()
             }
           } else {  // actor is null, neither mover nor captor
-            if (this.captors.length > 0 || this.movers.length > 0) {
-                this.msg = "This disc cannot move"
-            } else {
-              this.msg = "You have no moves available. Pass your turn."
-            }
+            this.msg = (this.captors.length > 0 || this.movers.length > 0)
+              ? "This disc cannot move"
+              : "You have no moves available. Pass your turn"
           }
         } else {
           this.msg = "That isn't your disc"
@@ -361,6 +357,7 @@ export default class Game {
       if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
         this.nextTurn();
       }
+
       const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
         this.nextTurn();
@@ -383,12 +380,15 @@ export default class Game {
       if (grabbedDisc) {
         console.log(`grabbedDisc exists, in mouseup`, grabbedDisc)
         
-        const isCaptor = this.captors.find(c => c === grabbedDisc.disc); 
-        const isMover = this.movers.find(m => m === grabbedDisc.disc);
+        const isCaptor = this.captors.find(c => c === grabbedDisc); 
+        const isMover = this.movers.find(m => m === grabbedDisc);
+        console.log(`iscaptor`, isCaptor)
+        console.log(`ismover`, isMover)
+        
         
         // if is a captor and mouseupped on valid capture move
         if (isCaptor) {
-          const captureMoves = this.findCaptureMoves(grabbedDisc.disc);
+          const captureMoves = this.findCaptureMoves(grabbedDisc);
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
@@ -417,19 +417,13 @@ export default class Game {
           }
         }
         if (this.hasCaptureChainStarted && this.captors.length === 0) {
-          // DISPATCH nextTurn
           this.nextTurn();
         }
         if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
         || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
-          // DISPATCH makeKing
           grabbedDisc.isKing = true;
         }
-        // DISPATCH drop disc
-        // TODO move sertclickarea call after disc actually moves
         grabbedDisc.toggleGrab();
-        // TODO remove reference to disc without making it null
-        // this.grabbedDisc = {}
       }
       
 
