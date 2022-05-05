@@ -6,7 +6,8 @@ export default class Disc {
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row are not initialized`);
     }
-    if (!color) {
+    // if (color !== CONSTANTS.RED || color !== CONSTANTS.BLACK || color !== CONSTANTS.GHOST) {
+    if (![CONSTANTS.RED, CONSTANTS.BLACK, CONSTANTS.GHOST].some(ele => color === ele)) {
       throw new TypeError(`A disc was not initialized a color`);
     }
     if (!offset?.x || !offset?.y) {
@@ -24,19 +25,16 @@ export default class Disc {
       this.y = ((row) * 100) + 50 + offset.y
     })(this.row, this.col, this.offset)
 
-    // this.center = {
-    //   x: ((this.col) * 100) + 50 + this.offset.x,
-    //   y: ((this.row) * 100) + 50 + this.offset.y
-    // }
-
     this.radius = 40;
+
+    // Color means disc type rather than rendered color
     this.color = color;
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
     this.isGrabbed = false;
     
     this.isKing = false;
-    this.kingColor = `hsl(0, 0%, 0%)`;
+    this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black';
     
     this.animateFrame = 0;
 
@@ -64,11 +62,6 @@ export default class Disc {
   }
 
   setClickArea() {
-    // const x = ((this.col) * 100) + 50 + this.offset.x;
-    // const y = ((this.row) * 100) + 50 + this.offset.y;
-    // console.log(`setClickArea centx,y`, this.center.x, this.center.y)
-    // console.log(`in setClickArea, offsets`, this.offset)
-    
     this.#path = new Path2D();
     this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI);
   }
@@ -88,14 +81,7 @@ export default class Disc {
 
   toggleGrab() {
     this.isGrabbed = !this.isGrabbed;
-    // Only calculate click area when disc transitions to being at rest
-    // !this.isGrabbed && this.setClickArea()
     return this.isGrabbed;
-  }
-
-  makeKing() {
-    this.isKing = true;
-    return this.isKing;
   }
   
   draw(canvasX, canvasY) {
@@ -105,9 +91,8 @@ export default class Disc {
     // VIGIL possible floating point evaluation of (decimal) * radius
     // may result in unexpected behavior.
 
-    const getStrokeStyle = () => {
-      return this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
-    }
+    // Strokes adjusted for disc's fill
+    const getStrokeStyle = () => this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
     
     if (this.isGrabbed) {
       this.center = {
