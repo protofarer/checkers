@@ -43,13 +43,13 @@ export default function setupExternalUI(id) {
   debugResetButton.innerText = 'debug\nreset\nboard';
   infoWrapper.appendChild(debugResetButton);
 
-  const kingButton = document.createElement('button');
-  kingButton.innerText = 'toggle\nkings';
-  infoWrapper.appendChild(kingButton);
+  const debugKingButton = document.createElement('button');
+  debugKingButton.innerText = 'toggle\nkings';
+  infoWrapper.appendChild(debugKingButton);
 
-  const victoryButton = document.createElement('button')
-  victoryButton.innerText = 'trigger victory';
-  infoWrapper.appendChild(victoryButton);
+  const debugVictoryButton = document.createElement('button')
+  debugVictoryButton.innerText = 'trigger victory';
+  infoWrapper.appendChild(debugVictoryButton);
   
   resetButton.addEventListener('click', () => {
     resetGame();
@@ -60,7 +60,7 @@ export default function setupExternalUI(id) {
   });
 
   function updateAll(game) {
-    function drawDebugEle() {
+    function updateDebugEle() {
       debugEle.innerHTML = `\
         <span>
           client: ${game.mouseCoords.cX},${game.mouseCoords.cY} <br />
@@ -75,13 +75,13 @@ export default function setupExternalUI(id) {
       `;
     }
 
-    function drawBoardStateEle() {
+    function updateBoardStateEle() {
       boardStateEle.innerHTML = `\
         <span>${game.boardToHTML()}</span>\
       `;
     }
 
-    function drawStatus() {
+    function updateStatusEle() {
       statusEle.innerHTML = `\
         <strong>Status:</strong> <br />
         Message: ${game.msg} <br />
@@ -93,15 +93,15 @@ export default function setupExternalUI(id) {
         // Black victories: ${game.match.black.wins} <br />
     }
 
-    drawStatus();
-    drawDebugEle();
-    drawBoardStateEle()
+    updateStatusEle();
+    updateDebugEle();
+    updateBoardStateEle()
   }
 
   return {
     canvas,
     statusEle, debugEle, boardStateEle, 
-    debugButton,resetButton, debugResetButton, kingButton, victoryButton,
+    debugButton, resetButton, debugResetButton, debugKingButton, debugVictoryButton,
     updateAll
   };
 }

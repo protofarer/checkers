@@ -258,8 +258,8 @@ export default class Game {
     this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
     this.ui.debugButton.addEventListener('click', handleDebugClick.bind(this));
-    this.ui.kingButton.addEventListener('click', handleDebugKing.bind(this));
-    this.ui.victoryButton.addEventListener('click', handleDebugVictory.bind(this));
+    this.ui.debugKingButton.addEventListener('click', handleDebugKing.bind(this));
+    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory.bind(this));
 
     function handleDebugVictory() {
       this.phase = CONSTANTS.PHASE_END;
@@ -432,14 +432,14 @@ export default class Game {
         this.ui.boardStateEle.style.display = 'block';
         this.ui.resetButton.style.display = 'block';
         this.ui.debugResetButton.style.display = 'block';
-        this.ui.kingButton.style.display = 'block';
+        this.ui.debugKingButton.style.display = 'block';
       } else {
         debugButton.innerText =  'turn\ndebug\non';
         this.ui.debugEle.style.display = 'none';
         this.ui.boardStateEle.style.display = 'none';
         this.ui.resetButton.style.display = 'none';
         this.ui.debugResetButton.style.display = 'none';
-        this.ui.kingButton.style.display = 'none';
+        this.ui.debugKingButton.style.display = 'none';
       }
     }
 
