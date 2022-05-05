@@ -7,7 +7,6 @@ export default class Disc {
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row are not initialized`);
     }
-    // if (color !== CONSTANTS.RED || color !== CONSTANTS.BLACK || color !== CONSTANTS.GHOST) {
     if (![CONSTANTS.RED, CONSTANTS.BLACK, CONSTANTS.GHOST].some(ele => color === ele)) {
       throw new TypeError(`A disc was not initialized a color`);
     }
@@ -19,7 +18,6 @@ export default class Disc {
     this.col = col;
     this.row = row;
     this.offset = offset;
-   
     // Absolute coord of disc center in canvas
     this.center = new (function(row, col, offset) {
       this.x =  ((col) * 100) + 50 + offset.x
@@ -27,13 +25,11 @@ export default class Disc {
     })(this.row, this.col, this.offset)
 
     this.radius = 40;
-
     // Color means disc type rather than rendered color
     this.color = color;
     this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
     this.direction = color === CONSTANTS.RED ? 1 : -1;
     this.isGrabbed = false;
-    
     this.isKing = false;
     this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black';
     
@@ -52,6 +48,7 @@ export default class Disc {
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
+        // Color angle skooched right and narrowed to avoid boring red range
         const colorAngle = (Math.floor(this.animateFrame / 15) % 290) + 30;
         this.kingColor = `hsl(${colorAngle}, 100%, 40%)`;
       } else {
@@ -93,7 +90,9 @@ export default class Disc {
     // may result in unexpected behavior.
 
     // Strokes adjusted for disc's fill
-    const getStrokeStyle = () => this.color === CONSTANTS.RED ? 'hsl(0,100%,10%)' : 'hsl(0,0%,80%)';
+    const getStrokeStyle = () => this.color === CONSTANTS.RED 
+    ? 'hsl(0,100%,10%)' 
+    : 'hsl(0,0%,80%)';
     
     if (this.isGrabbed) {
       this.center = {
@@ -112,7 +111,6 @@ export default class Disc {
     // CSDR: The y offset for the path's center is off by ~3 pixels
     
   }
-  // this.setClickArea()
 
     this.ctx.save()      // save A - disc center
     this.ctx.translate(this.center.x, this.center.y)
@@ -124,38 +122,6 @@ export default class Disc {
       // Adjust for differential contrast between dark on light versus light on dark lines
       this.ctx.lineWidth = this.color === CONSTANTS.RED ? 1 : 0.9; 
     }
-
-    // *********************************************
-    // *******    red shadow jank
-    // *********************************************
-    // Shadows for red (approach differently because of compositing problem)
-    // tmp draw disc shadow
-    // first circ offset y -15
-    // 2nd offset y +3
-    // if (this.color === CONSTANTS.RED) {
-    //   if (this.isGrabbed) {
-    //     this.ctx.beginPath()
-    //     let grad = this.ctx.createRadialGradient(
-    //       0, 28, 5,
-    //       0, 28, 53)
-    //     grad.addColorStop(0,'black')
-    //     grad.addColorStop(0.7, 'rgba(0,0,0,.5')
-    //     grad.addColorStop(1, 'rgba(0,0,0,0)')
-    //     this.ctx.fillStyle = grad
-    //     this.ctx.fillRect(-50, -50, 160, 160)
-
-    //   } else {
-    //     this.ctx.beginPath()
-    //     let grad = this.ctx.createRadialGradient(
-    //       0, 15, 10,
-    //       0, 3, 45)
-    //     grad.addColorStop(0,'black')
-    //     grad.addColorStop(0.8, 'rgba(0,0,0,.8')
-    //     grad.addColorStop(1, 'rgba(0,0,0,0)')
-    //     this.ctx.fillStyle = grad
-    //     this.ctx.fillRect(-50, -50, 100, 100)
-    //   }
-    // }
 
     // **************************************************************************
     // **********************    Fill Disc and Shadow

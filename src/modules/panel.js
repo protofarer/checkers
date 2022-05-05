@@ -61,7 +61,6 @@ export default class Panel {
   
   drawPassButton(x, y, playerColor, turnColor) {
     this.ctx.beginPath();
-
     this.ctx.lineWidth = 1;
     this.ctx.strokeStyle = 'black';
     this.ctx.fillStyle = 'hsl(0,0%,80%)';
@@ -156,7 +155,8 @@ export default class Panel {
     this.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorY + 75);
     this.ctx.arc(
       this.turnIndicatorX, 
-      this.turnIndicatorY + 75, 16, 0, 2*Math.PI);
+      this.turnIndicatorY + 75,
+      16, 0, 2*Math.PI);
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
 

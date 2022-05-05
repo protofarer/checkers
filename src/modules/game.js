@@ -14,8 +14,8 @@ export default class Game {
           [2,0,0,0,0,0,0,0],
           [0,0,0,0,0,1,0,1],
           [0,0,0,0,1,0,0,0],
-          [0,0,0,0,0,1,0,0],
-          [0,0,0,0,0,0,0,0]
+          [0,1,0,0,0,1,0,0],
+          [0,0,0,0,0,0,1,0]
         ]
       : [ 
           [0,2,0,2,0,2,0,2],
@@ -28,8 +28,11 @@ export default class Game {
           [1,0,1,0,1,0,1,0],
         ]
     this.discs = [];
-    this.movers = {};
-    this.captors = {};
+    
+    // Captors and Movers determined only after a disc has changed positions.
+    this.carefrees = [];
+    this.enticed = [];
+    
     this.msg = "";
     this.turnCount = 0;
     this.turnColor = CONSTANTS.BLACK;
@@ -62,7 +65,7 @@ export default class Game {
     
     this.boardHeight = 800;
     this.boardWidth = 800;
-    this.baseThickness = 75;      // decorative graphic around board
+    this.baseThickness = 40;      // decorative graphic around board
     
     // Play area is the active area of board, ie not including baseboard
     // and defined as such to calculate based off coordinates relative to
@@ -93,6 +96,8 @@ export default class Game {
     this.ui.canvas.style.border = '1px solid red'
 
     this.rect = this.ui.canvas.getBoundingClientRect();
+
+    this.ghostSourceDisc = null;
 
     this.initDiscs();
     this.updateDiscActors();
@@ -193,22 +198,23 @@ export default class Game {
   }
 
   updateDiscActors() {
-    this.movers = this.findPotentialMovers();
-    this.captors = this.findPotentialCaptors();
+    this.carefrees = this.findCarefrees();
+    this.enticed = this.findEnticed();
   }
 
   // WARNING till function from disc class called
-  findPotentialCaptors() {
-    const potentialCaptors = this.discs.filter(disc => 
+  findEnticed() {
+    const enticed = this.discs.filter(disc => 
       this.findCaptureMoves(disc).length > 0 && disc.color === this.turnColor
     );
-    return potentialCaptors;
+    return enticed;
   }
-  findPotentialMovers() {
-    const potentialMovers = this.discs.filter(disc =>
+  findCarefrees() {
+    const carefrees = this.discs.filter(disc =>
       this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor);
-    return potentialMovers;
+    return carefrees;
   }
+
   move(grabbedDisc, to) {
     this.board[grabbedDisc.row][grabbedDisc.col] = 0;
     this.board[to.row][to.col] = grabbedDisc.color;
@@ -219,6 +225,7 @@ export default class Game {
     }
     this.updateDiscActors();
   }
+  
   capture(grabbedDisc, to) {
     const capturedDisc = this.findCaptured(grabbedDisc, to);
     if (capturedDisc.color === CONSTANTS.RED) {
@@ -233,6 +240,7 @@ export default class Game {
     this.hasCaptureChainStarted = true;
 
   }
+
   findCaptured(from, to) {
     let col = (to.col - from.col) / Math.abs(to.col - from.col);
     col += from.col;
@@ -240,6 +248,7 @@ export default class Game {
     row += from.row;
     return this.discs.filter(disc => disc.col === col && disc.row === row)[0];
   }
+
   nextTurn() {
     this.turnCount++;
     this.turnColor = this.turnColor === CONSTANTS.RED 
@@ -251,12 +260,12 @@ export default class Game {
   }
 
   getActorType(disc) {
-    const isCaptor = this.captors.find(c => c === disc)
-    const isMover = this.movers.find(m => m === disc)
-    return isCaptor 
-      ? 'captor' 
-      : isMover 
-        ? 'mover'
+    const isEnticed = this.enticed.find(c => c === disc)
+    const isCarefree = this.carefrees.find(m => m === disc)
+    return isEnticed 
+      ? 'enticed' 
+      : isCarefree 
+        ? 'carefree'
         : null
   }
 
@@ -291,21 +300,20 @@ export default class Game {
       const clickedDisc = this.discs.find(disc =>
         disc.isClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY)
       );
-      console.log(`a disc was clicked`, clickedDisc)
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
           const actor = this.getActorType(clickedDisc)
-          if (actor === 'captor') {
+          if (actor === 'enticed') {
             clickedDisc.toggleGrab()
-          } else if (actor === 'mover') {
-            if (this.captors.length > 0) {
+          } else if (actor === 'carefree') {
+            if (this.enticed.length > 0) {
               this.msg = "You must make a capture when available"
             } else {
               clickedDisc.toggleGrab()
             }
-          } else {  // actor is null, neither mover nor captor
-            this.msg = (this.captors.length > 0 || this.movers.length > 0)
+          } else {  // actor is null, neither carefree nor enticed
+            this.msg = (this.enticed.length > 0 || this.carefrees.length > 0)
               ? "This disc cannot move"
               : "You have no moves available. Pass your turn"
           }
@@ -314,50 +322,20 @@ export default class Game {
         }
       }
 
-        //   if (this.captors.length > 0) {
-        //     if (isCaptor) {
-        //       // DISPATCH successful grab of a captor
-        //       clickedDisc.toggleGrab();
-        //       console.log(`a captor was grabbed`, )
-              
-        //     } else if (isMover) {
-        //       // DISPATCH must-capture msg
-        //       this.msg = "You must capture when possible.";
-        //     }
-        //   } else if (this.movers.length > 0) {
-        //     if (isMover) {
-        //       // DISPATCH successful grab of a mover
-        //       clickedDisc.toggleGrab();
-        //       console.log(`a mover was grabbed`)
-        //     } else if (this.movers.length === 0 && this.captors.length === 0) {
-        //       // DISPATCH no-moves-avail msg
-        //       this.msg = "You have no moves available! Press pass to turn control to other player";
-        //     } else {
-        //       // WARN this may be unreachable block
-        //       // DISPATCH cannot-move-this-disc msg
-        //       this.msg = "This disc cannot move!";
-        //     }
-        //   }
-        //   if (!isMover && !isCaptor) {
-        //     // DISPATCH no-moves-disc msg
-        //     this.msg = "This disc has no moves available";
-        //   }
-        // } else if (clickedDisc.color !== this.turnColor) {
-        //   // DISPATCH not-your-disc msg
-        //   this.msg = "That isn't your disc!";
-        // }
-      // } 
-
+      // TODO pass resetGame as a callback to a panel method instead
+      // this.panel.resetListener(this.mouseCoords.canvasX, this.mouseCoords.canvasY, resetGame)
       const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isResetClicked) {
         resetGame();
       }
 
+      // TODO pass resetGame as a callback to a panel method instead
       const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
         this.nextTurn();
       }
 
+      // TODO pass resetGame as a callback to a panel method instead
       const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
         this.nextTurn();
@@ -378,16 +356,11 @@ export default class Game {
       const grabbedDisc = this.discs.find(disc => disc.isGrabbed)
 
       if (grabbedDisc) {
-        console.log(`grabbedDisc exists, in mouseup`, grabbedDisc)
-        
-        const isCaptor = this.captors.find(c => c === grabbedDisc); 
-        const isMover = this.movers.find(m => m === grabbedDisc);
-        console.log(`iscaptor`, isCaptor)
-        console.log(`ismover`, isMover)
-        
-        
-        // if is a captor and mouseupped on valid capture move
-        if (isCaptor) {
+        const isEnticed = this.enticed.find(c => c === grabbedDisc); 
+        const isCarefree = this.carefrees.find(m => m === grabbedDisc);
+
+        // if is an enticed (can capture) and mouseupped on valid capture move
+        if (isEnticed) {
           const captureMoves = this.findCaptureMoves(grabbedDisc);
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
@@ -401,7 +374,7 @@ export default class Game {
             // DISPATCH not-valid-capture msg
             this.msg = "Not a valid capture move";
           }
-        } else if (isMover) {
+        } else if (isCarefree) {
           const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
           const nonCaptureMove = nonCaptureMoves.find(move =>
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
@@ -410,37 +383,35 @@ export default class Game {
             // DISPATCH valid mover move
             this.move(grabbedDisc, nonCaptureMove);
             grabbedDisc.setClickArea()
+            // DISPATCH nextTurn
             this.nextTurn();
           } else {
             // DISPATCH invalid-mover-move msg
             this.msg = "Invalid move. Try again"
           }
         }
-        if (this.hasCaptureChainStarted && this.captors.length === 0) {
+        if (this.hasCaptureChainStarted && this.enticed.length === 0) {
+          // DISPATCH
           this.nextTurn();
         }
         if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
         || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+          // DISPATCH
           grabbedDisc.isKing = true;
         }
+        // DISPATCH
         grabbedDisc.toggleGrab();
       }
       
 
       if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+        // DISPATCH RED WINS
         this.phase = CONSTANTS.PHASE_END;
         this.winner = CONSTANTS.BLACK;
-
-        // DISPATCH RED WINS
-        // TODO show win dialog
-        //    add point to winner
-        //    exclamation
-        //    show new game button
-        //    reset game
       } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
+        // DISPATCH BLACK WINS
         this.phase = CONSTANTS.PHASE_END;
         this.winner = CONSTANTS.RED;
-        // DISPATCH BLACK WINS
       }
     }
 
@@ -484,37 +455,14 @@ export default class Game {
           this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
         } else {
-          // this.ctx.shadowColor = 'black';
-          // this.ctx.shadowBlur = 45;
-          // this.ctx.shadowOffsetY = 20;
           this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`;
           this.ctx.fillRect(col * 100, row * 100, 100, 100);
-          // this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
         }
       }
     }
     this.ctx.restore();
   }
 
-  drawPossibleMoves() {
-    // When disc is grabbed, show available moves
-    // RFCT
-    if (this.grabbedDisc.disc) {
-      if (this.grabbedDisc.type === 'captor') {
-        const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc); 
-        for (let m of captureMoves) {
-          const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-          ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
-        }
-      } else if (this.grabbedDisc.type === 'mover') {
-        const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc, this.playAreaOffset);
-        for (let m of nonCaptureMoves) {
-          const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-          ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
-        }
-      }
-    }
-  }
 
   drawDiscs() {
     for (let disc of this.discs) {
@@ -527,46 +475,65 @@ export default class Game {
     this.ctx.fillStyle = 'hsla(0, 0%, 95%, 0.75)'
     this.ctx.fillRect(100, 200, 600, 400);
 
+    this.ctx.font = 'bold 60px Arial';
+    
     this.ctx.fillStyle = this.winner === CONSTANTS.RED 
       ? 'crimson'
       : 'black';
-    this.ctx.font = 'bold 60px Arial';
     this.ctx.fillText(
       `${this.winner === CONSTANTS.RED ? 'RED' : 'BLACK'}`,
       300, 350
     )
+
     this.ctx.fillStyle = 'green'
     this.ctx.fillText(
       'WINS!',
-      300, 425)
+      300, 425
+    )
   }
 
   drawBaseBoard() {
-    const origin = { x: 5, y: 5 }
-
+    // RFCT reference directly
+    const origin = { x: 0, y: 0 }
     this.ctx.beginPath()
 
     // Filler
-    this.ctx.fillStyle = 'hsla(27, 48%, 47%, 1)'
-    this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness - 10, this.boardHeight + 2 * this.baseThickness - 10)
+    this.ctx.fillStyle = 'hsla(28, 55%, 55%, 1)'
+    this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
 
     // Joints
     this.ctx.strokeStyle = 'black'
     this.ctx.moveTo(origin.x, origin.y)
-    this.ctx.lineTo(this.boardWidth + 2 * this.baseThickness - 10, this.boardHeight + 2 * this.baseThickness - 10)
-    this.ctx.moveTo(origin.x, origin.y + this.boardHeight + 2 * this.baseThickness - 10)
-    this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness - 10, origin.y)
+    this.ctx.lineTo(this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
+    this.ctx.moveTo(origin.x, origin.y + this.boardHeight + 2 * this.baseThickness)
+    this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness, origin.y)
     this.ctx.stroke()
-    
-
   }
+
+  // drawPossibleMoves(grabbedDisc) {
+  //   const actor = this.getActorType(grabbedDisc)
+  //   if (grabbedDisc) {
+  //     if (actor === 'enticed') {
+  //       const captureMoves = this.findCaptureMoves(grabbedDisc); 
+  //       for (let m of captureMoves) {
+  //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
+  //         ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+  //       }
+  //     } else if (actor === 'carefree') {
+  //       const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+  //       for (let m of nonCaptureMoves) {
+  //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
+  //         ghostDisc.draw(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
+  //       }
+  //     }
+  //   }
+  // }
 
   drawAll() {
     this.drawBaseBoard()
     this.drawBoard();
     this.drawDiscs();
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
-    // this.drawPossibleMoves();
 
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog();
   }
