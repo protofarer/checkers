@@ -33,10 +33,7 @@ export default class Game {
     this.msg = "";
     this.turnCount = 0;
     this.turnColor = CONSTANTS.BLACK;
-    this.grabbedDisc = {
-      disc: null,
-      type: null,
-    };
+
     this.hasCaptureChainStarted = false;
     this.mouseCoords = { 
       canvasX: 0, canvasY: 0, 
@@ -253,6 +250,16 @@ export default class Game {
     this.updateDiscActors();
   }
 
+  getActorType(disc) {
+    const isCaptor = this.captors.find(c => c === disc)
+    const isMover = this.movers.find(m => m === disc)
+    return isCaptor 
+      ? 'captor' 
+      : isMover 
+        ? 'mover'
+        : null
+  }
+
   setupEventListeners() {
     document.addEventListener('mousemove', handleMouseMove.bind(this));
     this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
@@ -285,64 +292,77 @@ export default class Game {
         disc.isClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY)
       );
       console.log(`a disc was clicked`, clickedDisc)
-      
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
-          const isCaptor = this.captors.find(c => c === clickedDisc);
-          const isMover = this.movers.find(m => m === clickedDisc);
-          if (this.captors.length > 0) {
-            if (isCaptor) {
-              // DISPATCH successful grab of a captor
-              clickedDisc.toggleGrab();
-              this.grabbedDisc.disc = clickedDisc;
-              this.grabbedDisc.type = "captor";
-              console.log(`a captor was grabbed`, )
-              
-            } else if (isMover) {
-              // DISPATCH must-capture msg
-              this.msg = "You must capture when possible.";
-            }
-          } else if (this.movers.length > 0) {
-            if (isMover) {
-              // DISPATCH successful grab of a mover
-              clickedDisc.toggleGrab();
-              this.grabbedDisc.disc = clickedDisc;
-              this.grabbedDisc.type = "mover";
-              console.log(`a mover was grabbed`)
-            } else if (this.movers.length === 0 && this.captors.length === 0) {
-              // DISPATCH no-moves-avail msg
-              this.msg = "You have no moves available! Press pass to turn control to other player";
+          const actor = this.getActorType(clickedDisc)
+          // const isCaptor = this.captors.find(c => c === clickedDisc);
+          // const isMover = this.movers.find(m => m === clickedDisc);
+          if (actor === 'captor') {
+            clickedDisc.toggleGrab()
+          } else if (actor === 'mover') {
+            if (this.captors.length > 0) {
+              this.msg = "You must make a capture when available"
             } else {
-              // WARN this may be unreachable block
-              // DISPATCH cannot-move-this-disc msg
-              this.msg = "This disc cannot move!";
+              clickedDisc.toggleGrab()
+            }
+          } else {  // actor is null, neither mover nor captor
+            if (this.captors.length > 0 || this.movers.length > 0) {
+                this.msg = "This disc cannot move"
+            } else {
+              this.msg = "You have no moves available. Pass your turn."
             }
           }
-          if (!isMover && !isCaptor) {
-            // DISPATCH no-moves-disc msg
-            this.msg = "This disc has no moves available";
-          }
-        } else if (clickedDisc.color !== this.turnColor) {
-          // DISPATCH not-your-disc msg
-          this.msg = "That isn't your disc!";
+        } else {
+          this.msg = "That isn't your disc"
         }
-      } 
+      }
+
+        //   if (this.captors.length > 0) {
+        //     if (isCaptor) {
+        //       // DISPATCH successful grab of a captor
+        //       clickedDisc.toggleGrab();
+        //       console.log(`a captor was grabbed`, )
+              
+        //     } else if (isMover) {
+        //       // DISPATCH must-capture msg
+        //       this.msg = "You must capture when possible.";
+        //     }
+        //   } else if (this.movers.length > 0) {
+        //     if (isMover) {
+        //       // DISPATCH successful grab of a mover
+        //       clickedDisc.toggleGrab();
+        //       console.log(`a mover was grabbed`)
+        //     } else if (this.movers.length === 0 && this.captors.length === 0) {
+        //       // DISPATCH no-moves-avail msg
+        //       this.msg = "You have no moves available! Press pass to turn control to other player";
+        //     } else {
+        //       // WARN this may be unreachable block
+        //       // DISPATCH cannot-move-this-disc msg
+        //       this.msg = "This disc cannot move!";
+        //     }
+        //   }
+        //   if (!isMover && !isCaptor) {
+        //     // DISPATCH no-moves-disc msg
+        //     this.msg = "This disc has no moves available";
+        //   }
+        // } else if (clickedDisc.color !== this.turnColor) {
+        //   // DISPATCH not-your-disc msg
+        //   this.msg = "That isn't your disc!";
+        // }
+      // } 
 
       const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isResetClicked) {
-        // DISPATCH resetGame
         resetGame();
       }
 
       const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
-        // DISPATCH nextTurn
         this.nextTurn();
       }
       const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvasX, this.mouseCoords.canvasY);
       if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
-        // DISPATCH nextTurn
         this.nextTurn();
       }
     }
@@ -354,36 +374,42 @@ export default class Game {
         return (Math.floor(x/100) === c && Math.floor(y/100) === r)
       }
 
-      if (this.grabbedDisc.disc !== null && this.grabbedDisc.disc !== undefined) {
-        console.log(`grabbedDisc exists, in mouseup`, this.grabbedDisc.disc)
+      // WARN may not copy disc.center.x|y
+      //    if not, try structuredClone or parse/stringify
+      // const grabbedDisc = JSON.parse(JSON.stringify(this.discs.find(disc => disc.isGrabbed)))
+      // const grabbedDisc = Object.assign({}, this.discs.find(disc => disc.isGrabbed))
+      const grabbedDisc = this.discs.find(disc => disc.isGrabbed)
+
+      if (grabbedDisc) {
+        console.log(`grabbedDisc exists, in mouseup`, grabbedDisc)
         
-        const isCaptor = this.captors.find(c => c === this.grabbedDisc.disc); 
-        const isMover = this.movers.find(m => m === this.grabbedDisc.disc);
+        const isCaptor = this.captors.find(c => c === grabbedDisc.disc); 
+        const isMover = this.movers.find(m => m === grabbedDisc.disc);
         
         // if is a captor and mouseupped on valid capture move
         if (isCaptor) {
-          const captureMoves = this.findCaptureMoves(this.grabbedDisc.disc);
+          const captureMoves = this.findCaptureMoves(grabbedDisc.disc);
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (validCaptureMove) {
             // DISPATCH valid capture move
-            this.capture(this.grabbedDisc.disc, validCaptureMove);
-            this.move(this.grabbedDisc.disc, validCaptureMove);
-            this.grabbedDisc.disc?.setClickArea()
+            this.capture(grabbedDisc, validCaptureMove);
+            this.move(grabbedDisc, validCaptureMove);
+            grabbedDisc.setClickArea()
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = "Not a valid capture move";
           }
         } else if (isMover) {
-          const nonCaptureMoves = this.findNonCaptureMoves(this.grabbedDisc.disc);
+          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
           const nonCaptureMove = nonCaptureMoves.find(move =>
             isMouseInSquare(this.mouseCoords.boardX, this.mouseCoords.boardY, move.row, move.col)
           );
           if (nonCaptureMove) {
             // DISPATCH valid mover move
-            this.move(this.grabbedDisc.disc, nonCaptureMove);
-            this.grabbedDisc.disc?.setClickArea()
+            this.move(grabbedDisc, nonCaptureMove);
+            grabbedDisc.setClickArea()
             this.nextTurn();
           } else {
             // DISPATCH invalid-mover-move msg
@@ -394,14 +420,14 @@ export default class Game {
           // DISPATCH nextTurn
           this.nextTurn();
         }
-        if ((this.grabbedDisc.disc.row === 0 && this.grabbedDisc.disc.color === CONSTANTS.BLACK)
-        || (this.grabbedDisc.disc.row === 7 && this.grabbedDisc.disc.color === CONSTANTS.RED)) {
+        if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+        || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
           // DISPATCH makeKing
-          this.grabbedDisc.disc.isKing = true;
+          grabbedDisc.isKing = true;
         }
         // DISPATCH drop disc
         // TODO move sertclickarea call after disc actually moves
-        this.grabbedDisc.disc?.toggleGrab();
+        grabbedDisc.toggleGrab();
         // TODO remove reference to disc without making it null
         // this.grabbedDisc = {}
       }

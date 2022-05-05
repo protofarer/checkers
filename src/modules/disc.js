@@ -3,6 +3,7 @@ import { CONSTANTS } from '../main';
 export default class Disc {
   #path;
   constructor(ctx, row, col, offset, color) {
+    // TRY console.assert?
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError(`A disc's col and row are not initialized`);
     }
