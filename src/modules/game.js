@@ -293,7 +293,7 @@ export default class Game {
     }
 
     function handleMouseDown(e) {
-      const pushGrabbedDisc = (disc) => {
+      const pushGrabbedDisc = (clickedDisc) => {
         this.discs = this.discs.filter(disc => disc !== clickedDisc)
         this.discs.push(clickedDisc)
       }
