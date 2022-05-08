@@ -1,5 +1,6 @@
 import setupExternalUI from './modules/init.js';
 import Game from './modules/game.js';
+import setupDebugGUI from './modules/debugGUI.js';
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -19,11 +20,11 @@ const initDebugMode = false;
 
 let ui = setupExternalUI('html')
 let game = new Game(ui, initDebugMode);
-ui.setupDebugGUI(game, ui)
+let debugGUI = setupDebugGUI(game, ui)
 
 export function resetGame(debug=false) {
   game = new Game(ui, debug);
-  ui.setupDebugGUI(game,ui)
+  debugGUI = setupDebugGUI(game, ui)
 }
 
 (function draw() {

@@ -419,11 +419,11 @@ export default class Game {
       
 
       if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
-        // DISPATCH RED WINS
+        // DISPATCH BLACK WINS
         this.phase = CONSTANTS.PHASE_END;
         this.winner = CONSTANTS.BLACK;
       } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
-        // DISPATCH BLACK WINS
+        // DISPATCH RED WINS
         this.phase = CONSTANTS.PHASE_END;
         this.winner = CONSTANTS.RED;
       }
