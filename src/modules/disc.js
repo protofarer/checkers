@@ -66,8 +66,8 @@ export default class Disc {
 
   isClicked(mouseCanvasX, mouseCanvasY) {
     // WARN this if block causes massive performance issues, freezes UI
-    // if (this.ctx.isPointInPath(this.#path, x, y, 'nonzero')) {
-    //   console.log(`canvasxy inside isclicked`, x, y)
+    // if (this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero')) {
+    //   console.log(`canvasxy inside isclicked`, mouseCanvasX, mouseCanvasY)
     //   console.log(`Disc ${this.row}, ${this.col} was clicked`)
     // }
     return this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero');

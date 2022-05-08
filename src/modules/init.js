@@ -1,4 +1,5 @@
 import { CONSTANTS, resetGame } from '../main.js';
+import GUI from 'lil-gui'
 
 export default function setupExternalUI(id) {
   const container = document.createElement('div');
@@ -20,6 +21,7 @@ export default function setupExternalUI(id) {
   statusEle.style.width = '300px';
   infoWrapper.appendChild(statusEle);
   
+
   const debugButton = document.createElement('button');
   debugButton.id = 'debugButton';
   debugButton.innerText = 'toggle\ndebug\n...'
@@ -59,6 +61,47 @@ export default function setupExternalUI(id) {
     resetGame(true);
   });
 
+  function setupDebugGUI(game, ui) {
+    // debug GUI
+    const gui = new GUI()
+    const rectpos = {
+      left: `${Math.floor(game.rect.left)}`,
+      top: `${Math.floor(game.rect.top)}`
+    }
+    gui.add(rectpos, 'left').name('rect.left').listen()
+    gui.add(rectpos, 'top').name('rect.top').listen()
+    gui.add(ui.canvas, 'width').name('canvas.width')
+    gui.add(ui.canvas,'height').name('canvas.height')
+
+    gui.add(game.mouseCoords.client, 'x').name('client.x').listen()
+    gui.add(game.mouseCoords.client, 'y').name('client.y').listen()
+    gui.add(game.mouseCoords.canvas, 'x').name('canvas.x').listen()
+    gui.add(game.mouseCoords.canvas, 'y').name('canvas.y').listen()
+    gui.add(game.mouseCoords.board, 'x').name('board.x').listen()
+    gui.add(game.mouseCoords.board, 'y').name('board.y').listen()
+    gui.add(game.mouseCoords.square, 'col').name('mouse.col').listen()
+    gui.add(game.mouseCoords.square, 'row').name('mouse.row').listen()
+
+    gui.add(game, 'turnCount').name('turnCount').listen()
+    gui.add(game, 'turnColor').name('turnColor').listen()
+    gui.add(game, 'phase').name('phase').listen()
+    gui.add(game, 'winner').name('winner').listen()
+
+    gui.add({ resetGame }, 'resetGame')
+    gui.add({ debugreset() { resetGame(true) } }, 'debugreset').name('debugReset')
+
+    const triggerVictory = () => {
+      game.phase = CONSTANTS.PHASE_END;
+      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
+    }
+    gui.add({ triggerVictory }, 'triggerVictory')
+
+    const toggleKings = () => {
+      game.discs.forEach(disc => { disc.isKing = !disc.isKing })
+    }
+    gui.add({ toggleKings }, 'toggleKings')
+  }
+
   function updateAll(game) {
     function updateDebugEle() {
       debugEle.innerHTML = `\
@@ -68,7 +111,7 @@ export default function setupExternalUI(id) {
           board: ${Math.floor(parseFloat(game.mouseCoords.board.x))}, ${game.mouseCoords.board.y}<br />
           col,row: ${Math.floor((parseFloat((game.mouseCoords.board.x)/100,2).toFixed(2))) }, ${Math.floor(parseFloat((game.mouseCoords.board.y)/100,2).toFixed(2))}<br />
           rectpos: ${Math.floor(game.rect.left)},${Math.floor(game.rect.top)}<br />
-          canvas: ${canvas.width},${canvas.height}<br />
+          canvas w,h: ${canvas.width},${canvas.height}<br />
           phase: ${game.phase}<br />
           winner: ${game.winner}
         </span>
@@ -102,6 +145,6 @@ export default function setupExternalUI(id) {
     canvas,
     statusEle, debugEle, boardStateEle, 
     debugButton, resetButton, debugResetButton, debugKingButton, debugVictoryButton,
-    updateAll
+    updateAll, setupDebugGUI
   };
 }

@@ -41,6 +41,9 @@ export default class Game {
       },
       client: {
         x: 0, y: 0
+      },
+      square: {
+        col: 0, row: 0
       }
     };
 
@@ -177,6 +180,8 @@ export default class Game {
         }
       }
     }
+    // console.log(`captureMoves`, captureMoves)
+    
     // if (disc.isKing) {
     //   if (disc.row - (2*disc.direction) >= 0 &&
     //       disc.row - (2*disc.direction) < 8) {
@@ -290,31 +295,36 @@ export default class Game {
       // Mouse coordinates relative to window
       this.mouseCoords.client.x = e.clientX;
       this.mouseCoords.client.y = e.clientY;
+          
+      // Calculate row,col from mouse coords
+      this.mouseCoords.square.col = Math.floor((parseFloat((this.mouseCoords.board.x)/100,2).toFixed(2)))
+      this.mouseCoords.square.row = Math.floor(parseFloat((this.mouseCoords.board.y)/100,2).toFixed(2))
     }
 
     function handleMouseDown(e) {
-      const pushGrabbedDisc = (clickedDisc) => {
-        this.discs = this.discs.filter(disc => disc !== clickedDisc)
-        this.discs.push(clickedDisc)
+      const pushGrabbedDisc = (grabbedDisc, discs) => {
+        discs = discs.filter(disc => disc !== grabbedDisc)
+        discs.push(grabbedDisc)
+        return discs;
       }
+
       const clickedDisc = this.discs.find(disc =>
         disc.isClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       );
-
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
           const actor = this.getActorType(clickedDisc)
           if (actor === 'enticed') {
             clickedDisc.toggleGrab()
-            pushGrabbedDisc(clickedDisc)
+            this.discs = pushGrabbedDisc(clickedDisc, this.discs)
           } else if (actor === 'carefree') {
             if (this.enticed.length > 0) {
               this.msg = "You must make a capture when available"
             } else {
               // RFCT
               clickedDisc.toggleGrab()
-              pushGrabbedDisc(clickedDisc)
+              this.discs = pushGrabbedDisc(clickedDisc, this.discs)
             }
           } else {  // actor is null, neither carefree nor enticed
             this.msg = (this.enticed.length > 0 || this.carefrees.length > 0)

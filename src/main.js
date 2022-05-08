@@ -19,9 +19,11 @@ const initDebugMode = false;
 
 let ui = setupExternalUI('html')
 let game = new Game(ui, initDebugMode);
+ui.setupDebugGUI(game, ui)
 
 export function resetGame(debug=false) {
   game = new Game(ui, debug);
+  ui.setupDebugGUI(game,ui)
 }
 
 (function draw() {
