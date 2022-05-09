@@ -1,5 +1,5 @@
-import GUI from "lil-gui"
-import { resetGame } from "../main"
+import GUI from 'lil-gui'
+import { resetGame, CONSTANTS } from '../main'
 
 export default function setupDebugGUI(game, ui) {
     // debug GUI
@@ -42,8 +42,8 @@ export default function setupDebugGUI(game, ui) {
     gui.add({ debugreset() { resetGame(true) } }, 'debugreset').name('debugReset')
 
     const triggerVictory = () => {
-      game.phase = CONSTANTS.PHASE_END;
-      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
+      game.phase = CONSTANTS.PHASE_END
+      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
     }
     gui.add({ triggerVictory }, 'triggerVictory')
 

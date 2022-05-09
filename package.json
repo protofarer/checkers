@@ -5,9 +5,11 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint src"
   },
   "devDependencies": {
+    "eslint": "^8.15.0",
     "lil-gui": "^0.16.1",
     "vite": "^2.8.0"
   }

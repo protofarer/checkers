@@ -1,67 +1,67 @@
-import { CONSTANTS } from '../main';
+import { CONSTANTS } from '../main'
 
 export default class Disc {
-  #path;
+  #path
   constructor(ctx, row, col, offset, color) {
     // TRY console.assert?
     if (!(col >= 0 && row >= 0)) {
-      throw new TypeError(`A disc's col and row are not initialized`);
+      throw new TypeError(`A disc's col and row are not initialized`)
     }
     if (![CONSTANTS.RED, CONSTANTS.BLACK, CONSTANTS.GHOST].some(ele => color === ele)) {
-      throw new TypeError(`A disc was not initialized a color`);
+      throw new TypeError(`A disc was not initialized a color`)
     }
     if (!offset?.x || !offset?.y) {
       throw new TypeError(`A disc's offsets are not initialized`)
     }
-    this.ctx = ctx;
-    this.id = `${parseInt(col)}${parseInt(row)}`;
-    this.col = col;
-    this.row = row;
-    this.offset = offset;
+    this.ctx = ctx
+    this.id = `${parseInt(col)}${parseInt(row)}`
+    this.col = col
+    this.row = row
+    this.offset = offset
     // Absolute coord of disc center in canvas
     this.center = new (function(row, col, offset) {
       this.x =  ((col) * 100) + 50 + offset.x
       this.y = ((row) * 100) + 50 + offset.y
     })(this.row, this.col, this.offset)
 
-    this.radius = 40;
+    this.radius = 40
     // Color means disc type rather than rendered color
-    this.color = color;
-    this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
-    this.direction = color === CONSTANTS.RED ? 1 : -1;
-    this.isGrabbed = false;
-    this.isKing = false;
-    this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black';
+    this.color = color
+    this.opposite = color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
+    this.direction = color === CONSTANTS.RED ? 1 : -1
+    this.isGrabbed = false
+    this.isKing = false
+    this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black'
     
-    this.animateFrame = 0;
+    this.animateFrame = 0
 
-    this.setClickArea();
+    this.setClickArea()
   }
 
   animateStep() {
     // animateFrame, the *2*2.85 is to give high enough animate frame to reach 
     // full range of desired colors in periodicColor
-    if (this.animateFrame === 45*60*2*2.85) this.animateFrame = 0;
-    return this.animateFrame++;
+    if (this.animateFrame === 45*60*2*2.85) this.animateFrame = 0
+    return this.animateFrame++
   }
 
   periodicColor() {
     if (this.animateFrame % 60 === 0) {
       if (this.color === CONSTANTS.RED) {
         // Color angle skooched right and narrowed to avoid boring red range
-        const colorAngle = (Math.floor(this.animateFrame / 15) % 290) + 30;
-        this.kingColor = `hsl(${colorAngle}, 100%, 40%)`;
+        const colorAngle = (Math.floor(this.animateFrame / 15) % 290) + 30
+        this.kingColor = `hsl(${colorAngle}, 100%, 40%)`
       } else {
-        const colorAngle = Math.floor(this.animateFrame / 15) % 360;
-        this.kingColor = `hsl(${colorAngle}, 100%, 70%)`;
+        const colorAngle = Math.floor(this.animateFrame / 15) % 360
+        this.kingColor = `hsl(${colorAngle}, 100%, 70%)`
       }
     }
-    return this.kingColor;
+    return this.kingColor
   }
 
   setClickArea() {
-    this.#path = new Path2D();
-    this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI);
+    this.#path = new Path2D()
+    this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI)
   }
 
   isClicked(mouseCanvasX, mouseCanvasY) {
@@ -70,16 +70,16 @@ export default class Disc {
     //   console.log(`canvasxy inside isclicked`, mouseCanvasX, mouseCanvasY)
     //   console.log(`Disc ${this.row}, ${this.col} was clicked`)
     // }
-    return this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero');
+    return this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero')
   }
 
   toString() {
-    return `Disc @ r,c: ${this.row},${this.col}`;
+    return `Disc @ r,c: ${this.row},${this.col}`
   }
 
   toggleGrab() {
-    this.isGrabbed = !this.isGrabbed;
-    return this.isGrabbed;
+    this.isGrabbed = !this.isGrabbed
+    return this.isGrabbed
   }
   
   draw(canvasX, canvasY) {
@@ -92,7 +92,7 @@ export default class Disc {
     // Strokes adjusted for disc's fill
     const getStrokeStyle = () => this.color === CONSTANTS.RED 
     ? 'hsl(0,100%,10%)' 
-    : 'hsl(0,0%,80%)';
+    : 'hsl(0,0%,80%)'
     
     if (this.isGrabbed) {
       this.center = {
@@ -116,126 +116,126 @@ export default class Disc {
     this.ctx.translate(this.center.x, this.center.y)
     
     if (this.color === CONSTANTS.GHOST) {
-      this.ctx.strokeStyle = 'hsl(250, 100%, 60%)';
+      this.ctx.strokeStyle = 'hsl(250, 100%, 60%)'
     } else {
-      this.ctx.strokeStyle = getStrokeStyle(); 
+      this.ctx.strokeStyle = getStrokeStyle() 
       // Adjust for differential contrast between dark on light versus light on dark lines
-      this.ctx.lineWidth = this.color === CONSTANTS.RED ? 1 : 0.9; 
+      this.ctx.lineWidth = this.color === CONSTANTS.RED ? 1 : 0.9 
     }
 
     // **************************************************************************
     // **********************    Fill Disc and Shadow
     // **************************************************************************
 
-    this.ctx.beginPath();
-    this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI);
+    this.ctx.beginPath()
+    this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI)
     
     // Style disc fill and shadow according to disc type: ghost, red, or black
     if (this.isGrabbed) {
       this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.9)'
-      this.ctx.shadowBlur = 25;
+      this.ctx.shadowBlur = 25
       this.ctx.shadowOffsetY = this.radius * 0.6
     } else {
       this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.8)'
-      this.ctx.shadowBlur = 6;
+      this.ctx.shadowBlur = 6
       this.ctx.shadowOffsetY = this.radius * 0.07
     }
 
     if (this.color === CONSTANTS.GHOST) {
-      this.ctx.stroke();
+      this.ctx.stroke()
     } else {
       this.ctx.fillStyle = this.color === CONSTANTS.RED
         ? 'crimson'
         : 'black'
     }
 
-    this.ctx.fill();
-    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null;
+    this.ctx.fill()
+    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
     
     // Inner circle detail
-    this.ctx.beginPath();
-    this.ctx.arc(0, 0, 0.8 * this.radius, 0, 2*Math.PI);
-    this.ctx.stroke();
+    this.ctx.beginPath()
+    this.ctx.arc(0, 0, 0.8 * this.radius, 0, 2*Math.PI)
+    this.ctx.stroke()
     
     // Outer ridges
-    const numRidges = 48;
-    this.ctx.save();
-    this.ctx.beginPath();
-    for (let i = 0; i < numRidges; i++) {
-      this.ctx.rotate(2*Math.PI/numRidges);
-      this.ctx.moveTo(0.85 * this.radius, 0);
-      this.ctx.lineTo(0.95 * this.radius, 0);
+    const numRidges = 48
+    this.ctx.save()
+    this.ctx.beginPath()
+    for (let i = 0 i < numRidges i++) {
+      this.ctx.rotate(2*Math.PI/numRidges)
+      this.ctx.moveTo(0.85 * this.radius, 0)
+      this.ctx.lineTo(0.95 * this.radius, 0)
     }
-    this.ctx.stroke();
-    this.ctx.restore();
+    this.ctx.stroke()
+    this.ctx.restore()
 
-    const numInlays = 8;
-    this.ctx.save();       // save C - inside outer draw loop
-    this.ctx.beginPath();
-    for (let i = 0; i < numInlays; i++) {
-      this.ctx.rotate(2*Math.PI/numInlays);
+    const numInlays = 8
+    this.ctx.save()       // save C - inside outer draw loop
+    this.ctx.beginPath()
+    for (let i = 0 i < numInlays i++) {
+      this.ctx.rotate(2*Math.PI/numInlays)
 
       // Outer and encircled small circle
-      this.ctx.moveTo(0.575 * this.radius, 0);
-      this.ctx.arc(0.525 * this.radius, 0, 0.05 * this.radius, 0, 2*Math.PI);
+      this.ctx.moveTo(0.575 * this.radius, 0)
+      this.ctx.arc(0.525 * this.radius, 0, 0.05 * this.radius, 0, 2*Math.PI)
       
       // Arc outer to small circle
-      this.ctx.save();
-      this.ctx.translate(0.5 * this.radius, 0);
-      this.ctx.rotate(-Math.PI*6/12);
-      this.ctx.moveTo(0.225 * this.radius, 0);
-      this.ctx.arc(0, 0, 0.225 * this.radius, 0, Math.PI);
-      this.ctx.restore();
+      this.ctx.save()
+      this.ctx.translate(0.5 * this.radius, 0)
+      this.ctx.rotate(-Math.PI*6/12)
+      this.ctx.moveTo(0.225 * this.radius, 0)
+      this.ctx.arc(0, 0, 0.225 * this.radius, 0, Math.PI)
+      this.ctx.restore()
       
       // Line details 'round small circle
-      this.ctx.save();
-      this.ctx.translate(0.525 * this.radius, 0);
-      this.ctx.rotate(Math.PI*-10/12);
-      for (let i = 0; i < 3; i++) {
-        this.ctx.rotate(Math.PI*5/12);
-        this.ctx.moveTo(0.1 * this.radius, 0);
-        this.ctx.lineTo(0.15 * this.radius, 0);
+      this.ctx.save()
+      this.ctx.translate(0.525 * this.radius, 0)
+      this.ctx.rotate(Math.PI*-10/12)
+      for (let i = 0 i < 3 i++) {
+        this.ctx.rotate(Math.PI*5/12)
+        this.ctx.moveTo(0.1 * this.radius, 0)
+        this.ctx.lineTo(0.15 * this.radius, 0)
       }
-      this.ctx.restore();
+      this.ctx.restore()
       
       // Details just within solid outer circle
-      this.ctx.save();
-      this.ctx.rotate(Math.PI/numInlays);
-      this.ctx.moveTo(0.675 * this.radius, 0);
-      this.ctx.lineTo(0.75 * this.radius, 0);
-      this.ctx.rotate(Math.PI/24);
-      this.ctx.moveTo(0.725 * this.radius, 0);
-      this.ctx.lineTo(0.75 * this.radius, 0);
-      this.ctx.rotate(-2*Math.PI/24);
-      this.ctx.moveTo(0.725 * this.radius, 0);
-      this.ctx.lineTo(0.75 * this.radius, 0);
-      this.ctx.restore();
+      this.ctx.save()
+      this.ctx.rotate(Math.PI/numInlays)
+      this.ctx.moveTo(0.675 * this.radius, 0)
+      this.ctx.lineTo(0.75 * this.radius, 0)
+      this.ctx.rotate(Math.PI/24)
+      this.ctx.moveTo(0.725 * this.radius, 0)
+      this.ctx.lineTo(0.75 * this.radius, 0)
+      this.ctx.rotate(-2*Math.PI/24)
+      this.ctx.moveTo(0.725 * this.radius, 0)
+      this.ctx.lineTo(0.75 * this.radius, 0)
+      this.ctx.restore()
     }
 
     this.ctx.restore()    
-    this.ctx.strokeStyle = getStrokeStyle();
+    this.ctx.strokeStyle = getStrokeStyle()
     
     // Arc encompassing disc center
     this.ctx.save()
-    for (let i = 0; i < numInlays; i++) {
-      this.ctx.rotate(2*Math.PI/numInlays);
-      this.ctx.save();
+    for (let i = 0 i < numInlays i++) {
+      this.ctx.rotate(2*Math.PI/numInlays)
+      this.ctx.save()
       if (this.isKing) {
-        this.ctx.rotate(Math.floor(this.animateStep() / 60) * 2 * Math.PI / 180);
+        this.ctx.rotate(Math.floor(this.animateStep() / 60) * 2 * Math.PI / 180)
         }
-      this.ctx.translate(9, 0);
-      this.ctx.rotate(Math.PI*3/12);
-      this.ctx.moveTo(11,0);
-      this.ctx.arc(0, 0, 11, 0, Math.PI*18/12);
-      this.ctx.restore();
+      this.ctx.translate(9, 0)
+      this.ctx.rotate(Math.PI*3/12)
+      this.ctx.moveTo(11,0)
+      this.ctx.arc(0, 0, 11, 0, Math.PI*18/12)
+      this.ctx.restore()
     }
     this.ctx.restore()
 
     if (this.isKing) {
-      this.ctx.strokeStyle = this.periodicColor();
+      this.ctx.strokeStyle = this.periodicColor()
     }
 
-    this.ctx.stroke();
-    this.ctx.restore(); // restore A
+    this.ctx.stroke()
+    this.ctx.restore() // restore A
   }
 }

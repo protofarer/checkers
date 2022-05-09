@@ -7,22 +7,22 @@
     <title>Game Lobby</title>
     <style>
       #container {
-        display: flex;
-        flex-flow: row nowrap;
-        gap: 5px;
+        display: flex
+        flex-flow: row nowrap
+        gap: 5px
       }
       #sidebar {
-        padding: 5px;
-        width: 170px;
-        display: flex;
-        flex-flow: column nowrap;
-        border: 1px solid blue;
+        padding: 5px
+        width: 170px
+        display: flex
+        flex-flow: column nowrap
+        border: 1px solid blue
       }
       #chatInput {
-        width: 140px;
+        width: 140px
       }
       #checkersGame {
-        padding: 5px;
+        padding: 5px
       }
     </style>
   </head>

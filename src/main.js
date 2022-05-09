@@ -1,6 +1,6 @@
-import setupExternalUI from './modules/init.js';
-import Game from './modules/game.js';
-import setupDebugGUI from './modules/debugGUI.js';
+import setupExternalUI from './modules/init.js'
+import Game from './modules/game.js'
+import setupDebugGUI from './modules/debugGUI.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -16,20 +16,20 @@ export const CONSTANTS = {
   PHASE_END: 6,
 }
 
-const initDebugMode = false;
+const initDebugMode = false
 
 let ui = setupExternalUI('html')
-let game = new Game(ui, initDebugMode);
-let debugGUI = setupDebugGUI(game, ui)
+let game = new Game(ui, initDebugMode)
+setupDebugGUI(game, ui)
 
 export function resetGame(debug=false) {
-  game = new Game(ui, debug);
-  debugGUI = setupDebugGUI(game, ui)
+  game = new Game(ui, debug)
+  setupDebugGUI(game, ui)
 }
 
 (function draw() {
-  game.clr();
-  game.drawAll();
-  ui.updateAll(game);
-  requestAnimationFrame(draw);
+  game.clr()
+  game.drawAll()
+  ui.updateAll(game)
+  requestAnimationFrame(draw)
 }())

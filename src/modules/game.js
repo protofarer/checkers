@@ -1,12 +1,12 @@
-import Disc from './disc';
-import { CONSTANTS, resetGame } from '../main';
-import Panel from './panel';
+import Disc from './disc'
+import { CONSTANTS, resetGame } from '../main'
+import Panel from './panel'
 
 export default class Game {
   constructor (ui, debugMode=false) {
-    this.debugMode = debugMode;
-    this.ui = ui;
-    this.ctx = this.ui.canvas.getContext('2d');
+    this.debugMode = debugMode
+    this.ui = ui
+    this.ctx = this.ui.canvas.getContext('2d')
 
     this.board = this.debugMode
       ? [ 
@@ -30,7 +30,7 @@ export default class Game {
           [1,0,1,0,1,0,1,0],
         ]
 
-    this.discs = [];
+    this.discs = []
     
     this.mouseCoords = { 
       canvas: {
@@ -45,26 +45,26 @@ export default class Game {
       square: {
         col: 0, row: 0
       }
-    };
+    }
 
     // Captors and Movers determined only after a disc has changed positions.
-    this.carefrees = [];
-    this.enticed = [];
+    this.carefrees = []
+    this.enticed = []
     
-    this.msg = "";
-    this.turnCount = 0;
-    this.turnColor = CONSTANTS.BLACK;
-    this.phase = CONSTANTS.PHASE_PLAY;    // new, playing, end
-    this.winner = "";
+    this.msg = ''
+    this.turnCount = 0
+    this.turnColor = CONSTANTS.BLACK
+    this.phase = CONSTANTS.PHASE_PLAY    // new, playing, end
+    this.winner = ''
     this.captures = {
       forRed: 0,
       forBlack: 0,
-    };
-    this.hasCaptureChainStarted = false;
+    }
+    this.hasCaptureChainStarted = false
 
-    this.boardHeight = 800;
-    this.boardWidth = 800;
-    this.baseThickness = 40;      // decorative graphic around board
+    this.boardHeight = 800
+    this.boardWidth = 800
+    this.baseThickness = 40      // decorative graphic around board
     
     // Play area is the active area of board, ie not including baseboard
     // and defined as such to calculate based off coordinates relative to
@@ -77,11 +77,11 @@ export default class Game {
       y: this.baseThickness,
     }
 
-    this.boardPanelGap = 15;
+    this.boardPanelGap = 15
 
     const panelOffsetX = this.boardWidth + 2 * this.baseThickness + this.boardPanelGap
-    const panelOffsetY = 0;
-    const panelWidth = 200;
+    const panelOffsetY = 0
+    const panelWidth = 200
     const panelHeight = this.boardHeight + 2 * this.baseThickness
     this.panel = new Panel(
       panelOffsetX, panelOffsetY,
@@ -90,17 +90,17 @@ export default class Game {
     )
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
-      + this.boardPanelGap + panelWidth;
-    this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness;
+      + this.boardPanelGap + panelWidth
+    this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
     this.ui.canvas.style.border = '1px solid red'
 
-    this.rect = this.ui.canvas.getBoundingClientRect();
+    this.rect = this.ui.canvas.getBoundingClientRect()
 
-    this.ghostSourceDisc = null;
+    this.ghostSourceDisc = null
 
-    this.initDiscs();
-    this.updateDiscActors();
-    this.setupEventListeners();
+    this.initDiscs()
+    this.updateDiscActors()
+    this.setupEventListeners()
   }
 
   initDiscs() {
@@ -108,31 +108,31 @@ export default class Game {
       for (let j = 0; j < 8; j++) {
         switch(this.board[i][j]) {
           case CONSTANTS.RED:
-            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED));
-            break;
+            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED))
+            break
           case CONSTANTS.BLACK:
-            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK));
-            break;
+            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK))
+            break
           case CONSTANTS.BLANK:
-            break;
+            break
           default:
-            console.log('unhandled board object render');
-            debug.innerText += 'error rendering board object';
+            console.log('unhandled board object render')
+            this.ui.debug.innerText += 'error rendering board object'
         }
       }
     }
   }
 
   boardToHTML() {
-    let s = '';
+    let s = ''
     for (let r of this.board) {
-      s += `${r.join(' ')}<br />`;
+      s += `${r.join(' ')}<br />`
     }
-    return s;
+    return s
   }
 
   findNonCaptureMoves(disc) {
-    let nonCaptureMoves = [];
+    let nonCaptureMoves = []
     if (disc.row + disc.direction >= 0 && 
         disc.row + disc.direction < 8) {
       if ((disc.col + 1 < 8) && 
@@ -157,14 +157,14 @@ export default class Game {
         }
       }
     }
-    return nonCaptureMoves;
+    return nonCaptureMoves
   }
 
   findCaptureMoves(disc) {
-    let captureMoves = [];
-    captureByDirection(1, this.board);
+    let captureMoves = []
+    captureByDirection(1, this.board)
     if (disc.isKing) {
-      captureByDirection(-1, this.board);
+      captureByDirection(-1, this.board)
     }
     function captureByDirection(direction, board) {
       // CSDR somehow binding board to this.board of Game
@@ -172,11 +172,11 @@ export default class Game {
           disc.row + (2*disc.direction * direction) < 8) {
         if ((board[disc.row + disc.direction * direction][disc.col - 1] === disc.opposite) && 
           (board[disc.row + (2*disc.direction * direction)][disc.col - 2] === 0)) {
-            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col - 2 });
+            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col - 2 })
         }
         if ((board[disc.row + disc.direction * direction * direction][disc.col + 1] === disc.opposite) &&
           (board[disc.row + (2*disc.direction * direction)][disc.col + 2] === 0)) {
-            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col + 2 });
+            captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col + 2 })
         }
       }
     }
@@ -187,77 +187,77 @@ export default class Game {
     //       disc.row - (2*disc.direction) < 8) {
     //     if ((this.board[disc.row - disc.direction][disc.col - 1] === disc.opposite) && 
     //       (this.board[disc.row - (2*disc.direction)][disc.col - 2] === 0)) {
-    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col - 2 });
+    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col - 2 })
     //     }
     //     if ((this.board[disc.row - disc.direction][disc.col + 1] === disc.opposite) &&
     //       (this.board[disc.row - (2*disc.direction)][disc.col + 2] === 0)) {
-    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col + 2 });
+    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col + 2 })
     //     }
     //   }
     // }
-    return captureMoves;
+    return captureMoves
   }
 
   updateDiscActors() {
-    this.carefrees = this.findCarefrees();
-    this.enticed = this.findEnticed();
+    this.carefrees = this.findCarefrees()
+    this.enticed = this.findEnticed()
   }
 
   // WARNING till function from disc class called
   findEnticed() {
     const enticed = this.discs.filter(disc => 
       this.findCaptureMoves(disc).length > 0 && disc.color === this.turnColor
-    );
-    return enticed;
+    )
+    return enticed
   }
   findCarefrees() {
     const carefrees = this.discs.filter(disc =>
-      this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor);
-    return carefrees;
+      this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor)
+    return carefrees
   }
 
   move(grabbedDisc, to) {
-    this.board[grabbedDisc.row][grabbedDisc.col] = 0;
-    this.board[to.row][to.col] = grabbedDisc.color;
-    grabbedDisc.row = to.row;
-    grabbedDisc.col = to.col;
+    this.board[grabbedDisc.row][grabbedDisc.col] = 0
+    this.board[to.row][to.col] = grabbedDisc.color
+    grabbedDisc.row = to.row
+    grabbedDisc.col = to.col
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
-      grabbedDisc.direction *= -1;
+      grabbedDisc.direction *= -1
     }
-    this.updateDiscActors();
+    this.updateDiscActors()
   }
   
   capture(grabbedDisc, to) {
-    const capturedDisc = this.findCaptured(grabbedDisc, to);
+    const capturedDisc = this.findCaptured(grabbedDisc, to)
     if (capturedDisc.color === CONSTANTS.RED) {
-      this.captures.forBlack += 1;
+      this.captures.forBlack += 1
     } else {
-      this.captures.forRed += 1;
+      this.captures.forRed += 1
     }
-    this.board[capturedDisc.row][capturedDisc.col] = 0;
+    this.board[capturedDisc.row][capturedDisc.col] = 0
     this.discs = this.discs.filter(disc => 
       !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
-    );
-    this.hasCaptureChainStarted = true;
+    )
+    this.hasCaptureChainStarted = true
 
   }
 
   findCaptured(from, to) {
-    let col = (to.col - from.col) / Math.abs(to.col - from.col);
-    col += from.col;
-    let row = (to.row - from.row) / Math.abs(to.row - from.row);
-    row += from.row;
-    return this.discs.filter(disc => disc.col === col && disc.row === row)[0];
+    let col = (to.col - from.col) / Math.abs(to.col - from.col)
+    col += from.col
+    let row = (to.row - from.row) / Math.abs(to.row - from.row)
+    row += from.row
+    return this.discs.filter(disc => disc.col === col && disc.row === row)[0]
   }
 
   nextTurn() {
-    this.turnCount++;
+    this.turnCount++
     this.turnColor = this.turnColor === CONSTANTS.RED 
       ? CONSTANTS.BLACK 
-      : CONSTANTS.RED;
-    this.msg = "";
-    this.hasCaptureChainStarted = false;
-    this.updateDiscActors();
+      : CONSTANTS.RED
+    this.msg = ''
+    this.hasCaptureChainStarted = false
+    this.updateDiscActors()
   }
 
   getActorType(disc) {
@@ -276,31 +276,31 @@ export default class Game {
       
       // Mouse coordinates relative to canvas
       this.mouseCoords.canvas.x = e.clientX - this.rect.left // + window.scrollX
-      this.mouseCoords.canvas.y = e.clientY - this.rect.top // + window.scrollY;
+      this.mouseCoords.canvas.y = e.clientY - this.rect.top // + window.scrollY
 
       // Mouse coordinates relative to play area
       this.mouseCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x // + window.scrollX
       this.mouseCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y // + window.scrollY
 
       // Mouse coordinates relative to window
-      this.mouseCoords.client.x = e.clientX; // + window.scrollX
-      this.mouseCoords.client.y = e.clientY; // + window.scrollY
+      this.mouseCoords.client.x = e.clientX // + window.scrollX
+      this.mouseCoords.client.y = e.clientY // + window.scrollY
           
       // Calculate row,col from mouse coords
       this.mouseCoords.square.col = Math.floor((parseFloat((this.mouseCoords.board.x)/100,2).toFixed(2)))
       this.mouseCoords.square.row = Math.floor(parseFloat((this.mouseCoords.board.y)/100,2).toFixed(2))
     }
 
-    const handleMouseDown = (e) => {
+    const handleMouseDown = () => {
       const pushGrabbedDisc = (grabbedDisc, discs) => {
         discs = discs.filter(disc => disc !== grabbedDisc)
         discs.push(grabbedDisc)
-        return discs;
+        return discs
       }
 
       const clickedDisc = this.discs.find(disc =>
         disc.isClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      );
+      )
 
       if (clickedDisc) {
         if (clickedDisc.color === this.turnColor) {
@@ -310,7 +310,7 @@ export default class Game {
             this.discs = pushGrabbedDisc(clickedDisc, this.discs)
           } else if (actor === 'carefree') {
             if (this.enticed.length > 0) {
-              this.msg = "You must make a capture when available"
+              this.msg = 'You must make a capture when available'
             } else {
               // RFCT
               clickedDisc.toggleGrab()
@@ -318,35 +318,35 @@ export default class Game {
             }
           } else {  // actor is null, neither carefree nor enticed
             this.msg = (this.enticed.length > 0 || this.carefrees.length > 0)
-              ? "This disc cannot move"
-              : "You have no moves available. Pass your turn"
+              ? 'This disc cannot move'
+              : 'You have no moves available. Pass your turn'
           }
         } else {
-          this.msg = "That isn't your disc"
+          this.msg = 'That isn\'t your disc'
         }
       }
 
       // TODO pass resetGame as a callback to a panel method instead
       // this.panel.resetListener(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y, resetGame)
-      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       if (isResetClicked) {
-        resetGame();
+        resetGame()
       }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
-        this.nextTurn();
+        this.nextTurn()
       }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
       if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
-        this.nextTurn();
+        this.nextTurn()
       }
     }
 
-    const handleMouseUp = (e) => {
+    const handleMouseUp = () => {
 
       function isMouseInSquare(x, y, r, c) {
         // console.debug(`isMouseInSquarexy`, x, y)
@@ -360,44 +360,44 @@ export default class Game {
       const grabbedDisc = this.discs.find(disc => disc.isGrabbed)
 
       if (grabbedDisc) {
-        const isEnticed = this.enticed.find(c => c === grabbedDisc); 
-        const isCarefree = this.carefrees.find(m => m === grabbedDisc);
+        const isEnticed = this.enticed.find(c => c === grabbedDisc) 
+        const isCarefree = this.carefrees.find(m => m === grabbedDisc)
 
         // if is an enticed (can capture) and mouseupped on valid capture move
         if (isEnticed) {
-          const captureMoves = this.findCaptureMoves(grabbedDisc);
+          const captureMoves = this.findCaptureMoves(grabbedDisc)
           const validCaptureMove = captureMoves.find(move => 
             isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
-          );
+          )
           if (validCaptureMove) {
             // DISPATCH valid capture move
-            this.capture(grabbedDisc, validCaptureMove);
-            this.move(grabbedDisc, validCaptureMove);
+            this.capture(grabbedDisc, validCaptureMove)
+            this.move(grabbedDisc, validCaptureMove)
             grabbedDisc.setClickArea()
           } else {
             // DISPATCH not-valid-capture msg
-            this.msg = "Not a valid capture move";
+            this.msg = 'Not a valid capture move'
           }
         } else if (isCarefree) {
-          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc)
           const nonCaptureMove = nonCaptureMoves.find(move =>
             isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
-          );
+          )
           if (nonCaptureMove) {
             // DISPATCH valid mover move
-            this.move(grabbedDisc, nonCaptureMove);
+            this.move(grabbedDisc, nonCaptureMove)
             grabbedDisc.setClickArea()
             // DISPATCH nextTurn
-            this.nextTurn();
+            this.nextTurn()
           } else {
             // DISPATCH invalid-mover-move msg
-            this.msg = "Invalid move. Try again"
+            this.msg = 'Invalid move. Try again'
           }
         }
 
         if (this.hasCaptureChainStarted && this.enticed.length === 0) {
           // DISPATCH
-          this.nextTurn();
+          this.nextTurn()
         }
 
         if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
@@ -405,89 +405,89 @@ export default class Game {
           // DISPATCH
           // 1.16 When a man reaches the farthest row forward (known as the “king-row” or “crown-head”) it becomes a king, and this completes the turn of play. 
           // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
-          grabbedDisc.isKing = true;
+          grabbedDisc.isKing = true
           this.nextTurn()
         }
           // DISPATCH
-        grabbedDisc.toggleGrab();
+        grabbedDisc.toggleGrab()
       }
       
 
       if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
         // DISPATCH BLACK WINS
-        this.phase = CONSTANTS.PHASE_END;
-        this.winner = CONSTANTS.BLACK;
+        this.phase = CONSTANTS.PHASE_END
+        this.winner = CONSTANTS.BLACK
       } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
         // DISPATCH RED WINS
-        this.phase = CONSTANTS.PHASE_END;
-        this.winner = CONSTANTS.RED;
+        this.phase = CONSTANTS.PHASE_END
+        this.winner = CONSTANTS.RED
       }
     }
 
     const handleDebugClick = () => {
-      this.debugMode = !this.debugMode;
+      this.debugMode = !this.debugMode
       if (this.debugMode) {
-        debugButton.innerText = 'turn\ndebug\noff';
-        this.ui.debugEle.style.display = 'block';
-        this.ui.boardStateEle.style.display = 'block';
-        this.ui.resetButton.style.display = 'block';
-        this.ui.debugResetButton.style.display = 'block';
-        this.ui.debugKingButton.style.display = 'block';
+        this.ui.debugButton.innerText = 'turn\ndebug\noff'
+        this.ui.debugEle.style.display = 'block'
+        this.ui.boardStateEle.style.display = 'block'
+        this.ui.resetButton.style.display = 'block'
+        this.ui.debugResetButton.style.display = 'block'
+        this.ui.debugKingButton.style.display = 'block'
       } else {
-        debugButton.innerText =  'turn\ndebug\non';
-        this.ui.debugEle.style.display = 'none';
-        this.ui.boardStateEle.style.display = 'none';
-        this.ui.resetButton.style.display = 'none';
-        this.ui.debugResetButton.style.display = 'none';
-        this.ui.debugKingButton.style.display = 'none';
+        this.ui.debugButton.innerText =  'turn\ndebug\non'
+        this.ui.debugEle.style.display = 'none'
+        this.ui.boardStateEle.style.display = 'none'
+        this.ui.resetButton.style.display = 'none'
+        this.ui.debugResetButton.style.display = 'none'
+        this.ui.debugKingButton.style.display = 'none'
       }
     }
 
     const handleDebugKing = () => {
-      this.discs.forEach(disc => { disc.isKing = !disc.isKing });
+      this.discs.forEach(disc => { disc.isKing = !disc.isKing })
     }
     
     const handleDebugVictory = () => {
-      this.phase = CONSTANTS.PHASE_END;
-      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
+      this.phase = CONSTANTS.PHASE_END
+      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
     }
 
-    document.addEventListener('mousemove', handleMouseMove);
-    this.ui.canvas.addEventListener('mousedown', handleMouseDown); 
-    this.ui.canvas.addEventListener('mouseup', handleMouseUp); 
-    this.ui.debugButton.addEventListener('click', handleDebugClick);
-    this.ui.debugKingButton.addEventListener('click', handleDebugKing);
-    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory);
+    document.addEventListener('mousemove', handleMouseMove)
+    this.ui.canvas.addEventListener('mousedown', handleMouseDown) 
+    this.ui.canvas.addEventListener('mouseup', handleMouseUp) 
+    this.ui.debugButton.addEventListener('click', handleDebugClick)
+    this.ui.debugKingButton.addEventListener('click', handleDebugKing)
+    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory)
   }
 
   clr() {
-    this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height);
+    this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height)
   }
 
   drawBoard() {
-    const darkHue = 18;
-    const lightHue = 45;
-    this.ctx.save();
+    const darkHue = 18
+    const lightHue = 45
+    this.ctx.save()
     this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
-    for (let row = 0; row < 8; row++) {
+    for (let row = 0;row < 8; row++) {
       for (let col = 0; col < 8; col++) {
-        this.ctx.beginPath();
+        this.ctx.beginPath()
         if (( row + col) % 2 === 0) {
-          this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`;
-          this.ctx.fillRect(col * 100, row * 100, 100, 100);
+          this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`
+          this.ctx.fillRect(col * 100, row * 100, 100, 100)
         } else {
-          this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`;
-          this.ctx.fillRect(col * 100, row * 100, 100, 100);
+          this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`
+          this.ctx.fillRect(col * 100, row * 100, 100, 100)
         }
       }
     }
-    this.ctx.restore();
+    this.ctx.restore()
   }
 
 
   drawDiscs() {
     // for (let disc of this.discs) {
-    //   disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+    //   disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
     // }
     for (let i = 0; i < this.discs.length; i++) {
       this.discs[i].draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
@@ -497,13 +497,13 @@ export default class Game {
   drawVictoryDialog() {
     this.ctx.beginPath()
     this.ctx.fillStyle = 'hsla(0, 0%, 95%, 0.75)'
-    this.ctx.fillRect(100, 200, 600, 400);
+    this.ctx.fillRect(100, 200, 600, 400)
 
-    this.ctx.font = 'bold 60px Arial';
+    this.ctx.font = 'bold 60px Arial'
     
     this.ctx.fillStyle = this.winner === CONSTANTS.RED 
       ? 'crimson'
-      : 'black';
+      : 'black'
     this.ctx.fillText(
       `${this.winner === CONSTANTS.RED ? 'RED' : 'BLACK'}`,
       300, 350
@@ -538,16 +538,16 @@ export default class Game {
   //   const actor = this.getActorType(grabbedDisc)
   //   if (grabbedDisc) {
   //     if (actor === 'enticed') {
-  //       const captureMoves = this.findCaptureMoves(grabbedDisc); 
+  //       const captureMoves = this.findCaptureMoves(grabbedDisc) 
   //       for (let m of captureMoves) {
   //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
   //       }
   //     } else if (actor === 'carefree') {
-  //       const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc);
+  //       const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc)
   //       for (let m of nonCaptureMoves) {
   //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y);
+  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
   //       }
   //     }
   //   }
@@ -555,10 +555,10 @@ export default class Game {
 
   drawAll() {
     this.drawBaseBoard()
-    this.drawBoard();
-    this.drawDiscs();
-    this.panel.draw({ captures: this.captures, turnColor: this.turnColor });
+    this.drawBoard()
+    this.drawDiscs()
+    this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
 
-    this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog();
+    this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
 }
