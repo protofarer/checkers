@@ -271,38 +271,27 @@ export default class Game {
   }
 
   setupEventListeners() {
-    document.addEventListener('mousemove', handleMouseMove.bind(this));
-    this.ui.canvas.addEventListener('mousedown', handleMouseDown.bind(this)); 
-    this.ui.canvas.addEventListener('mouseup', handleMouseUp.bind(this)); 
-    this.ui.debugButton.addEventListener('click', handleDebugClick.bind(this));
-    this.ui.debugKingButton.addEventListener('click', handleDebugKing.bind(this));
-    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory.bind(this));
-
-
-    function handleDebugVictory() {
-      this.phase = CONSTANTS.PHASE_END;
-      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
-    }
-
-    function handleMouseMove(e) {
+    const handleMouseMove = (e) => {
+      // Scrolled window is not supported
+      
       // Mouse coordinates relative to canvas
-      this.mouseCoords.canvas.x = e.clientX - this.rect.left; //window.scrollX
-      this.mouseCoords.canvas.y = e.clientY - this.rect.top;
+      this.mouseCoords.canvas.x = e.clientX - this.rect.left // + window.scrollX
+      this.mouseCoords.canvas.y = e.clientY - this.rect.top // + window.scrollY;
 
       // Mouse coordinates relative to play area
-      this.mouseCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x
-      this.mouseCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y
+      this.mouseCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x // + window.scrollX
+      this.mouseCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y // + window.scrollY
 
       // Mouse coordinates relative to window
-      this.mouseCoords.client.x = e.clientX;
-      this.mouseCoords.client.y = e.clientY;
+      this.mouseCoords.client.x = e.clientX; // + window.scrollX
+      this.mouseCoords.client.y = e.clientY; // + window.scrollY
           
       // Calculate row,col from mouse coords
       this.mouseCoords.square.col = Math.floor((parseFloat((this.mouseCoords.board.x)/100,2).toFixed(2)))
       this.mouseCoords.square.row = Math.floor(parseFloat((this.mouseCoords.board.y)/100,2).toFixed(2))
     }
 
-    function handleMouseDown(e) {
+    const handleMouseDown = (e) => {
       const pushGrabbedDisc = (grabbedDisc, discs) => {
         discs = discs.filter(disc => disc !== grabbedDisc)
         discs.push(grabbedDisc)
@@ -357,7 +346,7 @@ export default class Game {
       }
     }
 
-    function handleMouseUp(e) {
+    const handleMouseUp = (e) => {
 
       function isMouseInSquare(x, y, r, c) {
         // console.debug(`isMouseInSquarexy`, x, y)
@@ -435,7 +424,7 @@ export default class Game {
       }
     }
 
-    function handleDebugClick() {
+    const handleDebugClick = () => {
       this.debugMode = !this.debugMode;
       if (this.debugMode) {
         debugButton.innerText = 'turn\ndebug\noff';
@@ -454,9 +443,21 @@ export default class Game {
       }
     }
 
-    function handleDebugKing() {
+    const handleDebugKing = () => {
       this.discs.forEach(disc => { disc.isKing = !disc.isKing });
     }
+    
+    const handleDebugVictory = () => {
+      this.phase = CONSTANTS.PHASE_END;
+      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
+    }
+
+    document.addEventListener('mousemove', handleMouseMove);
+    this.ui.canvas.addEventListener('mousedown', handleMouseDown); 
+    this.ui.canvas.addEventListener('mouseup', handleMouseUp); 
+    this.ui.debugButton.addEventListener('click', handleDebugClick);
+    this.ui.debugKingButton.addEventListener('click', handleDebugKing);
+    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory);
   }
 
   clr() {

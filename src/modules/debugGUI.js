@@ -8,25 +8,35 @@ export default function setupDebugGUI(game, ui) {
       left: `${Math.floor(game.rect.left)}`,
       top: `${Math.floor(game.rect.top)}`
     }
+
     
-    gui.add(rectpos, 'left').name('rect.left').listen()
-    gui.add(rectpos, 'top').name('rect.top').listen()
-    gui.add(ui.canvas, 'width').name('canvas.width')
-    gui.add(ui.canvas,'height').name('canvas.height')
+    // gui.add(
+    //   { pos: 'topright'}, 
+    //   'pos', 
+    //   ['topleft', 'botleft', 'botright', 'topright'])
+    //   .onChange(val =>  )
 
-    gui.add(game.mouseCoords.client, 'x').name('client.x').listen()
-    gui.add(game.mouseCoords.client, 'y').name('client.y').listen()
-    gui.add(game.mouseCoords.canvas, 'x').name('canvas.x').listen()
-    gui.add(game.mouseCoords.canvas, 'y').name('canvas.y').listen()
-    gui.add(game.mouseCoords.board, 'x').name('board.x').listen()
-    gui.add(game.mouseCoords.board, 'y').name('board.y').listen()
-    gui.add(game.mouseCoords.square, 'col').name('mouse.col').listen()
-    gui.add(game.mouseCoords.square, 'row').name('mouse.row').listen()
+    const guiGamePositioning = gui.addFolder('GamePositioning') 
+    guiGamePositioning.add(rectpos, 'left').name('rect.left').listen()
+    guiGamePositioning.add(rectpos, 'top').name('rect.top').listen()
+    guiGamePositioning.add(ui.canvas, 'width').name('canvas.width')
+    guiGamePositioning.add(ui.canvas,'height').name('canvas.height')
 
-    gui.add(game, 'turnCount').name('turnCount').listen()
-    gui.add(game, 'turnColor').name('turnColor').listen()
-    gui.add(game, 'phase').name('phase').listen()
-    gui.add(game, 'winner').name('winner').listen()
+    const guiMouseTracking = gui.addFolder('MouseTracking')
+    guiMouseTracking.add(game.mouseCoords.client, 'x').name('client.x').listen()
+    guiMouseTracking.add(game.mouseCoords.client, 'y').name('client.y').listen()
+    guiMouseTracking.add(game.mouseCoords.canvas, 'x').name('canvas.x').listen()
+    guiMouseTracking.add(game.mouseCoords.canvas, 'y').name('canvas.y').listen()
+    guiMouseTracking.add(game.mouseCoords.board, 'x').name('board.x').listen()
+    guiMouseTracking.add(game.mouseCoords.board, 'y').name('board.y').listen()
+    guiMouseTracking.add(game.mouseCoords.square, 'col').name('mouse.col').listen()
+    guiMouseTracking.add(game.mouseCoords.square, 'row').name('mouse.row').listen()
+
+    const guiGameState = gui.addFolder('GameState')
+    guiGameState.add(game, 'turnCount').name('turnCount').listen()
+    guiGameState.add(game, 'turnColor').name('turnColor').listen()
+    guiGameState.add(game, 'phase').name('phase').listen()
+    guiGameState.add(game, 'winner').name('winner').listen()
 
     gui.add({ resetGame }, 'resetGame')
     gui.add({ debugreset() { resetGame(true) } }, 'debugreset').name('debugReset')
