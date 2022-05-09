@@ -11,13 +11,13 @@ export default class Game {
     this.board = this.debugMode
       ? [ 
           [0,0,0,0,0,0,0,0],
-          [0,0,2,0,0,0,0,0],
-          [0,2,0,2,0,0,0,0],
-          [2,0,0,0,0,0,0,0],
+          [1,0,0,0,2,0,2,0],
+          [0,2,0,0,0,0,0,0],
+          [2,0,0,0,2,0,0,0],
           [0,0,0,0,0,1,0,1],
           [0,0,0,0,1,0,0,0],
-          [0,1,0,0,0,1,0,0],
-          [0,0,0,0,0,0,1,0]
+          [0,1,0,0,0,1,0,2],
+          [0,0,0,0,0,0,0,0]
         ]
       : [ 
           [0,2,0,2,0,2,0,2],
@@ -278,6 +278,7 @@ export default class Game {
     this.ui.debugKingButton.addEventListener('click', handleDebugKing.bind(this));
     this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory.bind(this));
 
+
     function handleDebugVictory() {
       this.phase = CONSTANTS.PHASE_END;
       this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED;
@@ -404,16 +405,21 @@ export default class Game {
             this.msg = "Invalid move. Try again"
           }
         }
+
         if (this.hasCaptureChainStarted && this.enticed.length === 0) {
           // DISPATCH
           this.nextTurn();
         }
+
         if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
         || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
           // DISPATCH
+          // 1.16 When a man reaches the farthest row forward (known as the “king-row” or “crown-head”) it becomes a king, and this completes the turn of play. 
+          // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
           grabbedDisc.isKing = true;
+          this.nextTurn()
         }
-        // DISPATCH
+          // DISPATCH
         grabbedDisc.toggleGrab();
       }
       

@@ -60,6 +60,15 @@ export default function setupExternalUI(id) {
     resetGame(true);
   });
 
+  document.addEventListener('keydown', handleKeydown)
+  function handleKeydown(e) {
+    if (e.key === '`') {
+      resetGame(true)
+    } else if (e.key === '~') {
+      resetGame(false)
+    }
+  }
+
 
   function updateAll(game) {
     function updateDebugEle() {
