@@ -161,7 +161,7 @@ export default class Disc {
     const numRidges = 48
     this.ctx.save()
     this.ctx.beginPath()
-    for (let i = 0 i < numRidges i++) {
+    for (let i = 0; i < numRidges; i++) {
       this.ctx.rotate(2*Math.PI/numRidges)
       this.ctx.moveTo(0.85 * this.radius, 0)
       this.ctx.lineTo(0.95 * this.radius, 0)
@@ -172,7 +172,7 @@ export default class Disc {
     const numInlays = 8
     this.ctx.save()       // save C - inside outer draw loop
     this.ctx.beginPath()
-    for (let i = 0 i < numInlays i++) {
+    for (let i = 0; i < numInlays; i++) {
       this.ctx.rotate(2*Math.PI/numInlays)
 
       // Outer and encircled small circle
@@ -191,7 +191,7 @@ export default class Disc {
       this.ctx.save()
       this.ctx.translate(0.525 * this.radius, 0)
       this.ctx.rotate(Math.PI*-10/12)
-      for (let i = 0 i < 3 i++) {
+      for (let i = 0; i < 3; i++) {
         this.ctx.rotate(Math.PI*5/12)
         this.ctx.moveTo(0.1 * this.radius, 0)
         this.ctx.lineTo(0.15 * this.radius, 0)
@@ -217,7 +217,7 @@ export default class Disc {
     
     // Arc encompassing disc center
     this.ctx.save()
-    for (let i = 0 i < numInlays i++) {
+    for (let i = 0; i < numInlays; i++) {
       this.ctx.rotate(2*Math.PI/numInlays)
       this.ctx.save()
       if (this.isKing) {
