@@ -20,11 +20,11 @@ const initDebugMode = false
 
 let ui = setupExternalUI('html')
 let game = new Game(ui, initDebugMode)
-setupDebugGUI(game, ui)
+import.meta.env.DEV && setupDebugGUI(game, ui)
 
 export function resetGame(debug=false) {
   game = new Game(ui, debug)
-  setupDebugGUI(game, ui)
+  import.meta.env.DEV && setupDebugGUI(game, ui)
 }
 
 (function draw() {

@@ -1,17 +1,17 @@
-import { CONSTANTS } from '../main'
+import { CONSTANTS } from '../main.js'
 
 export default class Disc {
   #path
   constructor(ctx, row, col, offset, color) {
     // TRY console.assert?
     if (!(col >= 0 && row >= 0)) {
-      throw new TypeError(`A disc's col and row are not initialized`)
+      throw new TypeError('A disc\'s col and row are not initialized')
     }
     if (![CONSTANTS.RED, CONSTANTS.BLACK, CONSTANTS.GHOST].some(ele => color === ele)) {
-      throw new TypeError(`A disc was not initialized a color`)
+      throw new TypeError('A disc was not initialized a color')
     }
     if (!offset?.x || !offset?.y) {
-      throw new TypeError(`A disc's offsets are not initialized`)
+      throw new TypeError('A disc\'s offsets are not initialized')
     }
     this.ctx = ctx
     this.id = `${parseInt(col)}${parseInt(row)}`

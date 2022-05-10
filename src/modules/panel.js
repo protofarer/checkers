@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../main'
+import { CONSTANTS } from '../main.js'
 
 export default class Panel {
   #resetButtonPath

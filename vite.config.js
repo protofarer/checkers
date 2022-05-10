@@ -1,12 +1,11 @@
 import { defineConfig, loadEnv } from 'vite'
 
 export default defineConfig({
-  root: "src",
-  mode: "development",
+  root: 'src',
   build: {
     outDir: '../dist'
   },
-  envDir: "../",
+  envDir: '../',
   // publicDir: '../public',
   server: {
     open: true,
