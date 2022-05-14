@@ -41,16 +41,14 @@ export default function setupDebugGUI(game, ui) {
     gui.add({ resetGame }, 'resetGame')
     gui.add({ debugreset() { resetGame(true) } }, 'debugreset').name('debugReset')
 
-    const triggerVictory = () => {
-      game.phase = CONSTANTS.PHASE_END
-      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-    }
-    gui.add({ triggerVictory }, 'triggerVictory')
+    // const triggerVictory = () => {
+    //   game.phase = CONSTANTS.PHASE_END
+    //   game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
+    // }
+    gui.add({ triggerVictory() {game.triggerVictory()} }, 'triggerVictory')
 
-    const toggleKings = () => {
-      game.discs.forEach(disc => { disc.isKing = !disc.isKing })
-    }
-    gui.add({ toggleKings }, 'toggleKings')
+    // const toggleKings = () => game.toggleKings()
+    gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
     return gui
   }

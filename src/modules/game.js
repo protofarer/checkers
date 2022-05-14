@@ -424,40 +424,41 @@ export default class Game {
       }
     }
 
-    const handleDebugClick = () => {
-      this.debugMode = !this.debugMode
-      if (this.debugMode) {
-        this.ui.debugButton.innerText = 'turn\ndebug\noff'
-        this.ui.debugEle.style.display = 'block'
-        this.ui.boardStateEle.style.display = 'block'
-        this.ui.resetButton.style.display = 'block'
-        this.ui.debugResetButton.style.display = 'block'
-        this.ui.debugKingButton.style.display = 'block'
-      } else {
-        this.ui.debugButton.innerText =  'turn\ndebug\non'
-        this.ui.debugEle.style.display = 'none'
-        this.ui.boardStateEle.style.display = 'none'
-        this.ui.resetButton.style.display = 'none'
-        this.ui.debugResetButton.style.display = 'none'
-        this.ui.debugKingButton.style.display = 'none'
-      }
-    }
+    // const handleDebugClick = () => {
+    //   this.debugMode = !this.debugMode
+    //   if (this.debugMode) {
+    //     this.ui.debugButton.innerText = 'turn\ndebug\noff'
+    //     this.ui.debugEle.style.display = 'block'
+    //     this.ui.boardStateEle.style.display = 'block'
+    //     this.ui.resetButton.style.display = 'block'
+    //     this.ui.debugResetButton.style.display = 'block'
+    //     this.ui.debugKingButton.style.display = 'block'
+    //   } else {
+    //     this.ui.debugButton.innerText =  'turn\ndebug\non'
+    //     this.ui.debugEle.style.display = 'none'
+    //     this.ui.boardStateEle.style.display = 'none'
+    //     this.ui.resetButton.style.display = 'none'
+    //     this.ui.debugResetButton.style.display = 'none'
+    //     this.ui.debugKingButton.style.display = 'none'
+    //   }
+    // }
 
-    const handleDebugKing = () => {
-      this.discs.forEach(disc => { disc.isKing = !disc.isKing })
-    }
-    
-    const handleDebugVictory = () => {
-      this.phase = CONSTANTS.PHASE_END
-      this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-    }
 
     document.addEventListener('mousemove', handleMouseMove)
+    // this.ui.debugButton.addEventListener('click', handleDebugClick)
+    // this.ui.debugKingButton.addEventListener('click', toggleKings)
+    // this.ui.debugVictoryButton.addEventListener('click', triggerVictory)
     this.ui.canvas.addEventListener('mousedown', handleMouseDown) 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp) 
-    this.ui.debugButton.addEventListener('click', handleDebugClick)
-    this.ui.debugKingButton.addEventListener('click', handleDebugKing)
-    this.ui.debugVictoryButton.addEventListener('click', handleDebugVictory)
+  }
+
+  toggleKings = () => {
+    this.discs.forEach(disc => { disc.isKing = !disc.isKing })
+  }
+  
+  triggerVictory = () => {
+    this.phase = CONSTANTS.PHASE_END
+    this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
   }
 
   clr() {
