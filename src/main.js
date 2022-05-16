@@ -16,7 +16,9 @@ export const CONSTANTS = {
   PHASE_END: 6,
 }
 
-const initDebugMode = window.location.hash === 'debugmode' ? true : false
+const initDebugMode = import.meta.env.PROD 
+  ? window.location.hash === 'debugmode' ? true : false
+  : true
 
 let ui = setupExternalUI('html')
 let game = new Game(ui, initDebugMode)

@@ -110,7 +110,7 @@ export default class Disc {
     // This click path valid only for when disc is at rest and ungrabbed state
     // CSDR: The y offset for the path's center is off by ~3 pixels
     
-  }
+    }
 
     this.ctx.save()      // save A - disc center
     this.ctx.translate(this.center.x, this.center.y)
@@ -237,5 +237,9 @@ export default class Disc {
 
     this.ctx.stroke()
     this.ctx.restore() // restore A
+  }
+
+  drawClickArea() {
+
   }
 }

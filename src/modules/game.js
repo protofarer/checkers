@@ -210,6 +210,7 @@ export default class Game {
     )
     return enticed
   }
+
   findCarefrees() {
     const carefrees = this.discs.filter(disc =>
       this.findNonCaptureMoves(disc).length > 0 && disc.color === this.turnColor)
@@ -221,6 +222,7 @@ export default class Game {
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
     grabbedDisc.col = to.col
+    grabbedDisc.setClickArea()
     this.updateDiscActors()
 
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
@@ -240,9 +242,6 @@ export default class Game {
     } else if (!this.hasCaptureChainStarted) {
       this.nextTurn()
     }
-
-    grabbedDisc.setClickArea()
-
   }
   
   capture(grabbedDisc, to) {
@@ -566,8 +565,10 @@ export default class Game {
     this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
+    if (this.debugMode) {
+      this.discs.forEach(d => d.drawClickArea())
+    }
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
-
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
 }
