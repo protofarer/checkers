@@ -64,7 +64,7 @@ export default class Disc {
       this.right = centerX + radius
     })(this.center.x, this.center.y, this.radius)
 
-    this.setClickArea()
+    this.updateClickArea()
   }
 
   animateStep() {
@@ -88,7 +88,7 @@ export default class Disc {
     return this.kingColor
   }
 
-  setClickArea() {
+  updateClickArea() {
     this.#path = new Path2D()
     this.#path.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)
   }

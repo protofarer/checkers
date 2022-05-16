@@ -224,7 +224,7 @@ export default class Game {
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
     grabbedDisc.col = to.col
-    grabbedDisc.setClickArea()
+    grabbedDisc.updateClickArea()
     this.updateDiscActors()
 
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
