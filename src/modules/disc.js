@@ -40,10 +40,14 @@ export default class Disc {
 
     this.clickArea = new (function(centerX, centerY, radius) {
       this.center = {
-        x: centerX + 2,
-        y: centerY + 4
+        x: centerX,
+        y: centerY
       }
-      this.radius = radius + 2
+      // ensure clickArea perimeter surrounds disc 
+      // with no overlap on disc drawArea
+      this.radius = radius + 1 
+
+      this.lineWidth = 1
 
       // debug helpers, points to clickArea relative to canvas
       this.top = this.center.y - this.radius
