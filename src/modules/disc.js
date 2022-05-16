@@ -17,8 +17,11 @@ export default class Disc {
     this.id = `${parseInt(col)}${parseInt(row)}`
     this.col = col
     this.row = row
+
+    // Offset produced by baseboard and other objects within canvas
     this.offset = offset
-    // Absolute coord of disc center in canvas
+
+    // Disc center wrt canvas
     this.center = new (function(row, col, offset) {
       this.x =  ((col) * 100) + 50 + offset.x
       this.y = ((row) * 100) + 50 + offset.y
@@ -34,6 +37,28 @@ export default class Disc {
     this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black'
     
     this.animateFrame = 0
+
+    this.clickArea = new (function(centerX, centerY, radius) {
+      this.center = {
+        x: centerX + 2,
+        y: centerY + 4
+      }
+      this.radius = radius + 2
+
+      // debug helpers, points to clickArea relative to canvas
+      this.top = this.center.y - this.radius
+      this.bottom = this.center.y + this.radius
+      this.left = this.center.x - this.radius
+      this.right = this.center.x + this.radius
+    })(this.center.x, this.center.y, this.radius)
+
+    // debug helpers, points to drawArea relative to canvas
+    this.drawArea = new (function(centerX, centerY, radius) {
+      this.top = centerY - radius
+      this.bottom = centerY + radius
+      this.left = centerX - radius
+      this.right = centerX + radius
+    })(this.center.x, this.center.y, this.radius)
 
     this.setClickArea()
   }
@@ -61,7 +86,7 @@ export default class Disc {
 
   setClickArea() {
     this.#path = new Path2D()
-    this.#path.arc(this.center.x, this.center.y + 3, this.radius + 2, 0, 2 * Math.PI)
+    this.#path.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)
   }
 
   isClicked(mouseCanvasX, mouseCanvasY) {
@@ -240,6 +265,25 @@ export default class Disc {
   }
 
   drawClickArea() {
+    // this.ctx.save()      // save A - disc center
+    // this.ctx.translate(this.center.x, this.center.y)
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = 'lawngreen'
+    this.ctx.stroke(this.#path)
 
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = 'white'
+    this.ctx.arc(this.clickArea.center.x, this.clickArea.top, 1, 0, 2 * Math.PI)
+
+    this.ctx.moveTo(this.clickArea.center.x, this.clickArea.bottom)
+    this.ctx.arc(this.clickArea.center.x, this.clickArea.bottom, 1, 0, 2 * Math.PI)
+
+    this.ctx.moveTo(this.clickArea.left, this.clickArea.center.y)
+    this.ctx.arc(this.clickArea.left, this.clickArea.center.y, 1, 0, 2 * Math.PI)
+
+    this.ctx.moveTo(this.clickArea.right, this.clickArea.center.y)
+    this.ctx.arc(this.clickArea.right, this.clickArea.center.y, 1, 0, 2 * Math.PI)
+    this.ctx.stroke()
+    // this.ctx.restore()
   }
 }

@@ -15,18 +15,33 @@ export const CONSTANTS = {
   PHASE_PLAY: 5,
   PHASE_END: 6,
 }
+// debugMode is the debug board arrangement with debug gui + overlay on
+// debug overlay is debug gui + overlay
+// 1. reset to normal play: no debug
+// 2. reset to normal play with debug gui + overlay
+// 3. reset to debugMode, all debug on
 
-const initDebugMode = import.meta.env.PROD 
-  ? window.location.hash === 'debugmode' ? true : false
-  : true
+// Debug setup for prod
+let initDebugMode = false
+let initDebugOverlay = false
+if (import.meta.env.PROD) {
+  initDebugMode = window.location.hash === 'debugmode' ? true : false
+  initDebugOverlay = false
+}
+
+// Debug setup for dev
+if (import.meta.env.DEV) {
+  initDebugMode = false
+  initDebugOverlay = true
+}
 
 let ui = setupExternalUI('html')
-let game = new Game(ui, initDebugMode)
+let game = new Game(ui, initDebugMode, initDebugOverlay)
 import.meta.env.DEV && setupDebugGUI(game, ui)
 
-export function resetGame(debug=false) {
-  game = new Game(ui, debug)
-  import.meta.env.DEV && setupDebugGUI(game, ui)
+export function resetGame(debugMode=false, debugOverlay=false) {
+  game = new Game(ui, debugMode, debugOverlay)
+  debugOverlay && setupDebugGUI(game, ui)
 }
 
 (function draw() {

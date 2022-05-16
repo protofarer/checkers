@@ -3,8 +3,10 @@ import { CONSTANTS, resetGame } from '../main'
 import Panel from './panel'
 
 export default class Game {
-  constructor (ui, debugMode=false) {
+  constructor (ui, debugMode=false, debugOverlay=false) {
     this.debugMode = debugMode
+    this.debugOverlay = debugOverlay
+    this.debugDiscPosition = 'top'
     this.ui = ui
     this.ctx = this.ui.canvas.getContext('2d')
 
@@ -92,7 +94,7 @@ export default class Game {
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
     this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
-    this.ui.canvas.style.border = '1px solid red'
+    // this.ui.canvas.style.border = '1px solid red'
 
     this.rect = this.ui.canvas.getBoundingClientRect()
 
@@ -335,6 +337,14 @@ export default class Game {
       )
 
       if (clickedDisc) {
+        // Debug logging
+        if (this.debugOverlay || this.debugMode) {
+          // console.log(`Clicked Disc ${clickedDisc.id}`)
+          console.log(`clickedDisc.clickArea.${this.debugDiscPosition}: ${clickedDisc.clickArea[this.debugDiscPosition]}`, )
+          console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x}, ${this.mouseCoords.canvas.y}`, )
+          console.log(`drawArea.${this.debugDiscPosition}: ${clickedDisc.drawArea[this.debugDiscPosition]}`, )
+        }
+
         if (clickedDisc.color === this.turnColor) {
           const actor = this.getActorType(clickedDisc)
           if (actor === 'enticed') {
@@ -565,7 +575,7 @@ export default class Game {
     this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
-    if (this.debugMode) {
+    if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea())
     }
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
