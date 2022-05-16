@@ -1,5 +1,5 @@
 import GUI from 'lil-gui'
-import { resetGame, CONSTANTS } from '../main'
+import { resetGame } from '../main'
 
 export default function setupDebugGUI(game, ui) {
     // debug GUI
