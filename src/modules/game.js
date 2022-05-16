@@ -221,11 +221,28 @@ export default class Game {
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
     grabbedDisc.col = to.col
+    this.updateDiscActors()
+
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
       grabbedDisc.direction *= -1
     }
+
+    if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
+    || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
+      // DISPATCH
+      // 1.16 When a man reaches the farthest row forward (known as the “king-row” or “crown-head”) it becomes a king, and this completes the turn of play. 
+      // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
+      grabbedDisc.isKing = true
+      this.nextTurn()
+    } else if (this.hasCaptureChainStarted && this.enticed.length === 0) {
+      // DISPATCH
+      this.nextTurn()
+    } else if (!this.hasCaptureChainStarted) {
+      this.nextTurn()
+    }
+
     grabbedDisc.setClickArea()
-    this.updateDiscActors()
+
   }
   
   capture(grabbedDisc, to) {
@@ -239,8 +256,22 @@ export default class Game {
     this.discs = this.discs.filter(disc => 
       !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
     )
-    this.hasCaptureChainStarted = true
 
+    this.checkVictory()
+
+    this.hasCaptureChainStarted = true
+  }
+
+  checkVictory() {
+    if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+      // DISPATCH BLACK WINS
+      this.phase = CONSTANTS.PHASE_END
+      this.winner = CONSTANTS.BLACK
+    } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
+      // DISPATCH RED WINS
+      this.phase = CONSTANTS.PHASE_END
+      this.winner = CONSTANTS.RED
+    }
   }
 
   findCaptured(from, to) {
@@ -250,6 +281,7 @@ export default class Game {
     row += from.row
     return this.discs.filter(disc => disc.col === col && disc.row === row)[0]
   }
+
 
   nextTurn() {
     this.turnCount++
@@ -387,26 +419,10 @@ export default class Game {
             // DISPATCH valid mover move
             this.move(grabbedDisc, nonCaptureMove)
             // DISPATCH nextTurn
-            this.nextTurn()
           } else {
             // DISPATCH invalid-mover-move msg
             this.msg = 'Invalid move. Try again'
           }
-        }
-
-        if (this.hasCaptureChainStarted && this.enticed.length === 0) {
-          // DISPATCH
-          this.nextTurn()
-        }
-
-
-        if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
-        || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
-          // DISPATCH
-          // 1.16 When a man reaches the farthest row forward (known as the “king-row” or “crown-head”) it becomes a king, and this completes the turn of play. 
-          // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
-          grabbedDisc.isKing = true
-          this.nextTurn()
         }
 
         // DISPATCH
@@ -414,15 +430,6 @@ export default class Game {
       }
 
 
-      if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
-        // DISPATCH BLACK WINS
-        this.phase = CONSTANTS.PHASE_END
-        this.winner = CONSTANTS.BLACK
-      } else if (this.discs.filter(d => d.color === CONSTANTS.BLACK).length === 0 ) {
-        // DISPATCH RED WINS
-        this.phase = CONSTANTS.PHASE_END
-        this.winner = CONSTANTS.RED
-      }
     }
 
     // const handleDebugClick = () => {
