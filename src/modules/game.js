@@ -340,9 +340,14 @@ export default class Game {
         // Debug logging
         if (this.debugOverlay || this.debugMode) {
           // console.log(`Clicked Disc ${clickedDisc.id}`)
+          console.log(`------------`, )
+          
+          console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
           console.log(`clickedDisc.clickArea.${this.debugDiscPosition}: ${clickedDisc.clickArea[this.debugDiscPosition]}`, )
-          console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x}, ${this.mouseCoords.canvas.y}`, )
           console.log(`drawArea.${this.debugDiscPosition}: ${clickedDisc.drawArea[this.debugDiscPosition]}`, )
+          console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x} ${this.mouseCoords.canvas.y}`, )
+          console.log(`------------`, )
+          
         }
 
         if (clickedDisc.color === this.turnColor) {
