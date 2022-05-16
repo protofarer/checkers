@@ -6,7 +6,7 @@ export default class Game {
   constructor (ui, debugMode=false, debugOverlay=false) {
     this.debugMode = debugMode
     this.debugOverlay = debugOverlay
-    this.debugDiscPosition = 'top'
+    this.debugDiscPosition = ''
     this.ui = ui
     this.ctx = this.ui.canvas.getContext('2d')
 
@@ -224,7 +224,7 @@ export default class Game {
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
     grabbedDisc.col = to.col
-    grabbedDisc.updateClickArea()
+    grabbedDisc.updateDiscGeometry()
     this.updateDiscActors()
 
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
@@ -339,14 +339,15 @@ export default class Game {
       if (clickedDisc) {
         // Debug logging
         if (this.debugOverlay || this.debugMode) {
-          // console.log(`Clicked Disc ${clickedDisc.id}`)
-          console.log('------------', )
-          console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
-          console.log(`clickedDisc.clickArea.${this.debugDiscPosition}: ${clickedDisc.clickArea[this.debugDiscPosition]}`, )
-          console.log(`drawArea.${this.debugDiscPosition}: ${clickedDisc.drawArea[this.debugDiscPosition]}`, )
-          console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x} ${this.mouseCoords.canvas.y}`, )
-          console.log('------------', )
-          
+          if (this.debugDiscPosition !== '') {
+            // console.log(`Clicked Disc ${clickedDisc.id}`)
+            console.log('------------', )
+            console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
+            console.log(`clickedDisc.clickArea.${this.debugDiscPosition}: ${clickedDisc.clickArea[this.debugDiscPosition]}`, )
+            console.log(`drawArea.${this.debugDiscPosition}: ${clickedDisc.drawArea[this.debugDiscPosition]}`, )
+            console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x} ${this.mouseCoords.canvas.y}`, )
+            console.log('------------', )
+          }
         }
 
         if (clickedDisc.color === this.turnColor) {
@@ -440,6 +441,7 @@ export default class Game {
 
         // DISPATCH
         grabbedDisc.toggleGrab()
+        grabbedDisc.updateDiscGeometry()
       }
 
 

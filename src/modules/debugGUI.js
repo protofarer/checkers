@@ -46,7 +46,7 @@ export default function setupDebugGUI(game, ui) {
     // }
     console.log(game.debugOverlay)
     gui.add(game, 'debugOverlay').listen()
-    gui.add(game, 'debugDiscPosition', ['bottom', 'left', 'right', 'top'])
+    gui.add(game, 'debugDiscPosition', ['top', 'bottom', 'left', 'right', ])
 
     // const triggerVictory = () => {
     //   game.phase = CONSTANTS.PHASE_END

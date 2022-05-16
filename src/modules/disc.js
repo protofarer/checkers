@@ -1,7 +1,6 @@
 import { CONSTANTS } from '../main.js'
 
 export default class Disc {
-  #path
   constructor(ctx, row, col, offset, color) {
     // TRY console.assert?
     if (!(col >= 0 && row >= 0)) {
@@ -21,12 +20,6 @@ export default class Disc {
     // Offset produced by baseboard and other objects within canvas
     this.offset = offset
 
-    // Disc center wrt canvas
-    this.center = new (function(row, col, offset) {
-      this.x =  ((col) * 100) + 50 + offset.x
-      this.y = ((row) * 100) + 50 + offset.y
-    })(this.row, this.col, this.offset)
-
     this.radius = 40
     // Color means disc type rather than rendered color
     this.color = color
@@ -37,34 +30,35 @@ export default class Disc {
     this.kingColor = color === CONSTANTS.RED ? 'crimson' : 'black'
     
     this.animateFrame = 0
+    
+    // Disc center wrt canvas
+    this.center = new (function(row, col, offset) {
+      this.x =  ((col) * 100) + 50 + offset.x
+      this.y = ((row) * 100) + 50 + offset.y
+    })(this.row, this.col, this.offset)
 
-    this.clickArea = new (function(centerX, centerY, radius) {
-      this.center = {
-        x: centerX,
-        y: centerY
-      }
-      // ensure clickArea perimeter surrounds disc 
-      // with no overlap on disc drawArea
-      this.radius = radius + 1 
-
-      this.lineWidth = 1
-
-      // debug helpers, points to clickArea relative to canvas
-      this.top = this.center.y - this.radius
-      this.bottom = this.center.y + this.radius
-      this.left = this.center.x - this.radius
-      this.right = this.center.x + this.radius
-    })(this.center.x, this.center.y, this.radius)
+    this.clickArea = {
+      center: {
+        x: 0,
+        y: 0,
+      },
+      radius: 0,
+      lineWidth: 0,
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    }
 
     // debug helpers, points to drawArea relative to canvas
-    this.drawArea = new (function(centerX, centerY, radius) {
-      this.top = centerY - radius
-      this.bottom = centerY + radius
-      this.left = centerX - radius
-      this.right = centerX + radius
-    })(this.center.x, this.center.y, this.radius)
+    this.drawArea = {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    }
 
-    this.updateClickArea()
+    this.updateDiscGeometry()
   }
 
   animateStep() {
@@ -88,18 +82,44 @@ export default class Disc {
     return this.kingColor
   }
 
-  updateClickArea() {
-    this.#path = new Path2D()
-    this.#path.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)
+  updateDiscGeometry() {
+    this.center = new (function(row, col, offset) {
+      this.x =  ((col) * 100) + 50 + offset.x
+      this.y = ((row) * 100) + 50 + offset.y
+    })(this.row, this.col, this.offset)
+
+    this.clickArea = new (function(centerX, centerY, radius) {
+      this.center = {
+        x: centerX,
+        y: centerY
+      }
+      // ensure clickArea perimeter surrounds disc 
+      // with no overlap on disc drawArea
+      this.radius = radius + 1 
+
+      this.lineWidth = 1
+
+      // debug helpers, points to clickArea relative to canvas
+      this.top = this.center.y - this.radius
+      this.bottom = this.center.y + this.radius
+      this.left = this.center.x - this.radius
+      this.right = this.center.x + this.radius
+    })(this.center.x, this.center.y, this.radius)
+
+    // drawArea specifically used for debugging clickArea, so calculate here
+    this.drawArea = new (function(centerX, centerY, radius) {
+      this.top = centerY - radius
+      this.bottom = centerY + radius
+      this.left = centerX - radius
+      this.right = centerX + radius
+    })(this.center.x, this.center.y, this.radius)
+
+    this.perimeter = new Path2D()
+    this.perimeter.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)
   }
 
   isClicked(mouseCanvasX, mouseCanvasY) {
-    // WARN this if block causes massive performance issues, freezes UI
-    // if (this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero')) {
-    //   console.log(`canvasxy inside isclicked`, mouseCanvasX, mouseCanvasY)
-    //   console.log(`Disc ${this.row}, ${this.col} was clicked`)
-    // }
-    return this.ctx.isPointInPath(this.#path, mouseCanvasX, mouseCanvasY, 'nonzero')
+    return this.ctx.isPointInPath(this.perimeter, mouseCanvasX, mouseCanvasY, 'nonzero')
   }
 
   toString() {
@@ -128,18 +148,19 @@ export default class Disc {
         x: canvasX,
         y: canvasY
       }
-    } else {
-      this.center = {
-        x: ((this.col) * 100) + 50 + this.offset.x,
-        y: ((this.row) * 100) + 50 + this.offset.y
-      }
-    // Register path for click detection
-    // Divergent dimensions from draw compensating for unknown
-    // differences between rendered disc and click event coordinates
-    // This click path valid only for when disc is at rest and ungrabbed state
-    // CSDR: The y offset for the path's center is off by ~3 pixels
+    } 
+    // else {
+    //   this.center = {
+    //     x: ((this.col) * 100) + 50 + this.offset.x,
+    //     y: ((this.row) * 100) + 50 + this.offset.y
+    //   }
+    // // Register path for click detection
+    // // Divergent dimensions from draw compensating for unknown
+    // // differences between rendered disc and click event coordinates
+    // // This click path valid only for when disc is at rest and ungrabbed state
+    // // CSDR: The y offset for the path's center is off by ~3 pixels
     
-    }
+    // }
 
     this.ctx.save()      // save A - disc center
     this.ctx.translate(this.center.x, this.center.y)
@@ -273,7 +294,7 @@ export default class Disc {
     // this.ctx.translate(this.center.x, this.center.y)
     this.ctx.beginPath()
     this.ctx.strokeStyle = 'lawngreen'
-    this.ctx.stroke(this.#path)
+    this.ctx.stroke(this.perimeter)
 
     this.ctx.beginPath()
     this.ctx.strokeStyle = 'white'
