@@ -224,6 +224,7 @@ export default class Game {
     if (grabbedDisc.row === 0 || grabbedDisc.row === 7) {
       grabbedDisc.direction *= -1
     }
+    grabbedDisc.setClickArea()
     this.updateDiscActors()
   }
   
@@ -373,7 +374,6 @@ export default class Game {
             // DISPATCH valid capture move
             this.capture(grabbedDisc, validCaptureMove)
             this.move(grabbedDisc, validCaptureMove)
-            grabbedDisc.setClickArea()
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = 'Not a valid capture move'
@@ -386,7 +386,6 @@ export default class Game {
           if (nonCaptureMove) {
             // DISPATCH valid mover move
             this.move(grabbedDisc, nonCaptureMove)
-            grabbedDisc.setClickArea()
             // DISPATCH nextTurn
             this.nextTurn()
           } else {
@@ -400,6 +399,7 @@ export default class Game {
           this.nextTurn()
         }
 
+
         if ((grabbedDisc.row === 0 && grabbedDisc.color === CONSTANTS.BLACK)
         || (grabbedDisc.row === 7 && grabbedDisc.color === CONSTANTS.RED)) {
           // DISPATCH
@@ -408,10 +408,11 @@ export default class Game {
           grabbedDisc.isKing = true
           this.nextTurn()
         }
-          // DISPATCH
+
+        // DISPATCH
         grabbedDisc.toggleGrab()
       }
-      
+
 
       if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
         // DISPATCH BLACK WINS
