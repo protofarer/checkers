@@ -210,27 +210,61 @@ export default class Panel {
 
 
 class Button {
-  constructor(origin, label, stretchLength=1) {
+  constructor(ctx, onClick, origin, label, stretchWidth=1, stretchHeight=1, baseWidth=70, baseHeight=30) {
+    this.ctx = ctx
+    this.rect = this.ctx.getBoundingClientRect()
 
+    this.onClick = onClick
+    this.origin = origin
+    this.label = label
+
+    this.baseWidth = baseWidth
+    this.baseHeight = baseHeight
+    this.stretchWidth = stretchWidth
+    this.stretchHeight = stretchHeight
+
+    this.path = new Path2D()
+    // literals account for the border itself so that clicks that register for
+    // this path cover the entirety of button including button border
+    this.path.strokeRect(
+      this.origin.x - 2, 
+      this.origin.y - 2,
+      this.baseWidth * this.stretchWidth + 4,
+      this.baseEHeight * this.stretchHeight + 4,
+    )
+
+    this.addClickListener()
+    return this.path
   }
-    this.ctx.beginPath()
-    const x = origin.x
-    const y = origin.y
-      
+
+  addOnClickListener() {
+    document.addEventListener('click', this.handleClick)
+  }
+
+  handleClick(e) {
+    if (this.path.isPointInPath(e.target.clientX - this.rect.left, e.target.clientY - this.rect.top)) {
+      this.onClick()
+    }
+  }
+
+  draw () {
+    this.ctx.strokeStyle = 'black'
+    this.ctx.fillStyle = 'hsl(0,0%,80%)'
+    this.ctx.lineWidth = 1
+
     this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
     this.ctx.shadowBlur = 7
     this.ctx.shadowOffsetY = 5
 
-    this.ctx.lineWidth = 1
-    this.ctx.strokeStyle = 'black'
-    this.ctx.fillStyle = 'hsl(0,0%,80%)'
-    this.ctx.fillRect(x, y, 70 * stretchLength, 30)
-    
-    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
-
-    this.ctx.strokeRect(x-1, y-1, 70 * stretchLength + 1,31)
-    
     this.ctx.font = '16px Arial'
     this.ctx.fillStyle = 'black'
-    this.ctx.fillText(`${label}`, x + 13, y + 20)
+
+    this.ctx.beginPath()
+    this.ctx.fillRect(this.origin.x, this.origin.y, 70 * this.stretchLength, 30)
+  
+    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
+
+    this.ctx.strokeRect(this.origin.x - 1, this.origin.y - 1, 70 * this.stretchLength + 1,31)
+    this.ctx.fillText(`${this.label}`, this.origin.x + 13, this.origin.y + 20)
+  }
 }
