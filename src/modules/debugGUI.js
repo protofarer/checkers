@@ -38,21 +38,19 @@ export default function setupDebugGUI(game, ui) {
     guiGameState.add(game, 'phase').name('phase').listen()
     guiGameState.add(game, 'winner').name('winner').listen()
 
+    console.log(game.debugOverlay)
+    gui.add(game, 'debugOverlay').listen()
+    gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
+
     gui.add({ resetGame }, 'resetGame').name('reset - prod')
     gui.add({ debugreset() { resetGame(true, true) } }, 'debugreset').name('reset - full debug')
 
-    // const toggleDebugOverlay = () => {
-    //   this.game.debugOverlay = !this.game.debugOverlay
-    // }
-    console.log(game.debugOverlay)
-    gui.add(game, 'debugOverlay').listen()
-    gui.add(game, 'debugDiscPosition', ['top', 'bottom', 'left', 'right', ])
 
     // const triggerVictory = () => {
     //   game.phase = CONSTANTS.PHASE_END
     //   game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
     // }
-    gui.add({ triggerVictory() {game.triggerVictory()} }, 'triggerVictory')
+    gui.add({ triggerVictory() {game.debugTriggerVictory()} }, 'triggerVictory')
 
     // const toggleKings = () => game.toggleKings()
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')

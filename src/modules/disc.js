@@ -289,7 +289,7 @@ export default class Disc {
     this.ctx.restore() // restore A
   }
 
-  drawClickArea() {
+  drawClickArea(position) {
     // this.ctx.save()      // save A - disc center
     // this.ctx.translate(this.center.x, this.center.y)
     this.ctx.beginPath()
@@ -297,15 +297,24 @@ export default class Disc {
     this.ctx.stroke(this.perimeter)
 
     this.ctx.beginPath()
-    this.ctx.strokeStyle = 'white'
+    this.ctx.strokeStyle = position === 'top' ? 'red' : 'white'
     this.ctx.arc(this.clickArea.center.x, this.clickArea.top, 1, 0, 2 * Math.PI)
+    this.ctx.stroke()
 
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = position === 'bottom' ? 'red' : 'white'
     this.ctx.moveTo(this.clickArea.center.x, this.clickArea.bottom)
     this.ctx.arc(this.clickArea.center.x, this.clickArea.bottom, 1, 0, 2 * Math.PI)
+    this.ctx.stroke()
 
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = position === 'left' ? 'red' : 'white'
     this.ctx.moveTo(this.clickArea.left, this.clickArea.center.y)
     this.ctx.arc(this.clickArea.left, this.clickArea.center.y, 1, 0, 2 * Math.PI)
+    this.ctx.stroke()
 
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = position === 'right' ? 'red' : 'white'
     this.ctx.moveTo(this.clickArea.right, this.clickArea.center.y)
     this.ctx.arc(this.clickArea.right, this.clickArea.center.y, 1, 0, 2 * Math.PI)
     this.ctx.stroke()

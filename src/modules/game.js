@@ -6,7 +6,7 @@ export default class Game {
   constructor (ui, debugMode=false, debugOverlay=false) {
     this.debugMode = debugMode
     this.debugOverlay = debugOverlay
-    this.debugDiscPosition = ''
+    this.debugDiscPositionMarker = ''
     this.ui = ui
     this.ctx = this.ui.canvas.getContext('2d')
 
@@ -264,7 +264,12 @@ export default class Game {
   }
 
   checkVictory() {
-    if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
+    if (this.enticed === 0 && this.carefrees ===0) {
+      this.phase = CONSTANTS.PHASE_END
+      this.winner = this.turnColor === CONSTANTS.RED 
+        ? CONSTANTS.BLACK 
+        : CONSTANTS.RED
+    } else if (this.discs.filter(d => d.color === CONSTANTS.RED).length === 0) {
       // DISPATCH BLACK WINS
       this.phase = CONSTANTS.PHASE_END
       this.winner = CONSTANTS.BLACK
@@ -339,12 +344,12 @@ export default class Game {
       if (clickedDisc) {
         // Debug logging
         if (this.debugOverlay || this.debugMode) {
-          if (this.debugDiscPosition !== '') {
+          if (this.debugDiscPositionMarker !== '') {
             // console.log(`Clicked Disc ${clickedDisc.id}`)
             console.log('------------', )
             console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
-            console.log(`clickedDisc.clickArea.${this.debugDiscPosition}: ${clickedDisc.clickArea[this.debugDiscPosition]}`, )
-            console.log(`drawArea.${this.debugDiscPosition}: ${clickedDisc.drawArea[this.debugDiscPosition]}`, )
+            console.log(`clickedDisc.clickArea.${this.debugDiscPositionMarker}: ${clickedDisc.clickArea[this.debugDiscPositionMarker]}`, )
+            console.log(`drawArea.${this.debugDiscPositionMarker}: ${clickedDisc.drawArea[this.debugDiscPositionMarker]}`, )
             console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x} ${this.mouseCoords.canvas.y}`, )
             console.log('------------', )
           }
@@ -470,7 +475,7 @@ export default class Game {
     document.addEventListener('mousemove', handleMouseMove)
     // this.ui.debugButton.addEventListener('click', handleDebugClick)
     // this.ui.debugKingButton.addEventListener('click', toggleKings)
-    // this.ui.debugVictoryButton.addEventListener('click', triggerVictory)
+    // this.ui.debugVictoryButton.addEventListener('click', debugTriggerVictory)
     this.ui.canvas.addEventListener('mousedown', handleMouseDown) 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp) 
   }
@@ -479,7 +484,8 @@ export default class Game {
     this.discs.forEach(disc => { disc.isKing = !disc.isKing })
   }
   
-  triggerVictory = () => {
+  debugTriggerVictory = () => {
+    // for debug
     this.phase = CONSTANTS.PHASE_END
     this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
   }
@@ -582,7 +588,7 @@ export default class Game {
     this.drawBoard()
     this.drawDiscs()
     if (this.debugOverlay) {
-      this.discs.forEach(d => d.drawClickArea())
+      this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
