@@ -94,8 +94,8 @@ export default function setupExternalUI(id) {
 
     function updateStatusEle() {
       statusEle.innerHTML = `\
-        Message: ${game.msg} <br />
-        Turns: ${game.turnCount} <br />
+        <span>Turns: ${game.turnCount} </span>
+        <span>Message: ${game.msg}</span>
         \
       `
         // Red victories: ${game.match.red.wins} <br />

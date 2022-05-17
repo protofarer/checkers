@@ -62,11 +62,19 @@ export default class Panel {
   }
   
   drawPassButton(x, y, playerColor, turnColor) {
+    this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
+    this.ctx.shadowBlur = 7
+    this.ctx.shadowOffsetY = 5
+
     this.ctx.beginPath()
     this.ctx.lineWidth = 1
     this.ctx.strokeStyle = 'black'
     this.ctx.fillStyle = 'hsl(0,0%,80%)'
     this.ctx.fillRect(x, y, 70, 30)
+
+    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
+
+    this.ctx.strokeRect(x-1, y-1,71,31)
     
     this.ctx.font = '16px Arial'
     turnColor === playerColor
@@ -75,20 +83,6 @@ export default class Panel {
     this.ctx.fillText('Pass', x + 17, y + 21)
   }
 
-  drawResetButton() {
-    this.ctx.beginPath()
-    const x = this.resetButtonX
-    const y = this.resetButtonY
-
-    this.ctx.lineWidth = 1
-    this.ctx.strokeStyle = 'black'
-    this.ctx.fillStyle = 'hsl(0,0%,80%)'
-    this.ctx.fillRect(x, y, 70, 30)
-    
-    this.ctx.font = '16px Arial'
-    this.ctx.fillStyle = 'black'
-    this.ctx.fillText('Reset', x + 13, y + 20)
-  }
 
   isResetClicked(x, y) {
     return this.ctx.isPointInPath(this.#resetButtonPath, x , y)
@@ -106,7 +100,7 @@ export default class Panel {
     this.ctx.save()
     this.ctx.translate(this.offsetX, this.offsetY)
 
-    this.drawResetButton()
+    this.drawSimpleButton({ x: this.resetButtonX, y: this.resetButtonY }, 'Reset')
     this.drawPassButton(
       this.#redPassButtonX, this.#redPassButtonY, 
       CONSTANTS.RED, turnColor
@@ -212,4 +206,31 @@ export default class Panel {
 
     this.ctx.restore()
   }
+}
+
+
+class Button {
+  constructor(origin, label, stretchLength=1) {
+
+  }
+    this.ctx.beginPath()
+    const x = origin.x
+    const y = origin.y
+      
+    this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
+    this.ctx.shadowBlur = 7
+    this.ctx.shadowOffsetY = 5
+
+    this.ctx.lineWidth = 1
+    this.ctx.strokeStyle = 'black'
+    this.ctx.fillStyle = 'hsl(0,0%,80%)'
+    this.ctx.fillRect(x, y, 70 * stretchLength, 30)
+    
+    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
+
+    this.ctx.strokeRect(x-1, y-1, 70 * stretchLength + 1,31)
+    
+    this.ctx.font = '16px Arial'
+    this.ctx.fillStyle = 'black'
+    this.ctx.fillText(`${label}`, x + 13, y + 20)
 }
