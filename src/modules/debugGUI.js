@@ -38,7 +38,6 @@ export default function setupDebugGUI(game, ui) {
     guiGameState.add(game, 'phase').name('phase').listen()
     guiGameState.add(game, 'winner').name('winner').listen()
 
-    console.log(game.debugOverlay)
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 

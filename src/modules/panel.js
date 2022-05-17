@@ -12,18 +12,20 @@ export default class Panel {
   constructor (offsetX, offsetY, width, height, ctx) {
     this.ctx = ctx
 
+    // Panel Origin
     this.offsetX = offsetX
     this.offsetY = offsetY
+
     this.width = width     // pixels
     this.height = height   // pixels
-    this.centerX =this.width / 2
+    this.centerX = this.width / 2
     this.centerY = this.height / 2
 
     this.separatorUpperY = this.centerY - 38
     this.separatorLowerY = this.centerY + 38
     
-    this.redJailOffsetX = 20   // relative to panel
-    this.redJailOffsetY = 20  // relative to panel
+    this.redJailOffsetX = 20   // relative to panel origin
+    this.redJailOffsetY = 20  // relative to panel origin
 
     this.blackJailOffsetX = 20
     this.blackJailOffsetY = this.height - 20
@@ -127,6 +129,7 @@ export default class Panel {
     this.ctx.lineTo(15 + this.width - 30, this.separatorLowerY)
 
     // Draw red's jail
+
     this.ctx.font = '16px Arial'
     this.ctx.fillStyle = 'black'
     this.ctx.fillText(
@@ -139,7 +142,7 @@ export default class Panel {
     this.ctx.fillText(
       `Reds captured: ${captures.forBlack}`, 
       this.blackJailOffsetX, 
-      this.blackJailOffsetY
+      this.blackJailOffsetY + 12
     )
 
     // Red's empty turn indicator
@@ -166,6 +169,46 @@ export default class Panel {
       : this.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI)
     this.ctx.fillStyle = 'hsl(100, 50%, 50%)'
     this.ctx.fill()
+
+    this.ctx.restore()
+  }
+
+  drawCapturedDiscs(captures) {
+    const scaleRatio = 0.5
+    const horizontalOffset = 100
+    const verticalOffset = 100
+
+    this.ctx.save()
+    this.ctx.translate(
+      this.offsetX + this.centerX, 
+      0
+    )
+
+    const redJailTop = 45
+    this.ctx.save()
+    this.ctx.translate(-50, redJailTop)
+    this.ctx.scale(scaleRatio, scaleRatio)
+    captures.capturedBlacks.forEach((disc, ndx) => {
+      if (ndx > 0 && ndx % 3 === 0) {
+        this.ctx.translate(-3 * horizontalOffset,verticalOffset)
+      }
+      disc.draw()
+      this.ctx.translate(horizontalOffset, 0)
+    })
+    this.ctx.restore()
+
+    const blackJailBottom = this.height - 45
+    this.ctx.save()
+    this.ctx.translate(-50, blackJailBottom)
+    this.ctx.scale(scaleRatio, scaleRatio)
+    captures.capturedReds.forEach((disc, ndx) => {
+      if (ndx > 0 && ndx % 3 === 0) {
+        this.ctx.translate(-3 * horizontalOffset, -verticalOffset)
+      }
+      disc.draw()
+      this.ctx.translate(horizontalOffset, 0)
+    })
+    this.ctx.restore()
 
     this.ctx.restore()
   }

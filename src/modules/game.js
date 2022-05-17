@@ -61,6 +61,8 @@ export default class Game {
     this.captures = {
       forRed: 0,
       forBlack: 0,
+      capturedBlacks: [],
+      capturedReds: [],
     }
     this.hasCaptureChainStarted = false
 
@@ -81,14 +83,15 @@ export default class Game {
 
     this.boardPanelGap = 15
 
-    const panelOffsetX = this.boardWidth + 2 * this.baseThickness + this.boardPanelGap
+    const panelOffsetX = this.boardWidth + 2 * this.baseThickness 
+      + this.boardPanelGap
     const panelOffsetY = 0
     const panelWidth = 200
     const panelHeight = this.boardHeight + 2 * this.baseThickness
     this.panel = new Panel(
       panelOffsetX, panelOffsetY,
       panelWidth, panelHeight,
-      this.ctx
+      this.ctx,
     )
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
@@ -110,10 +113,14 @@ export default class Game {
       for (let j = 0; j < 8; j++) {
         switch(this.board[i][j]) {
           case CONSTANTS.RED:
-            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED))
+            this.discs.push(
+              new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED)
+            )
             break
           case CONSTANTS.BLACK:
-            this.discs.push(new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK))
+            this.discs.push(
+              new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK)
+            )
             break
           case CONSTANTS.BLANK:
             break
@@ -122,6 +129,14 @@ export default class Game {
             this.ui.debug.innerText += 'error rendering board object'
         }
       }
+    }
+    if (this.debugMode) {
+      for (let i = 0; i < 11; i++) {
+      this.captures.capturedBlacks.push(new Disc(this.ctx,9,9,this.playAreaOffset,CONSTANTS.BLACK))
+      this.captures.capturedReds.push(new Disc(this.ctx,9,9,this.playAreaOffset,CONSTANTS.RED))
+      }
+      this.captures.capturedBlacks[0].isKing = true
+      this.captures.capturedReds[0].isKing = true
     }
   }
 
@@ -250,13 +265,16 @@ export default class Game {
     const capturedDisc = this.findCaptured(grabbedDisc, to)
     if (capturedDisc.color === CONSTANTS.RED) {
       this.captures.forBlack += 1
+      this.captures.capturedReds.push(capturedDisc)
     } else {
       this.captures.forRed += 1
+      this.captures.capturedBlacks.push(capturedDisc)
     }
     this.board[capturedDisc.row][capturedDisc.col] = 0
     this.discs = this.discs.filter(disc => 
       !(disc.row === capturedDisc.row && disc.col === capturedDisc.col)
     )
+    capturedDisc.row = capturedDisc.col = 9
 
     this.checkVictory()
 
@@ -563,7 +581,6 @@ export default class Game {
     this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness, origin.y)
     this.ctx.stroke()
   }
-
   // drawPossibleMoves(grabbedDisc) {
   //   const actor = this.getActorType(grabbedDisc)
   //   if (grabbedDisc) {
@@ -591,6 +608,7 @@ export default class Game {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
     this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
+    this.panel.drawCapturedDiscs(this.captures)
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
 }

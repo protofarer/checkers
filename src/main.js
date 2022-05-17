@@ -31,7 +31,7 @@ if (import.meta.env.PROD) {
 
 // Debug setup for dev
 if (import.meta.env.DEV) {
-  initDebugMode = false
+  initDebugMode = true
   initDebugOverlay = true
 }
 

@@ -131,7 +131,7 @@ export default class Disc {
     return this.isGrabbed
   }
   
-  draw(canvasX, canvasY) {
+  draw(canvasX=0, canvasY=0) {
     // Draws game piece by referencing a row and column on board
     // or by mouse location relative to board when disc isGrabbed
 
@@ -139,7 +139,7 @@ export default class Disc {
     // may result in unexpected behavior.
 
     // Strokes adjusted for disc's fill
-    const getStrokeStyle = () => this.color === CONSTANTS.RED 
+    const getStrokeStyle = this.color === CONSTANTS.RED 
     ? 'hsl(0,100%,10%)' 
     : 'hsl(0,0%,80%)'
     
@@ -163,12 +163,14 @@ export default class Disc {
     // }
 
     this.ctx.save()      // save A - disc center
-    this.ctx.translate(this.center.x, this.center.y)
+
+    // Don't translate for captured discs, whose col,row set to 9,9
+    this.col < 8 && this.ctx.translate(this.center.x, this.center.y)
     
     if (this.color === CONSTANTS.GHOST) {
       this.ctx.strokeStyle = 'hsl(250, 100%, 60%)'
     } else {
-      this.ctx.strokeStyle = getStrokeStyle() 
+      this.ctx.strokeStyle = getStrokeStyle
       // Adjust for differential contrast between dark on light versus light on dark lines
       this.ctx.lineWidth = this.color === CONSTANTS.RED ? 1 : 0.9 
     }
@@ -263,7 +265,7 @@ export default class Disc {
     }
 
     this.ctx.restore()    
-    this.ctx.strokeStyle = getStrokeStyle()
+    this.ctx.strokeStyle = getStrokeStyle
     
     // Arc encompassing disc center
     this.ctx.save()
