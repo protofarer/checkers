@@ -91,8 +91,11 @@ export default class Game {
     this.panel = new Panel(
       panelOffsetX, panelOffsetY,
       panelWidth, panelHeight,
-      this.ctx,
+      this.ctx, resetGame
     )
+
+    // TODO after debugging button class
+    this.panel.resetButton.addClickListener(resetGame, { once: true })
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
@@ -398,10 +401,10 @@ export default class Game {
 
       // TODO pass resetGame as a callback to a panel method instead
       // this.panel.resetListener(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y, resetGame)
-      const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      if (isResetClicked) {
-        resetGame()
-      }
+      // const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
+      // if (isResetClicked) {
+      //   resetGame()
+      // }
 
       // TODO pass resetGame as a callback to a panel method instead
       const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
@@ -607,7 +610,7 @@ export default class Game {
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
-    this.panel.draw({ captures: this.captures, turnColor: this.turnColor })
+    this.panel.drawAll({ captures: this.captures, turnColor: this.turnColor })
     this.panel.drawCapturedDiscs(this.captures)
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
