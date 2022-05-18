@@ -1,14 +1,8 @@
 import { CONSTANTS } from '../main'
 import Button from './Button'
 export default class Panel {
-  #redPassButtonPath
-  #redPassButtonX
-  #redPassButtonY
-  #blackPassButtonPath
-  #blackPassButtonX
-  #blackPassButtonY
-  
   constructor (offsetX, offsetY, width, height, ctx) {
+    // All distances and lengths are in pixels, unfortunately for now
     this.ctx = ctx
     this.drawableChildren = []
 
@@ -16,8 +10,8 @@ export default class Panel {
     this.offsetX = offsetX
     this.offsetY = offsetY
 
-    this.width = width     // pixels
-    this.height = height   // pixels
+    this.width = width
+    this.height = height
     this.centerX = this.width / 2
     this.centerY = this.height / 2
 
@@ -37,40 +31,31 @@ export default class Panel {
     this.resetButtonY = this.centerY - 15
     this.resetButton = new Button(
       this.ctx, 
-      { 
-        x: this.offsetX + this.resetButtonX, 
-        y: this.offsetY + this.resetButtonY 
-      },
+      { x: this.offsetX + this.resetButtonX, 
+        y: this.offsetY + this.resetButtonY },
       'Reset'
     )
     this.drawableChildren.push(this.resetButton)
 
     this.redPassButtonX = this.centerX - 40
     this.redPassButtonY = this.centerY - 90
-    // this.#redPassButtonPath = new Path2D()
-    // this.#redPassButtonPath.rect(
-    //   this.offsetX + this.#redPassButtonX, 
-    //    this.offsetY + this.#redPassButtonY,
-    //   70, 30
-    // )
     this.redPassButton = new Button(
       this.ctx, 
-      { 
-        x: this.offsetX + this.redPassButtonX, 
-        y: this.offsetY + this.redPassButtonY, 
-      },
+      { x: this.offsetX + this.redPassButtonX, 
+        y: this.offsetY + this.redPassButtonY, },
       'Pass'
     )
     this.drawableChildren.push(this.redPassButton)
 
-    this.#blackPassButtonX = this.centerX - 40
-    this.#blackPassButtonY = this.centerY + 60
-    this.#blackPassButtonPath = new Path2D()
-    this.#blackPassButtonPath.rect(
-      this.offsetX + this.#blackPassButtonX, 
-      this.offsetY + this.#blackPassButtonY,
-      70, 30
+    this.blackPassButtonX = this.centerX - 40
+    this.blackPassButtonY = this.centerY + 60
+    this.blackPassButton = new Button(
+      this.ctx, 
+      { x: this.offsetX + this.blackPassButtonX, 
+        y: this.offsetY + this.blackPassButtonY, },
+      'Pass'
     )
+    this.drawableChildren.push(this.blackPassButton)
   }
   
   drawPassButton(x, y, playerColor, turnColor) {
@@ -95,33 +80,10 @@ export default class Panel {
     this.ctx.fillText('Pass', x + 17, y + 21)
   }
 
-  // isResetClicked(x, y) {
-  //   return this.ctx.isPointInPath(this.resetButton.path, x , y)
-  // }
-
-  // isRedPassClicked(x, y) {
-  //   return this.ctx.isPointInPath(this.#redPassButtonPath, x, y)
-  // }
-  
-  isBlackPassClicked(x, y) {
-    return this.ctx.isPointInPath(this.#blackPassButtonPath, x, y)
-  }
-
   drawAll({captures, turnColor}) {
     this.draw({captures, turnColor})
     this.drawCapturedDiscs(captures)
     this.drawableChildren.forEach(c => c.draw())
-    // this.resetButton.draw()
-
-    // this.drawPassButton(
-    //   this.#redPassButtonX, this.#redPassButtonY, 
-    //   CONSTANTS.RED, turnColor
-    // )
-
-    this.drawPassButton(
-      this.#blackPassButtonX, this.#blackPassButtonY, 
-      CONSTANTS.BLACK, turnColor
-    )
   }
 
   draw({ captures, turnColor }) {
@@ -142,7 +104,6 @@ export default class Panel {
     this.ctx.lineTo(15 + this.width - 30, this.separatorLowerY)
 
     // Draw red's jail
-
     this.ctx.font = '16px Arial'
     this.ctx.fillStyle = 'black'
     this.ctx.fillText(
@@ -192,10 +153,7 @@ export default class Panel {
     const verticalOffset = 100
 
     this.ctx.save()
-    this.ctx.translate(
-      this.offsetX + this.centerX, 
-      0
-    )
+    this.ctx.translate(this.offsetX + this.centerX, 0)
 
     const redJailTop = 45
     this.ctx.save()

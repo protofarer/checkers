@@ -44,13 +44,22 @@ export default class Button {
 
     // Click detection handled handled here instead of outside of it!
     // Assuming handler listening to canvas
-    this.ctx.canvas.addEventListener('click', (e) => {
-      if (this.ctx.isPointInPath(
-        this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
-      )) {
-        f()
-      }
-    }, options)
+    this.f = f
+    this.ctx.canvas.addEventListener('click', this.handleClick.bind(this), options)
+  }
+
+  handleClick(e) {
+    if (this.ctx.isPointInPath(
+      this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
+    )) {
+      console.log(`woohoo button is clicked`, this.f.name)
+      this.f()
+    }
+  }
+
+  removeClickListener() {
+    console.log(`Button removeClickListener invoked`, )
+    this.ctx.canvas.removeEventListener('click', this.handleClick)
   }
 
   draw () {

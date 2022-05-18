@@ -94,9 +94,9 @@ export default class Game {
       this.ctx, resetGame
     )
 
-    // TODO after debugging button class
-    this.panel.resetButton.addClickListener(resetGame, { once: true })
+    this.panel.resetButton.addClickListener(resetGame)
     this.panel.redPassButton.addClickListener(this.passTurn(CONSTANTS.RED).bind(this))
+    this.panel.blackPassButton.addClickListener(this.passTurn(CONSTANTS.BLACK).bind(this))
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
@@ -112,10 +112,15 @@ export default class Game {
     this.setupEventListeners()
   }
 
+  killEventListeners() {
+    this.ctx.canvas.removeEventListener('click', resetGame)
+    this.ctx.canvas.removeEventListener('click', this.passTurn(CONSTANTS.RED))
+    this.ctx.canvas.removeEventListener('click', this.passTurn(CONSTANTS.BLACK))
+  }
+
   passTurn(playerColor) {
-    const c = playerColor
     return () => {
-      if (this.turnColor === c) {
+      if (this.turnColor === playerColor) {
         this.nextTurn()
       }
     }
@@ -193,9 +198,11 @@ export default class Game {
   findCaptureMoves(disc) {
     let captureMoves = []
     captureByDirection(1, this.board)
+
     if (disc.isKing) {
       captureByDirection(-1, this.board)
     }
+
     function captureByDirection(direction, board) {
       // CSDR somehow binding board to this.board of Game
       if (disc.row + (2*disc.direction * direction) >= 0 &&
@@ -210,21 +217,6 @@ export default class Game {
         }
       }
     }
-    // console.log(`captureMoves`, captureMoves)
-    
-    // if (disc.isKing) {
-    //   if (disc.row - (2*disc.direction) >= 0 &&
-    //       disc.row - (2*disc.direction) < 8) {
-    //     if ((this.board[disc.row - disc.direction][disc.col - 1] === disc.opposite) && 
-    //       (this.board[disc.row - (2*disc.direction)][disc.col - 2] === 0)) {
-    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col - 2 })
-    //     }
-    //     if ((this.board[disc.row - disc.direction][disc.col + 1] === disc.opposite) &&
-    //       (this.board[disc.row - (2*disc.direction)][disc.col + 2] === 0)) {
-    //         captureMoves.push({ row: disc.row - (2*disc.direction), col: disc.col + 2 })
-    //     }
-    //   }
-    // }
     return captureMoves
   }
 
@@ -423,10 +415,10 @@ export default class Game {
       // }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
-        this.nextTurn()
-      }
+      // const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
+      // if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
+      //   this.nextTurn()
+      // }
     }
 
     const handleMouseUp = () => {
