@@ -94,9 +94,20 @@ export default class Game {
       this.ctx, resetGame
     )
 
-    this.panel.resetButton.addClickListener(resetGame)
-    this.panel.redPassButton.addClickListener(this.passTurn(CONSTANTS.RED).bind(this))
-    this.panel.blackPassButton.addClickListener(this.passTurn(CONSTANTS.BLACK).bind(this))
+    // AbortController is quite good
+    this.controller = new AbortController()
+    this.panel.resetButton.addClickListener(
+      resetGame, 
+      { signal: this.controller.signal }
+    )
+    this.panel.redPassButton.addClickListener(
+      this.passTurn(CONSTANTS.RED).bind(this), 
+      { signal: this.controller.signal }
+    )
+    this.panel.blackPassButton.addClickListener(
+      this.passTurn(CONSTANTS.BLACK).bind(this), 
+      { signal: this.controller.signal }
+    )
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
