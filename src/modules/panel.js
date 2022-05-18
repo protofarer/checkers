@@ -1,7 +1,6 @@
-import { CONSTANTS } from '../main.js'
-
+import { CONSTANTS } from '../main'
+import Button from './Button'
 export default class Panel {
-  #resetButtonPath
   #redPassButtonPath
   #redPassButtonX
   #redPassButtonY
@@ -45,22 +44,24 @@ export default class Panel {
       'Reset'
     )
     this.drawableChildren.push(this.resetButton)
-    // this.#resetButtonPath = new Path2D()
-    // this.#resetButtonPath.rect(
-    //   this.offsetX + this.resetButtonX, 
-    //   this.offsetY + this.resetButtonY,
+
+    this.redPassButtonX = this.centerX - 40
+    this.redPassButtonY = this.centerY - 90
+    // this.#redPassButtonPath = new Path2D()
+    // this.#redPassButtonPath.rect(
+    //   this.offsetX + this.#redPassButtonX, 
+    //    this.offsetY + this.#redPassButtonY,
     //   70, 30
     // )
-
-    this.#redPassButtonX = this.centerX - 40
-    this.#redPassButtonY = this.centerY - 90
-    this.#redPassButtonPath = new Path2D()
-    this.#redPassButtonPath.rect(
-      this.offsetX + this.#redPassButtonX, 
-       this.offsetY + this.#redPassButtonY,
-      70, 30
+    this.redPassButton = new Button(
+      this.ctx, 
+      { 
+        x: this.offsetX + this.redPassButtonX, 
+        y: this.offsetY + this.redPassButtonY, 
+      },
+      'Pass'
     )
-    // this.drawableChildren.push
+    this.drawableChildren.push(this.redPassButton)
 
     this.#blackPassButtonX = this.centerX - 40
     this.#blackPassButtonY = this.centerY + 60
@@ -94,13 +95,13 @@ export default class Panel {
     this.ctx.fillText('Pass', x + 17, y + 21)
   }
 
-  isResetClicked(x, y) {
-    return this.ctx.isPointInPath(this.resetButton.path, x , y)
-  }
+  // isResetClicked(x, y) {
+  //   return this.ctx.isPointInPath(this.resetButton.path, x , y)
+  // }
 
-  isRedPassClicked(x, y) {
-    return this.ctx.isPointInPath(this.#redPassButtonPath, x, y)
-  }
+  // isRedPassClicked(x, y) {
+  //   return this.ctx.isPointInPath(this.#redPassButtonPath, x, y)
+  // }
   
   isBlackPassClicked(x, y) {
     return this.ctx.isPointInPath(this.#blackPassButtonPath, x, y)
@@ -109,12 +110,13 @@ export default class Panel {
   drawAll({captures, turnColor}) {
     this.draw({captures, turnColor})
     this.drawCapturedDiscs(captures)
-    this.resetButton.draw()
+    this.drawableChildren.forEach(c => c.draw())
+    // this.resetButton.draw()
 
-    this.drawPassButton(
-      this.#redPassButtonX, this.#redPassButtonY, 
-      CONSTANTS.RED, turnColor
-    )
+    // this.drawPassButton(
+    //   this.#redPassButtonX, this.#redPassButtonY, 
+    //   CONSTANTS.RED, turnColor
+    // )
 
     this.drawPassButton(
       this.#blackPassButtonX, this.#blackPassButtonY, 
@@ -222,89 +224,5 @@ export default class Panel {
     this.ctx.restore()
 
     this.ctx.restore()
-  }
-}
-
-class Button {
-  #defaultHandler
-  constructor(ctx, origin, label, stretchWidth=1, stretchHeight=1, baseWidth=70, baseHeight=30) {
-    this.ctx = ctx
-    this.rect = this.ctx.canvas.getBoundingClientRect()
-    
-    this.origin = origin
-    this.label = label
-
-    this.baseWidth = baseWidth
-    this.baseHeight = baseHeight
-    this.stretchWidth = stretchWidth
-    this.stretchHeight = stretchHeight
-
-    this.path = new Path2D()
-    // literals account for the border itself so that clicks that register for
-    // this path cover the entirety of button including button border
-    this.path.rect(
-      this.origin.x - 2, 
-      this.origin.y - 2,
-      this.baseWidth * this.stretchWidth + 4,
-      this.baseHeight * this.stretchHeight + 4,
-    )
-
-    this.#defaultHandler = (e) => {
-      if (this.ctx.isPointInPath(
-        this.path,
-        e.clientX - this.rect.left, 
-        e.clientY - this.rect.top
-      )) {
-        console.log(`some Button's onclick is undefined`)
-      }
-    }
-    this.ctx.canvas.addEventListener('click', this.#defaultHandler)
-  }
-
-  addClickListener(f, options) {
-    // Only one click listener, remove default before adding new handler
-    // pass in EventTarget.addEventListener options
-    
-    this.ctx.canvas.removeEventListener('click', this.#defaultHandler)
-
-    // Click detection handled handled here instead of outside of it!
-    // Assuming handler listening to canvas
-    this.ctx.canvas.addEventListener('click', (e) => {
-      if (this.ctx.isPointInPath(
-        this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
-      )) {
-        f()
-      }
-    }, options)
-  }
-
-  draw () {
-    this.ctx.strokeStyle = 'black'
-    this.ctx.fillStyle = 'hsl(0,0%,80%)'
-    this.ctx.lineWidth = 1
-
-    this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
-    this.ctx.shadowBlur = 7
-    this.ctx.shadowOffsetY = 5
-
-    this.ctx.beginPath()
-    this.ctx.fillRect(this.origin.x, 
-      this.origin.y, 
-      this.baseWidth * this.stretchWidth, 
-      this.baseHeight * this.stretchHeight
-    )
-  
-    this.ctx.shadowColor = this.ctx.shadowBlur = this.ctx.shadowOffsetY = null
-
-    this.ctx.strokeRect(
-      this.origin.x, 
-      this.origin.y, 
-      this.baseWidth * this.stretchWidth,
-      this.baseHeight * this.stretchHeight
-    )
-
-    this.ctx.font = '16px Arial'
-    this.ctx.fillStyle = 'black'
-    this.ctx.fillText(`${this.label}`, this.origin.x + 13, this.origin.y + 20)
   }
 }

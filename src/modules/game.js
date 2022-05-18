@@ -96,6 +96,7 @@ export default class Game {
 
     // TODO after debugging button class
     this.panel.resetButton.addClickListener(resetGame, { once: true })
+    this.panel.redPassButton.addClickListener(this.passTurn(CONSTANTS.RED).bind(this))
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
@@ -109,6 +110,15 @@ export default class Game {
     this.initDiscs()
     this.updateDiscActors()
     this.setupEventListeners()
+  }
+
+  passTurn(playerColor) {
+    const c = playerColor
+    return () => {
+      if (this.turnColor === c) {
+        this.nextTurn()
+      }
+    }
   }
 
   initDiscs() {
@@ -407,10 +417,10 @@ export default class Game {
       // }
 
       // TODO pass resetGame as a callback to a panel method instead
-      const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
-        this.nextTurn()
-      }
+      // const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
+      // if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
+      //   this.nextTurn()
+      // }
 
       // TODO pass resetGame as a callback to a panel method instead
       const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
