@@ -83,14 +83,17 @@ export default class Game {
 
     this.boardPanelGap = 15
 
-    const panelOffsetX = this.boardWidth + 2 * this.baseThickness 
-      + this.boardPanelGap
-    const panelOffsetY = 0
-    const panelWidth = 200
-    const panelHeight = this.boardHeight + 2 * this.baseThickness
+    const panelOffset = {
+      x: this.boardWidth + 2 * this.baseThickness + this.boardPanelGap,
+      y: 0
+    }
+    const panelDims = {
+      w: 200,
+      h: this.boardHeight + 2 * this.baseThickness
+    }
     this.panel = new Panel(
-      panelOffsetX, panelOffsetY,
-      panelWidth, panelHeight,
+      panelOffset,
+      panelDims,
       this
     )
 
@@ -102,17 +105,17 @@ export default class Game {
     )
 
     // VIGIL passTurn bind to this? or?
-    // this.panel.redPassButton.addClickListener(
-    //   this.passTurn(CONSTANTS.RED), 
-    //   { signal: this.controller.signal }
-    // )
-    // this.panel.blackPassButton.addClickListener(
-    //   this.passTurn(CONSTANTS.BLACK), 
-    //   { signal: this.controller.signal }
-    // )
+    this.panel.redPassButton.addClickListener(
+      this.passTurn(CONSTANTS.RED), 
+      { signal: this.controller.signal }
+    )
+    this.panel.blackPassButton.addClickListener(
+      this.passTurn(CONSTANTS.BLACK), 
+      { signal: this.controller.signal }
+    )
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
-      + this.boardPanelGap + panelWidth
+      + this.boardPanelGap + panelDims.w
     this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
     // this.ui.canvas.style.border = '1px solid red'
 

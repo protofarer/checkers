@@ -2,17 +2,19 @@ import { CONSTANTS } from '../main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
-  constructor (offsetX, offsetY, width, height, game) {
+  constructor (offset, dims, game) {
     // All distances and lengths are in pixels, unfortunately for now
     this.drawableChildren = []
     this.game = game
 
     // Panel Origin
-    this.offsetX = offsetX
-    this.offsetY = offsetY
+    this.offset = {
+      x: offset.x,
+      y: offset.y
+    }
 
-    this.width = width
-    this.height = height
+    this.width = dims.w
+    this.height = dims.h
     this.centerX = this.width / 2
     this.centerY = this.height / 2
 
@@ -28,6 +30,9 @@ export default class Panel {
     this.turnIndicatorX = this.centerX - 75
     this.turnIndicatorY = this.centerY
     
+    // **********************************************************************
+    // ********************   Reset Button
+    // **********************************************************************
     this.resetButtonX = this.centerX - 40
     this.resetButtonY = this.centerY - 15
     this.resetButton = new Button(
@@ -36,8 +41,25 @@ export default class Panel {
         y: this.resetButtonY },
       'Reset'
     )
+    this.resetButton.setClickArea(this.offset)
     this.drawableChildren.push(this.resetButton)
 
+    function reactTurnColor(game, playerColor) {
+      return (button) => {
+        // console.log(`IN passButtonColor return fn`, game, turnColor, game.turnColor)
+        
+        game.ctx.font = '16px Arial'
+        if (game.turnColor === playerColor) {
+          button.labelColor = 'blue'
+        } else {
+          button.labelColor = 'grey'
+        }
+      }
+    }
+
+    // **********************************************************************
+    // ********************   Red Pass Button
+    // **********************************************************************
     this.redPassButtonX = this.centerX - 40
     this.redPassButtonY = this.centerY - 90
     // this.redPassButton = new Button(
@@ -47,40 +69,31 @@ export default class Panel {
     //   'Pass'
     // )
 
-    function passButtonColor(playerColor) {
-      return (game, turnColor, button) => {
-        // console.log(`IN passButtonColor return fn`, game, turnColor, game.turnColor)
-        
-        game.ctx.font = '16px Arial'
-        if (game[turnColor] === playerColor) {
-          button.labelColor = 'blue'
-        } else {
-          button.labelColor = 'grey'
-        }
-      }
-    }
     this.redPassButton = new ReactiveButton(
       this.game.ctx, 
       { x: this.redPassButtonX, 
         y: this.redPassButtonY, },
       'Pass',
       1,1,70,30,
-      game, 
-      'turnColor', 
-      // foo,
-      // (obj, propName) => console.log(`reactiveButt f; obj: ${obj}, propName: ${propName}`, ),
-      passButtonColor(CONSTANTS.RED)
+      reactTurnColor(game, CONSTANTS.RED)
     )
+    this.redPassButton.setClickArea(this.offset)
     this.drawableChildren.push(this.redPassButton)
 
+    // **********************************************************************
+    // ********************   Black Pass Button
+    // **********************************************************************
     this.blackPassButtonX = this.centerX - 40
     this.blackPassButtonY = this.centerY + 60
-    this.blackPassButton = new Button(
+    this.blackPassButton = new ReactiveButton(
       this.game.ctx, 
       { x: this.blackPassButtonX, 
         y: this.blackPassButtonY, },
-      'Pass'
+      'Pass',
+      1,1,70,30,
+      reactTurnColor(game, CONSTANTS.BLACK)
     )
+    this.blackPassButton.setClickArea(this.offset)
     this.drawableChildren.push(this.blackPassButton)
   }
 
@@ -164,7 +177,7 @@ export default class Panel {
     // **********************************************************************
     // Topmost panel container
     this.game.ctx.save()
-    this.game.ctx.translate(this.offsetX, this.offsetY)
+    this.game.ctx.translate(this.offset.x, this.offset.y)
 
     this.game.ctx.beginPath()
     this.game.ctx.lineWidth = 1

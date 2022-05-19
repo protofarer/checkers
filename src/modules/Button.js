@@ -13,20 +13,23 @@ export default class Button {
     this.stretchHeight = stretchHeight
 
     this.labelColor = 'black'
+  }
 
-    this.path = new Path2D()
-    // literals account for the border itself so that clicks that register for
+  setClickArea(offset) {
+    // Parent must invoke to enable clickArea and default click handler
+
+    // literal offsets account for the border itself so that clicks that register for
     // this path cover the entirety of button including button border
+    this.path = new Path2D()
     this.path.rect(
-      this.origin.x - 2, 
-      this.origin.y - 2,
+      offset.x + this.origin.x - 2, 
+      offset.y + this.origin.y - 2,
       this.baseWidth * this.stretchWidth + 4,
       this.baseHeight * this.stretchHeight + 4,
     )
 
     this.#defaultHandler = (e) => {
-      console.log(`button default handler coordsX click.`, e.clientX - this.rect.left)
-      
+      console.log(`${this.label} button's default handler coordsX.`, e.clientX - this.rect.left)
       if (this.ctx.isPointInPath(
         this.path,
         e.clientX - this.rect.left, 
@@ -65,6 +68,10 @@ export default class Button {
   }
 
   draw () {
+    // Init clickArea path here because Panel draw does offset for its components
+    // and I don't want to pass in more constructor arguments to this button
+    // Indeed, the button is oblivious to its environment at large
+    // Thus encapsulated and simplified
     this.ctx.strokeStyle = 'hsl(0, 0%, 25%)'
     this.ctx.fillStyle = 'hsl(0,0%,80%)'
     this.ctx.lineWidth = 1
