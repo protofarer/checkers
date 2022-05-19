@@ -17,16 +17,6 @@ export const CONSTANTS = {
   PHASE_END: 6,
 }
 
-export function resetGame(debugMode=false, debugOverlay=false) {
-  // Remove event listeners
-  game.controller.abort()
-
-  // Remove html overlay elements
-  document.body.removeChild(game.panel.gameInfo)
-
-  game = new Game(ui, debugMode, debugOverlay)
-  debugOverlay && setupDebugGUI(game, ui)
-}
 
 // **********************************************************************
 // ********************   Setup Game: PHASE_SETUP
@@ -35,8 +25,13 @@ export function resetGame(debugMode=false, debugOverlay=false) {
 const parsedURL = new URL(window.location.href)
 const matchType = parsedURL.searchParams.get('matchType')
 const privacy = parsedURL.searchParams.get('privacy')
+const gamesPerMatch = matchType === 'local-single'
+  ? 1
+  : matchType === 'local-bo3'
+    ? 3 : 5
 let match = {
   matchType,
+  gamesPerMatch,
   privacy,
   score: {
     red: 0,
@@ -45,10 +40,9 @@ let match = {
   gameNo: 0,
 }
 
-
-
-// debugMode is the debug board arrangement with debug gui + overlay on
-// debug overlay is debug gui + overlay
+// DEF debugMode true: debug board arrangement with debugOverlay
+// DEF debugMode false: production board arrangement w/o debugOverlay
+// DEF debugOverlay: debug gui + overlay
 // 1. reset to normal play: no debug
 // 2. reset to normal play with debug gui + overlay
 // 3. reset to debugMode, all debug on
@@ -76,7 +70,7 @@ import.meta.env.DEV && setupDebugGUI(game, ui)
 // ********************   Play Game: PHASE_PLAY
 // **********************************************************************
 
-function startGame() {
+export function startGame() {
   let loopID = requestAnimationFrame(draw)
 
   function draw() {
@@ -84,6 +78,10 @@ function startGame() {
     game.drawAll()
     ui.updateAll(game)
     loopID = requestAnimationFrame(draw)
+    if (game.phase === CONSTANTS.PHASE_END) {
+      cancelAnimationFrame(loopID)
+      new VictoryDialog(game, match)
+    }
   }
 
   function handleKeyPress(e) {
@@ -93,9 +91,20 @@ function startGame() {
     }
   }
 
-  document.body.addEventListener('keypress', handleKeyPress.bind(this))
+  document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
 }
 startGame()
+
+export function resetGame(debugMode=false, debugOverlay=false) {
+  // Remove event listeners
+  game.controller.abort()
+
+  // Remove html overlay elements
+  document.body.removeChild(game.panel.gameInfo)
+
+  game = new Game(ui, debugMode, debugOverlay)
+  debugOverlay && setupDebugGUI(game, ui)
+}
 
 // **********************************************************************
 // ********************   End Game: PHASE_END

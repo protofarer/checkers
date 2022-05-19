@@ -15,6 +15,10 @@ export default class Button {
 
     this.labelColor = 'black'
 
+    console.log(`setup button: ${this.label}`, )
+    console.log(`data`, buttonData )
+    
+    
     // NTH help functions for top, bot, left, right, center
   }
 
@@ -24,6 +28,8 @@ export default class Button {
     // literal offsets account for the border itself so that clicks that register for
     // this path cover the entirety of button including button border
     this.path = new Path2D()
+    console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
+    
     this.path.rect(
       offset.x + this.origin.x - 2, 
       offset.y + this.origin.y - 2,
