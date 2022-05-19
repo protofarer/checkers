@@ -19,11 +19,11 @@ export default class Panel {
     this.centerY = this.height / 2
 
     // Define vertical separation for all vertically aligned items
-    const verticalAlignmentGap = 180
+    this.verticalAlignmentGap = 280
 
-    const separatorVerticalGap = verticalAlignmentGap
-    this.separatorUpperY = this.centerY - separatorVerticalGap/2
-    this.separatorLowerY = this.centerY + separatorVerticalGap/2
+    this.separatorVerticalGap = this.verticalAlignmentGap
+    this.separatorUpperY = this.centerY - this.separatorVerticalGap/2
+    this.separatorLowerY = this.centerY + this.separatorVerticalGap/2
     
     this.redJailOffsetX = 20   // relative to panel origin
     this.redJailOffsetY = 20  // relative to panel origin
@@ -33,7 +33,7 @@ export default class Panel {
 
     this.turnIndicatorX = this.centerX - 75
     this.turnIndicatorCenterY = this.centerY
-    this.turnIndicatorVerticalGap = separatorVerticalGap + 84
+    this.turnIndicatorVerticalGap = this.separatorVerticalGap + 84
     
     // **********************************************************************
     // ********************   Reset Button
@@ -41,7 +41,7 @@ export default class Panel {
     const resetButtonData = {
       origin: {
         x: this.centerX - 35,
-        y: this.centerY - 15 + 55,
+        y: this.separatorLowerY - 30 - 15,    // button height and gap
       },
       label: 'Reset'
     }
@@ -67,7 +67,7 @@ export default class Panel {
     // **********************************************************************
     // ********************   Pass Buttons
     // **********************************************************************
-    const passButtonsVerticalGap = separatorVerticalGap + 84
+    const passButtonsVerticalGap = this.separatorVerticalGap + 84
     const passButtonDims = { w: 70, h: 30 }
 
     // **********************************************************************
@@ -113,6 +113,23 @@ export default class Panel {
     // **********************************************************************
     this.turnIndicatorColor = 'hsl(100, 100%, 48%)'
     this.turnIndicatorRadius = 8
+
+    // **********************************************************************
+    // ********************   Informational Messssage Area
+    // **********************************************************************
+    this.gameInfo = document.createElement('div')
+    this.gameInfo.style.position = 'absolute'
+    this.gameInfo.style.left = `${offset.x + 15}px`
+    this.gameInfo.style.top = `${this.separatorUpperY + 15}px`
+    this.gameInfo.style.height = `${this.verticalAlignmentGap - 65}px`
+    this.gameInfo.style.width = `${this.width - 20}px`
+    this.gameInfo.style.fontFamily = 'Arial'
+    // this.gameInfo.style.border = '1px solid blue'
+    document.body.appendChild(this.gameInfo)
+    this.gameInfo.innerHTML = `\
+      <span>Turn ${this.game.turnCount} </span><br /><br />
+      <span style="color: blue;">${this.game.msg}</span>
+      `
   }
 
   drawDebugJail() {
@@ -189,6 +206,10 @@ export default class Panel {
     this.game.ctx.restore()
   }
 
+  // **********************************************************************
+  // ********************   MAIN DRAW
+  // **********************************************************************
+
   draw() {
     // **********************************************************************
     // ********************   PANEL
@@ -239,6 +260,10 @@ export default class Panel {
     this.drawCapturedDiscs()
     this.drawableChildren.forEach(c => c.draw())
     this.game.debugMode && this.drawDebugJail()
+    this.gameInfo.innerHTML = `\
+      <span>Turn ${this.game.turnCount} </span><br /><br />
+      <span style="color: blue;">${this.game.msg}</span>
+      `
 
     // Restore from Panel Offset
     this.game.ctx.restore()

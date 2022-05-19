@@ -14,6 +14,8 @@ export default class Button {
     this.stretchHeight = buttonData.stretch?.h || 1
 
     this.labelColor = 'black'
+
+    // NTH help functions for top, bot, left, right, center
   }
 
   setClickArea(offset) {

@@ -40,7 +40,12 @@ let game = new Game(ui, initDebugMode, initDebugOverlay)
 import.meta.env.DEV && setupDebugGUI(game, ui)
 
 export function resetGame(debugMode=false, debugOverlay=false) {
+  // Remove event listeners
   game.controller.abort()
+  document.body.removeChild(game.panel.gameInfo)
+
+  // Remove html overlay elements
+
   game = new Game(ui, debugMode, debugOverlay)
   debugOverlay && setupDebugGUI(game, ui)
 }
