@@ -115,17 +115,23 @@ export default class Panel {
     // **********************************************************************
     this.gameInfo = document.createElement('div')
     this.gameInfo.style.position = 'absolute'
-    this.gameInfo.style.left = `${offset.x + 15}px`
+    this.gameInfo.style.left = `${offset.x + 25}px`
     this.gameInfo.style.top = `${this.separatorUpperY + 15}px`
     this.gameInfo.style.height = `${this.verticalAlignmentGap - 65}px`
-    this.gameInfo.style.width = `${this.width - 20}px`
+    this.gameInfo.style.width = `${this.width - 30}px`
     this.gameInfo.style.fontFamily = 'Arial'
-    // this.gameInfo.style.border = '1px solid blue'
+    this.gameInfo.style.border = '1px solid blue'
+    this.gameInfo.style.display = 'flex'
+    this.gameInfo.style.flexFlow = 'col nowrap'
     document.body.appendChild(this.gameInfo)
     this.gameInfo.innerHTML = `\
       <span>Turn ${this.game.turnCount} </span><br /><br />
       <span style="color: blue;">${this.game.msg}</span>
       `
+    this.turnInfo = document.createElement('div')
+    this.turnInfo.style.alignText = 'center'
+    this.turnInfo.style.border = '1px solid orange'
+    this.gameInfo.appendChild(this.turnInfo)
   }
 
   drawDebugJail() {
@@ -232,8 +238,10 @@ export default class Panel {
     this.game.debugMode && this.drawDebugJail()
     this.gameInfo.innerHTML = `\
       <span>Turn ${this.game.turnCount} </span><br /><br />
-      <span style="color: blue;">${this.game.msg}</span>
       `
+    this.turnInfo.innerHTML = `\
+      <span style="color: blue;">${this.game.msg}</span>
+    `
 
     // Restore from Panel Offset
     this.game.ctx.restore()
