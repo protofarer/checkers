@@ -107,9 +107,15 @@ export default class Panel {
     )
     this.blackPassButton.setClickArea(this.offset)
     this.drawableChildren.push(this.blackPassButton)
+
+    // **********************************************************************
+    // ********************   Turn Indicators
+    // **********************************************************************
+    this.turnIndicatorColor = 'hsl(100, 100%, 48%)'
+    this.turnIndicatorRadius = 8
   }
 
-  draw() {
+  drawDebugJail() {
     // Draw red's jail
     this.game.ctx.beginPath()
     this.game.ctx.font = '16px Arial'
@@ -203,27 +209,27 @@ export default class Panel {
     this.game.ctx.lineTo(15 + this.width - 30, this.separatorLowerY)
 
     // Red's empty turn indicator
-    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2)
+    this.game.ctx.moveTo(this.turnIndicatorX + this.turnIndicatorRadius, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2)
     this.game.ctx.arc(
       this.turnIndicatorX, 
       this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 
-      16, 0, 2*Math.PI
+      this.turnIndicatorRadius, 0, 2*Math.PI
     )
     this.game.ctx.stroke()
 
     // Black's empty turn indicator
-    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2)
+    this.game.ctx.moveTo(this.turnIndicatorX + this.turnIndicatorRadius, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2)
     this.game.ctx.arc(
       this.turnIndicatorX, 
       this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2,
-      16, 0, 2*Math.PI)
+      this.turnIndicatorRadius, 0, 2*Math.PI)
     this.game.ctx.lineWidth = 1
     this.game.ctx.stroke()
 
     this.game.ctx.beginPath()
     this.game.turnColor === CONSTANTS.RED
-      ? this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
-      : this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
+      ? this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, this.turnIndicatorRadius - 1, 0, 2*Math.PI)
+      : this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2, this.turnIndicatorRadius - 1, 0, 2*Math.PI)
     this.game.ctx.fillStyle = this.turnIndicatorColor
     this.game.ctx.fill()
 
