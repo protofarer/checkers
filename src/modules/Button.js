@@ -1,16 +1,17 @@
 export default class Button {
   #defaultHandler
-  constructor(ctx, origin, label, stretchWidth=1, stretchHeight=1, baseWidth=70, baseHeight=30) {
+  constructor(ctx, buttonData) {
     this.ctx = ctx
     this.rect = this.ctx.canvas.getBoundingClientRect()
     
-    this.origin = origin
-    this.label = label
+    this.origin = buttonData.origin
+    
+    this.label = buttonData.label || 'no-button-label-assigned'
 
-    this.baseWidth = baseWidth
-    this.baseHeight = baseHeight
-    this.stretchWidth = stretchWidth
-    this.stretchHeight = stretchHeight
+    this.baseWidth = buttonData.base?.w || 70
+    this.baseHeight = buttonData.base?.h || 30
+    this.stretchWidth = buttonData.stretch?.w || 1
+    this.stretchHeight = buttonData.stretch?.h || 1
 
     this.labelColor = 'black'
   }

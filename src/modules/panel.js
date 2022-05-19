@@ -18,8 +18,12 @@ export default class Panel {
     this.centerX = this.width / 2
     this.centerY = this.height / 2
 
-    this.separatorUpperY = this.centerY - 38
-    this.separatorLowerY = this.centerY + 38
+    // Define vertical separation for all vertically aligned items
+    const verticalAlignmentGap = 180
+
+    const separatorVerticalGap = verticalAlignmentGap
+    this.separatorUpperY = this.centerY - separatorVerticalGap/2
+    this.separatorLowerY = this.centerY + separatorVerticalGap/2
     
     this.redJailOffsetX = 20   // relative to panel origin
     this.redJailOffsetY = 20  // relative to panel origin
@@ -28,18 +32,22 @@ export default class Panel {
     this.blackJailOffsetY = this.height - 20
 
     this.turnIndicatorX = this.centerX - 75
-    this.turnIndicatorY = this.centerY
+    this.turnIndicatorCenterY = this.centerY
+    this.turnIndicatorVerticalGap = separatorVerticalGap + 84
     
     // **********************************************************************
     // ********************   Reset Button
     // **********************************************************************
-    this.resetButtonX = this.centerX - 40
-    this.resetButtonY = this.centerY - 15
+    const resetButtonData = {
+      origin: {
+        x: this.centerX - 35,
+        y: this.centerY - 15,
+      },
+      label: 'Reset'
+    }
     this.resetButton = new Button(
       this.game.ctx, 
-      { x: this.resetButtonX, 
-        y: this.resetButtonY },
-      'Reset'
+      resetButtonData,
     )
     this.resetButton.setClickArea(this.offset)
     this.drawableChildren.push(this.resetButton)
@@ -56,25 +64,25 @@ export default class Panel {
         }
       }
     }
+    // **********************************************************************
+    // ********************   Pass Buttons
+    // **********************************************************************
+    const passButtonsVerticalGap = separatorVerticalGap + 84
+    const passButtonDims = { w: 70, h: 30 }
 
     // **********************************************************************
     // ********************   Red Pass Button
     // **********************************************************************
-    this.redPassButtonX = this.centerX - 40
-    this.redPassButtonY = this.centerY - 90
-    // this.redPassButton = new Button(
-    //   this.game.ctx, 
-    //   { x: this.redPassButtonX, 
-    //     y: this.redPassButtonY, },
-    //   'Pass'
-    // )
-
+    const redPassButtonData = {
+      origin: {
+        x: this.centerX - passButtonDims.w/2,
+        y: this.centerY - passButtonsVerticalGap/2 - passButtonDims.h/2
+      },
+      label: 'Pass',
+    }
     this.redPassButton = new ReactiveButton(
       this.game.ctx, 
-      { x: this.redPassButtonX, 
-        y: this.redPassButtonY, },
-      'Pass',
-      1,1,70,30,
+      redPassButtonData,
       reactTurnColor(game, CONSTANTS.RED)
     )
     this.redPassButton.setClickArea(this.offset)
@@ -83,14 +91,18 @@ export default class Panel {
     // **********************************************************************
     // ********************   Black Pass Button
     // **********************************************************************
-    this.blackPassButtonX = this.centerX - 40
-    this.blackPassButtonY = this.centerY + 60
+    const blackPassButtonData = {
+      origin: {
+        x: this.centerX - passButtonDims.w/2,
+        y: this.centerY + passButtonsVerticalGap/2 - passButtonDims.h/2
+      },
+      label: 'Pass',
+    }
+    // this.blackPassButtonX = this.centerX - 40
+    // this.blackPassButtonY = this.centerY + 60
     this.blackPassButton = new ReactiveButton(
       this.game.ctx, 
-      { x: this.blackPassButtonX, 
-        y: this.blackPassButtonY, },
-      'Pass',
-      1,1,70,30,
+      blackPassButtonData,
       reactTurnColor(game, CONSTANTS.BLACK)
     )
     this.blackPassButton.setClickArea(this.offset)
@@ -191,27 +203,27 @@ export default class Panel {
     this.game.ctx.lineTo(15 + this.width - 30, this.separatorLowerY)
 
     // Red's empty turn indicator
-    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorY - 75)
+    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2)
     this.game.ctx.arc(
       this.turnIndicatorX, 
-      this.turnIndicatorY - 75, 
+      this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 
       16, 0, 2*Math.PI
     )
     this.game.ctx.stroke()
 
     // Black's empty turn indicator
-    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorY + 75)
+    this.game.ctx.moveTo(this.turnIndicatorX + 16, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2)
     this.game.ctx.arc(
       this.turnIndicatorX, 
-      this.turnIndicatorY + 75,
+      this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2,
       16, 0, 2*Math.PI)
     this.game.ctx.lineWidth = 1
     this.game.ctx.stroke()
 
     this.game.ctx.beginPath()
     this.game.turnColor === CONSTANTS.RED
-      ? this.game.ctx.arc(this.turnIndicatorX, this.centerY - 75, 15, 0, 2*Math.PI)
-      : this.game.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI)
+      ? this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
+      : this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
     this.game.ctx.fillStyle = 'hsl(100, 50%, 50%)'
     this.game.ctx.fill()
 
