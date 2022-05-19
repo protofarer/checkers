@@ -563,27 +563,6 @@ export default class Game {
     }
   }
 
-  drawVictoryDialog() {
-    this.ctx.beginPath()
-    this.ctx.fillStyle = 'hsla(0, 0%, 95%, 0.75)'
-    this.ctx.fillRect(100, 200, 600, 400)
-
-    this.ctx.font = 'bold 60px Arial'
-    
-    this.ctx.fillStyle = this.winner === CONSTANTS.RED 
-      ? 'crimson'
-      : 'black'
-    this.ctx.fillText(
-      `${this.winner === CONSTANTS.RED ? 'RED' : 'BLACK'}`,
-      300, 350
-    )
-
-    this.ctx.fillStyle = 'green'
-    this.ctx.fillText(
-      'WINS!',
-      300, 425
-    )
-  }
 
   drawBaseBoard() {
     // RFCT reference directly
@@ -633,6 +612,5 @@ export default class Game {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
 
-    this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
 }

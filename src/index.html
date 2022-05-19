@@ -5,9 +5,63 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
-  <title>Checkers App</title>
+  <title>Checkers Start Menu</title>
 </head>
 <body>
-  <script src="/main.js" type="module"></script>
+  <a href="/checkers.html">Game</a>
+  <fieldset>
+    <legend>Setup Match</legend>
+    <form action="/checkers.html" method="get">
+      <fieldset>
+        <legend>Select Match Type</legend>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="local-single" 
+            checked
+          >
+          <label for="matchType">Local</label>
+        </div>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="local-bo3" 
+          >
+          <label for="matchType">Best of 3</label>
+        </div>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="local-bo5" 
+          >
+          <label for="matchType">Best of 5</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Select privacy</legend>
+        <div>
+          <input 
+            type="radio"
+            name="privacy"
+            value="public"
+            checked
+          >
+          <label for="public">Public</label>
+        </div>
+        <div>
+          <input 
+            type="radio"
+            name="privacy"
+            value="private"
+          >
+          <label for="private">Private</label></div>
+      </fieldset>
+      <button type="submit">Play</button>
+    </form>
+    </fieldset>
+  <script src="/menu.js" type="module"></script>
 </body>
 </html>

@@ -54,5 +54,7 @@ export default function setupDebugGUI(game, ui) {
     // const toggleKings = () => game.toggleKings()
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
+    
+
     return gui
   }
