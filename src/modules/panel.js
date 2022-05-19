@@ -40,24 +40,35 @@ export default class Panel {
 
     this.redPassButtonX = this.centerX - 40
     this.redPassButtonY = this.centerY - 90
+    // this.redPassButton = new Button(
+    //   this.game.ctx, 
+    //   { x: this.redPassButtonX, 
+    //     y: this.redPassButtonY, },
+    //   'Pass'
+    // )
 
     function passButtonColor(playerColor) {
-      return (game, turnColor) => {
-        this.ctx.font = '16px Arial'
-        turnColor === playerColor
-          ? this.game.ctx.fillStyle = 'blue'
-          : this.game.ctx.fillStyle = 'grey'
-        this.game.ctx.fillText('Pass', this.origin.x + 17, this.origin.y + 21)
+      return (game, turnColor, button) => {
+        // console.log(`IN passButtonColor return fn`, game, turnColor, game.turnColor)
+        
+        game.ctx.font = '16px Arial'
+        if (game[turnColor] === playerColor) {
+          button.labelColor = 'blue'
+        } else {
+          button.labelColor = 'grey'
+        }
       }
     }
-
     this.redPassButton = new ReactiveButton(
       this.game.ctx, 
       { x: this.redPassButtonX, 
         y: this.redPassButtonY, },
       'Pass',
-      this.game,
-      'turnColor',
+      1,1,70,30,
+      game, 
+      'turnColor', 
+      // foo,
+      // (obj, propName) => console.log(`reactiveButt f; obj: ${obj}, propName: ${propName}`, ),
       passButtonColor(CONSTANTS.RED)
     )
     this.drawableChildren.push(this.redPassButton)
@@ -148,7 +159,13 @@ export default class Panel {
   }
 
   draw() {
+    // **********************************************************************
+    // ********************   PANEL
+    // **********************************************************************
     // Topmost panel container
+    this.game.ctx.save()
+    this.game.ctx.translate(this.offsetX, this.offsetY)
+
     this.game.ctx.beginPath()
     this.game.ctx.lineWidth = 1
     this.game.ctx.strokeStyle = 'rgb(0,0,0,0.5)'
@@ -184,17 +201,15 @@ export default class Panel {
       : this.game.ctx.arc(this.turnIndicatorX, this.centerY + 75, 15, 0, 2*Math.PI)
     this.game.ctx.fillStyle = 'hsl(100, 50%, 50%)'
     this.game.ctx.fill()
-  }
 
-  drawAll() {
-    this.game.ctx.save()
-    this.game.ctx.translate(this.offsetX, this.offsetY)
-
-    this.draw()
+    // **********************************************************************
+    // ********************   PANEL COMPONENTS
+    // **********************************************************************
     this.drawCapturedDiscs()
     this.drawableChildren.forEach(c => c.draw())
     this.game.debugMode && this.drawDebugJail()
 
+    // Restore from Panel Offset
     this.game.ctx.restore()
   }
 }

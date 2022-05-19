@@ -25,6 +25,8 @@ export default class Button {
     )
 
     this.#defaultHandler = (e) => {
+      console.log(`button default handler coordsX click.`, e.clientX - this.rect.left)
+      
       if (this.ctx.isPointInPath(
         this.path,
         e.clientX - this.rect.left, 

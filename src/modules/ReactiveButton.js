@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../main'
+// import { CONSTANTS } from '../main'
 import Button from './Button'
 
 export default class ReactiveButton extends Button {
@@ -9,20 +9,34 @@ export default class ReactiveButton extends Button {
   constructor(
     ctx, origin, label, 
     stretchWidth=1, stretchHeight=1, baseWidth=70, baseHeight=30, 
-    obj, propName, f
+    obj, propName, fn
   ) {
     super(ctx, origin, label, stretchWidth, stretchHeight, baseWidth, baseHeight)
+    
 
     this.obj = obj
     this.propName = propName
-
-    this.f = f
+    this.fn = fn
+    // console.log(`obj`, obj)
+    // console.log(`propname`, propName)
+    // console.log(`f`, f)
+    // console.log('this.f', this.f)
+    // console.log(`foo()`, this.fn())
+    // this.fn()
+    
   }
   
   draw() {
     // If obj is passed by reference, then every time draw() is invoked
     // f() shouild act on the latest obj and specified prop
-    this.f(this.obj, this.propName)
+    // console.log(`reactive draw()`, )
+    // console.log(this.f)
+    
+    // BUG this.f invoked via drawChildren.forEach is not pointing to
+    // the ReactiveButton's f itself
+    this.fn(this.obj, this.propName, this)
+    
+    // this.f(this.obj, this.propName)
     super.draw()
   }
 }

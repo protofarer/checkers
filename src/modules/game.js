@@ -100,14 +100,16 @@ export default class Game {
       resetGame, 
       { signal: this.controller.signal }
     )
-    this.panel.redPassButton.addClickListener(
-      this.passTurn(CONSTANTS.RED).bind(this), 
-      { signal: this.controller.signal }
-    )
-    this.panel.blackPassButton.addClickListener(
-      this.passTurn(CONSTANTS.BLACK).bind(this), 
-      { signal: this.controller.signal }
-    )
+
+    // VIGIL passTurn bind to this? or?
+    // this.panel.redPassButton.addClickListener(
+    //   this.passTurn(CONSTANTS.RED), 
+    //   { signal: this.controller.signal }
+    // )
+    // this.panel.blackPassButton.addClickListener(
+    //   this.passTurn(CONSTANTS.BLACK), 
+    //   { signal: this.controller.signal }
+    // )
     
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelWidth
@@ -620,7 +622,7 @@ export default class Game {
     this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
-    this.panel.drawAll(
+    this.panel.draw(
       { captures: this.captures, turnColor: this.turnColor }
     )
 
