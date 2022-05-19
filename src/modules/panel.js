@@ -41,7 +41,7 @@ export default class Panel {
     const resetButtonData = {
       origin: {
         x: this.centerX - 35,
-        y: this.centerY - 15,
+        y: this.centerY - 15 + 55,
       },
       label: 'Reset'
     }
@@ -109,7 +109,7 @@ export default class Panel {
     this.drawableChildren.push(this.blackPassButton)
   }
 
-  drawDebugJail() {
+  draw() {
     // Draw red's jail
     this.game.ctx.beginPath()
     this.game.ctx.font = '16px Arial'
@@ -224,7 +224,7 @@ export default class Panel {
     this.game.turnColor === CONSTANTS.RED
       ? this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
       : this.game.ctx.arc(this.turnIndicatorX, this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2, 15, 0, 2*Math.PI)
-    this.game.ctx.fillStyle = 'hsl(100, 50%, 50%)'
+    this.game.ctx.fillStyle = this.turnIndicatorColor
     this.game.ctx.fill()
 
     // **********************************************************************
