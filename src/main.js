@@ -76,7 +76,6 @@ export function startGame() {
   function draw() {
     game.clr()
     game.drawAll()
-    ui.updateAll(game)
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)

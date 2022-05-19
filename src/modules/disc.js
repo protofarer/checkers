@@ -149,18 +149,6 @@ export default class Disc {
         y: canvasY
       }
     } 
-    // else {
-    //   this.center = {
-    //     x: ((this.col) * 100) + 50 + this.offset.x,
-    //     y: ((this.row) * 100) + 50 + this.offset.y
-    //   }
-    // // Register path for click detection
-    // // Divergent dimensions from draw compensating for unknown
-    // // differences between rendered disc and click event coordinates
-    // // This click path valid only for when disc is at rest and ungrabbed state
-    // // CSDR: The y offset for the path's center is off by ~3 pixels
-    
-    // }
 
     this.ctx.save()      // save A - disc center
 
@@ -292,8 +280,6 @@ export default class Disc {
   }
 
   drawClickArea(position) {
-    // this.ctx.save()      // save A - disc center
-    // this.ctx.translate(this.center.x, this.center.y)
     this.ctx.beginPath()
     this.ctx.strokeStyle = 'lawngreen'
     this.ctx.stroke(this.perimeter)
@@ -320,6 +306,5 @@ export default class Disc {
     this.ctx.moveTo(this.clickArea.right, this.clickArea.center.y)
     this.ctx.arc(this.clickArea.right, this.clickArea.center.y, 1, 0, 2 * Math.PI)
     this.ctx.stroke()
-    // this.ctx.restore()
   }
 }

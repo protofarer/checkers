@@ -2,14 +2,12 @@ import GUI from 'lil-gui'
 import { resetGame } from '../main'
 
 export default function setupDebugGUI(game, ui) {
-    // debug GUI
     const gui = new GUI()
     const rectpos = {
       left: `${Math.floor(game.rect.left)}`,
       top: `${Math.floor(game.rect.top)}`
     }
 
-    
     // gui.add(
     //   { pos: 'topright'}, 
     //   'pos', 
@@ -44,14 +42,8 @@ export default function setupDebugGUI(game, ui) {
     gui.add({ resetGame }, 'resetGame').name('reset - prod')
     gui.add({ debugreset() { resetGame(true, true) } }, 'debugreset').name('reset - full debug')
 
-
-    // const triggerVictory = () => {
-    //   game.phase = CONSTANTS.PHASE_END
-    //   game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-    // }
     gui.add({ triggerVictory() {game.debugTriggerVictory()} }, 'triggerVictory')
 
-    // const toggleKings = () => game.toggleKings()
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
     gui.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')

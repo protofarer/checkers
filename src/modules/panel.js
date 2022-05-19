@@ -54,8 +54,6 @@ export default class Panel {
 
     function reactTurnColor(game, playerColor) {
       return (button) => {
-        // console.log(`IN passButtonColor return fn`, game, turnColor, game.turnColor)
-        
         game.ctx.font = '16px Arial'
         if (game.turnColor === playerColor) {
           button.labelColor = 'blue'
@@ -98,8 +96,6 @@ export default class Panel {
       },
       label: 'Pass',
     }
-    // this.blackPassButtonX = this.centerX - 40
-    // this.blackPassButtonY = this.centerY + 60
     this.blackPassButton = new ReactiveButton(
       this.game.ctx, 
       blackPassButtonData,
@@ -111,7 +107,7 @@ export default class Panel {
     // **********************************************************************
     // ********************   Turn Indicators
     // **********************************************************************
-    this.turnIndicatorColor = 'hsl(100, 100%, 48%)'
+    this.turnIndicatorColor = 'hsl(100, 100%, 45%)'
     this.turnIndicatorRadius = 8
 
     // **********************************************************************
@@ -151,28 +147,6 @@ export default class Panel {
     )
     this.game.ctx.restore()
   }
-  
-  // drawPassButton(x, y, playerColor) {
-  //   this.game.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
-  //   this.game.ctx.shadowBlur = 7
-  //   this.game.ctx.shadowOffsetY = 5
-
-  //   this.game.ctx.beginPath()
-  //   this.game.ctx.lineWidth = 1
-  //   this.game.ctx.strokeStyle = 'black'
-  //   this.game.ctx.fillStyle = 'hsl(0,0%,80%)'
-  //   this.game.ctx.fillRect(x, y, 70, 30)
-
-  //   this.game.ctx.shadowColor = this.game.ctx.shadowBlur = this.game.ctx.shadowOffsetY = null
-
-  //   this.game.ctx.strokeRect(x-1, y-1,71,31)
-    
-  //   this.game.ctx.font = '16px Arial'
-  //   this.game.turnColor === playerColor
-  //     ? this.game.ctx.fillStyle = 'blue'
-  //     : this.game.ctx.fillStyle = 'grey'
-  //   this.game.ctx.fillText('Pass', x + 17, y + 21)
-  // }
 
   drawCapturedDiscs() {
     const scaleRatio = 0.5
@@ -205,10 +179,6 @@ export default class Panel {
     })
     this.game.ctx.restore()
   }
-
-  // **********************************************************************
-  // ********************   MAIN DRAW
-  // **********************************************************************
 
   draw() {
     // **********************************************************************

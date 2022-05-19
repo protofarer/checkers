@@ -416,25 +416,6 @@ export default class Game {
           this.msg = 'That isn\'t your disc'
         }
       }
-
-      // TODO pass resetGame as a callback to a panel method instead
-      // this.panel.resetListener(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y, resetGame)
-      // const isResetClicked = this.panel.isResetClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      // if (isResetClicked) {
-      //   resetGame()
-      // }
-
-      // TODO pass resetGame as a callback to a panel method instead
-      // const isRedPassClicked = this.panel.isRedPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      // if (isRedPassClicked && this.turnColor === CONSTANTS.RED) {
-      //   this.nextTurn()
-      // }
-
-      // TODO pass resetGame as a callback to a panel method instead
-      // const isBlackPassClicked = this.panel.isBlackPassClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      // if (isBlackPassClicked && this.turnColor === CONSTANTS.BLACK) {
-      //   this.nextTurn()
-      // }
     }
 
     const handleMouseUp = () => {
@@ -490,31 +471,7 @@ export default class Game {
 
 
     }
-
-    // const handleDebugClick = () => {
-    //   this.debugMode = !this.debugMode
-    //   if (this.debugMode) {
-    //     this.ui.debugButton.innerText = 'turn\ndebug\noff'
-    //     this.ui.debugEle.style.display = 'block'
-    //     this.ui.boardStateEle.style.display = 'block'
-    //     this.ui.resetButton.style.display = 'block'
-    //     this.ui.debugResetButton.style.display = 'block'
-    //     this.ui.debugKingButton.style.display = 'block'
-    //   } else {
-    //     this.ui.debugButton.innerText =  'turn\ndebug\non'
-    //     this.ui.debugEle.style.display = 'none'
-    //     this.ui.boardStateEle.style.display = 'none'
-    //     this.ui.resetButton.style.display = 'none'
-    //     this.ui.debugResetButton.style.display = 'none'
-    //     this.ui.debugKingButton.style.display = 'none'
-    //   }
-    // }
-
-
     document.addEventListener('mousemove', handleMouseMove)
-    // this.ui.debugButton.addEventListener('click', handleDebugClick)
-    // this.ui.debugKingButton.addEventListener('click', toggleKings)
-    // this.ui.debugVictoryButton.addEventListener('click', debugTriggerVictory)
     this.ui.canvas.addEventListener('mousedown', handleMouseDown) 
     this.ui.canvas.addEventListener('mouseup', handleMouseUp) 
   }
@@ -555,12 +512,9 @@ export default class Game {
 
 
   drawDiscs() {
-    // for (let disc of this.discs) {
-    //   disc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-    // }
-    for (let i = 0; i < this.discs.length; i++) {
-      this.discs[i].draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-    }
+    this.discs.forEach(disc => disc
+      .draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
+    )
   }
 
 
@@ -581,24 +535,6 @@ export default class Game {
     this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness, origin.y)
     this.ctx.stroke()
   }
-  // drawPossibleMoves(grabbedDisc) {
-  //   const actor = this.getActorType(grabbedDisc)
-  //   if (grabbedDisc) {
-  //     if (actor === 'enticed') {
-  //       const captureMoves = this.findCaptureMoves(grabbedDisc) 
-  //       for (let m of captureMoves) {
-  //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-  //       }
-  //     } else if (actor === 'carefree') {
-  //       const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc)
-  //       for (let m of nonCaptureMoves) {
-  //         const ghostDisc = new Disc(this.ctx, m.row, m.col, this.playAreaOffset, CONSTANTS.GHOST)
-  //         ghostDisc.draw(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-  //       }
-  //     }
-  //   }
-  // }
 
   drawAll() {
     this.drawBaseBoard()
