@@ -54,7 +54,7 @@ export default function setupDebugGUI(game, ui) {
     // const toggleKings = () => game.toggleKings()
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
-    
+    gui.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
 
     return gui
   }

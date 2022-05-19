@@ -35,8 +35,15 @@ export function resetGame(debugMode=false, debugOverlay=false) {
 const parsedURL = new URL(window.location.href)
 const matchType = parsedURL.searchParams.get('matchType')
 const privacy = parsedURL.searchParams.get('privacy')
-console.log(`privary`, privacy)
-console.log(`matchtype`, matchType)
+let match = {
+  matchType,
+  privacy,
+  score: {
+    red: 0,
+    black: 0,
+  },
+  gameNo: 0,
+}
 
 
 
