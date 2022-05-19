@@ -40,7 +40,6 @@ let game = new Game(ui, initDebugMode, initDebugOverlay)
 import.meta.env.DEV && setupDebugGUI(game, ui)
 
 export function resetGame(debugMode=false, debugOverlay=false) {
-  // TODO remove in-canvas event listeners to prevent stacking (stop redundance)
   game.controller.abort()
   game = new Game(ui, debugMode, debugOverlay)
   debugOverlay && setupDebugGUI(game, ui)

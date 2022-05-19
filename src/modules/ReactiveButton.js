@@ -1,4 +1,4 @@
-// import { CONSTANTS } from '../main'
+import { CONSTANTS } from '../main'
 import Button from './Button'
 
 export default class ReactiveButton extends Button {
@@ -6,8 +6,12 @@ export default class ReactiveButton extends Button {
   // a change in some state variable
   //    f: acts on prop and changes something
   //      about the button's draw, eg fill color for text
-  constructor(obj, propName, f) {
-    super()
+  constructor(
+    ctx, origin, label, 
+    stretchWidth=1, stretchHeight=1, baseWidth=70, baseHeight=30, 
+    obj, propName, f
+  ) {
+    super(ctx, origin, label, stretchWidth, stretchHeight, baseWidth, baseHeight)
 
     this.obj = obj
     this.propName = propName

@@ -91,7 +91,7 @@ export default class Game {
     this.panel = new Panel(
       panelOffsetX, panelOffsetY,
       panelWidth, panelHeight,
-      this.ctx, resetGame
+      this
     )
 
     // AbortController is quite good
@@ -620,11 +620,14 @@ export default class Game {
     this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
+    this.panel.drawAll(
+      { captures: this.captures, turnColor: this.turnColor }
+    )
+
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
-    this.panel.drawAll({ captures: this.captures, turnColor: this.turnColor })
-    this.panel.drawCapturedDiscs(this.captures)
+
     this.phase === CONSTANTS.PHASE_END && this.drawVictoryDialog()
   }
 }

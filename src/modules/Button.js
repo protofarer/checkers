@@ -63,7 +63,7 @@ export default class Button {
   }
 
   draw () {
-    this.ctx.strokeStyle = 'black'
+    this.ctx.strokeStyle = 'hsl(0, 0%, 25%)'
     this.ctx.fillStyle = 'hsl(0,0%,80%)'
     this.ctx.lineWidth = 1
 
