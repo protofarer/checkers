@@ -178,14 +178,14 @@ export default class Panel {
     this.game.ctx.font = '16px Arial'
     this.game.ctx.fillStyle = 'black'
     this.game.ctx.fillText(
-      `Blacks captured: ${this.game.captures.forRed}`, 
+      `Blacks captured: ${this.game.captures.capturedBlacks.length}`, 
       this.redJailOffsetX, 
       this.redJailOffsetY
     )
 
     // Draw black's jail
     this.game.ctx.fillText(
-      `Reds captured: ${this.game.captures.forBlack}`, 
+      `Reds captured: ${this.game.captures.capturedReds.length}`, 
       this.blackJailOffsetX, 
       this.blackJailOffsetY + 12
     )

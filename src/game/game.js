@@ -61,8 +61,6 @@ export default class Game {
     this.phase = CONSTANTS.PHASE_PLAY    // new, playing, end
     this.winner = ''
     this.captures = {
-      forRed: 0,
-      forBlack: 0,
       capturedBlacks: [],
       capturedReds: [],
     }
@@ -267,10 +265,8 @@ export default class Game {
   capture(grabbedDisc, to) {
     const capturedDisc = this.findCaptured(grabbedDisc, to)
     if (capturedDisc.color === CONSTANTS.RED) {
-      this.captures.forBlack += 1
       this.captures.capturedReds.push(capturedDisc)
     } else {
-      this.captures.forRed += 1
       this.captures.capturedBlacks.push(capturedDisc)
     }
     this.board[capturedDisc.row][capturedDisc.col] = 0
