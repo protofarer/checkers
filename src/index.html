@@ -10,24 +10,25 @@
 <body>
   <a href="/game/index.html">Game</a>
   <fieldset>
-    <legend>Setup Match</legend>
+    <legend><h1>Setup Match</h1></legend>
     <form action="/game/index.html" method="get">
       <fieldset>
-        <legend>Select Match Type</legend>
+        <legend><h2>Select Match Type</h2></legend>
+        <h3>Local</h3>
         <div>
           <input 
             type="radio" 
             name="matchType" 
-            value="local-single" 
+            value="local-1" 
             checked
           >
-          <label for="matchType">Local</label>
+          <label for="matchType">Single</label>
         </div>
         <div>
           <input 
             type="radio" 
             name="matchType" 
-            value="local-bo3" 
+            value="local-3" 
           >
           <label for="matchType">Best of 3</label>
         </div>
@@ -35,13 +36,39 @@
           <input 
             type="radio" 
             name="matchType" 
-            value="local-bo5" 
+            value="local-5" 
+          >
+          <label for="matchType">Best of 5</label>
+        </div>
+        <h3>Multiplayer</h3>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="mp-1" 
+            checked
+          >
+          <label for="matchType">Single</label>
+        </div>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="mp-3" 
+          >
+          <label for="matchType">Best of 3</label>
+        </div>
+        <div>
+          <input 
+            type="radio" 
+            name="matchType" 
+            value="mp-5" 
           >
           <label for="matchType">Best of 5</label>
         </div>
       </fieldset>
       <fieldset>
-        <legend>Select privacy</legend>
+        <legend><h2>Select privacy</h2></legend>
         <div>
           <input 
             type="radio"

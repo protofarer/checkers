@@ -73,7 +73,7 @@ export default class Disc {
       if (this.color === CONSTANTS.RED) {
         // Color angle skooched right and narrowed to avoid boring red range
         const colorAngle = (Math.floor(this.animateFrame / 15) % 290) + 30
-        this.kingColor = `hsl(${colorAngle}, 100%, 40%)`
+        this.kingColor = `hsl(${colorAngle}, 100%, 80%)`
       } else {
         const colorAngle = Math.floor(this.animateFrame / 15) % 360
         this.kingColor = `hsl(${colorAngle}, 100%, 70%)`

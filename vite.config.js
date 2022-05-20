@@ -1,4 +1,8 @@
-import { defineConfig, loadEnv } from 'vite'
+import { 
+  defineConfig, 
+  loadEnv 
+} from 'vite'
+
 import html from '@rollup/plugin-html'
 
 export default defineConfig({
@@ -14,7 +18,7 @@ export default defineConfig({
       },
       plugins: [
         html({
-          include: "**/*.html"
+          include: '**/*.html'
         }),
       ]
 
