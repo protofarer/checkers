@@ -49,7 +49,11 @@ export default class VictoryDialog {
     // origin of dialog is offset for buttons
     this.nextGameButton.setClickArea(this.offset)
     this.nextGameButton.addClickListener(
-      () => { resetGame(); startGame(); },
+      () => { 
+
+        resetGame(this.game.debugMode, this.game.debugOverlay) 
+        startGame()
+      },
       { once: true}
     )
     // Add "quit checkers"

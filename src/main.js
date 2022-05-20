@@ -62,7 +62,7 @@ if (import.meta.env.DEV) {
 }
 
 let ui = setupExternalUI('htmlUI')
-let game = new Game(ui, initDebugMode, initDebugOverlay)
+let game = new Game(match, ui, initDebugMode, initDebugOverlay)
 import.meta.env.DEV && setupDebugGUI(game, ui)
 
 
@@ -101,7 +101,7 @@ export function resetGame(debugMode=false, debugOverlay=false) {
   // Remove html overlay elements
   document.body.removeChild(game.panel.infoBox)
 
-  game = new Game(ui, debugMode, debugOverlay)
+  game = new Game(match, ui, debugMode, debugOverlay)
   debugOverlay && setupDebugGUI(game, ui)
 }
 

@@ -1,12 +1,14 @@
 import Disc from './disc'
-import { CONSTANTS, resetGame } from '../main'
+import { CONSTANTS, } from '../main'
 import Panel from './panel'
 
 export default class Game {
-  constructor (ui, debugMode=false, debugOverlay=false) {
+  constructor (match, ui, debugMode=false, debugOverlay=false) {
     this.debugMode = debugMode
     this.debugOverlay = debugOverlay
     this.debugDiscPositionMarker = ''
+
+    this.match = match
     this.ui = ui
     this.ctx = this.ui.canvas.getContext('2d')
 

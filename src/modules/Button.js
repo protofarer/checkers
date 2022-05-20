@@ -14,7 +14,7 @@ export default class Button {
     this.stretchHeight = buttonData.stretch?.h || 1
 
     this.labelColor = buttonData.labelColor || 'hsl(200, 20%, 30%)'
-    this.areaFill = buttonData.areaFill || 'hsl(210,60%,80%)'
+    this.areaFill = buttonData.areaFill || 'hsl(210,90%,85%)'
     this.borderStroke = buttonData.borderStroke || this.areaFill
 
     // NTH help functions for top, bot, left, right, center

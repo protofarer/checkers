@@ -61,6 +61,9 @@ export default class Panel {
         button.labelColor = game.turnColor === playerColor 
           ? 'hsl(0, 0%, 20%)' 
           : button.areaFill
+        button.areaFill = game.turnColor === playerColor
+          ? 'hsl(210,90%,85%'
+          : 'hsl(210,20%,85%)'
       }
     }
     // **********************************************************************
@@ -132,6 +135,11 @@ export default class Panel {
     this.turnInfo.style.flexGrow = 0
     this.turnInfo.style.textAlign = 'center'
     this.infoBox.append(this.turnInfo)
+
+    this.scoreInfo = document.createElement('div')
+    this.scoreInfo.style.flexGrow = 0
+    this.scoreInfo.style.textAlign = 'center'
+    this.infoBox.append(this.scoreInfo)
 
     this.statusInfo = document.createElement('div')
     this.statusInfo.style.flexGrow = 1
@@ -266,6 +274,10 @@ export default class Panel {
     this.statusInfo.innerHTML = `\
       <span style="color: blue;">${this.game.msg}</span>
     `
+    this.scoreInfo.innerHTML = `\
+      <span style="color: crimson;">Red: ${this.game.match.score.red}</span>
+      <span style="color: black;">Black: ${this.game.match.score.black}</span>
+    `
     
     // debug styles
     this.infoBox.style.border = this.game.debugOverlay 
@@ -276,6 +288,9 @@ export default class Panel {
       : 'none'
     this.statusInfo.style.border = this.game.debugOverlay 
     ? '1px solid red'
+    : 'none'
+    this.scoreInfo.style.border = this.game.debugOverlay 
+    ? '1px solid green'
     : 'none'
 
     // Restore from Panel Offset
