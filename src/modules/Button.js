@@ -105,6 +105,10 @@ export default class Button {
 
     this.ctx.font = '16px Arial'
     this.ctx.fillStyle = this.labelColor
-    this.ctx.fillText(`${this.label}`, this.origin.x + 13, this.origin.y + 20)
+    // Finagling with centering the text here, making estimates based on
+    // 16pt font size equivalent in pixels, see label.length * [numeric literal]
+    this.ctx.fillText(`${this.label}`, 
+      (this.origin.x + (this.baseWidth * this.stretchWidth / 2) - (this.label.length*8/2)), this.origin.y + 20
+    )
   }
 }

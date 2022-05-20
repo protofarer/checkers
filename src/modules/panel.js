@@ -31,9 +31,6 @@ export default class Panel {
     this.blackJailOffsetX = 20
     this.blackJailOffsetY = this.height - 20
 
-    this.turnIndicatorX = this.centerX - 75
-    this.turnIndicatorCenterY = this.centerY
-    this.turnIndicatorVerticalGap = this.separatorVerticalGap + 84
     
     // **********************************************************************
     // ********************   Reset Button
@@ -43,7 +40,7 @@ export default class Panel {
         x: this.centerX - 35,
         y: this.separatorLowerY - 30 - 15,    // button height and gap
       },
-      label: 'Reset',
+      label: 'Restart',
       labelColor: 'red',
       areaFill: 'hsl(220,40%,97%)',
       borderStroke: 'red'
@@ -70,7 +67,7 @@ export default class Panel {
     // ********************   Pass Buttons
     // **********************************************************************
     const passButtonsVerticalGap = this.separatorVerticalGap + 84
-    const passButtonDims = { w: 70, h: 30 }
+    const passButtonDims = { w: 160, h: 30 }
 
     // **********************************************************************
     // ********************   Red Pass Button
@@ -79,6 +76,9 @@ export default class Panel {
       origin: {
         x: this.centerX - passButtonDims.w/2,
         y: this.centerY - passButtonsVerticalGap/2 - passButtonDims.h/2
+      },
+      base: {
+        w: passButtonDims.w
       },
       label: 'Pass',
     }
@@ -98,6 +98,9 @@ export default class Panel {
         x: this.centerX - passButtonDims.w/2,
         y: this.centerY + passButtonsVerticalGap/2 - passButtonDims.h/2
       },
+      base: {
+        w: passButtonDims.w
+      },
       label: 'Pass',
     }
     this.blackPassButton = new ReactiveButton(
@@ -113,6 +116,9 @@ export default class Panel {
     // **********************************************************************
     this.turnIndicatorColor = 'hsl(100, 100%, 45%)'
     this.turnIndicatorRadius = 8
+    this.turnIndicatorX = this.centerX - 60
+    this.turnIndicatorCenterY = this.centerY
+    this.turnIndicatorVerticalGap = this.separatorVerticalGap + 84
 
     // **********************************************************************
     // ********************   Informational Messssage Area
@@ -237,6 +243,10 @@ export default class Panel {
     this.game.ctx.moveTo(15, this.separatorLowerY)
     this.game.ctx.lineTo(15 + this.width - 30, this.separatorLowerY)
 
+
+    this.drawCapturedDiscs()
+    this.drawableChildren.forEach(c => c.draw())
+
     // Red's empty turn indicator
     this.game.ctx.moveTo(this.turnIndicatorX + this.turnIndicatorRadius, this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2)
     this.game.ctx.arc(
@@ -262,14 +272,9 @@ export default class Panel {
     this.game.ctx.fillStyle = this.turnIndicatorColor
     this.game.ctx.fill()
 
-    // **********************************************************************
-    // ********************   PANEL COMPONENTS
-    // **********************************************************************
-    this.drawCapturedDiscs()
-    this.drawableChildren.forEach(c => c.draw())
     this.game.debugMode && this.drawDebugJail()
     this.turnInfo.innerHTML = `\
-      <span>Turn ${this.game.turnCount} </span><br /><br />
+      <span>Turn ${this.game.turnCount} </span>
       `
     this.statusInfo.innerHTML = `\
       <span style="color: blue;">${this.game.msg}</span>
