@@ -1,7 +1,7 @@
-import setupExternalUI from './modules/init.js'
-import Game from './modules/game.js'
-import setupDebugGUI from './modules/debugGUI.js'
-import VictoryDialog from './modules/VictoryDialog.js'
+import setupExternalUI from './init.js'
+import Game from './game.js'
+import setupDebugGUI from './debugGUI.js'
+import VictoryDialog from './VictoryDialog.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 

@@ -1,5 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
-import resolve from 'resolve'
+import html from '@rollup/plugin-html'
 
 export default defineConfig({
   root: 'src',
@@ -7,9 +7,16 @@ export default defineConfig({
     rollupOptions: {
       input: {
         a: 'src/menu.js',
-        'b/index': 'src/main.js',
+        'b/index': 'src/game/main.js',
       },
-      output: 'dist'
+      output: {
+        dir: 'dist'
+      },
+      plugins: [
+        html({
+          include: "**/*.html"
+        }),
+      ]
 
     }
   },

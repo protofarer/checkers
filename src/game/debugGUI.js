@@ -1,5 +1,5 @@
 import GUI from 'lil-gui'
-import { resetGame } from '../main'
+import { resetGame } from './main.js'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()

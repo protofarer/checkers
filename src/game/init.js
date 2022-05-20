@@ -1,4 +1,4 @@
-import { resetGame } from '../main.js'
+import { resetGame } from './main.js'
 
 export default function setupExternalUI(id) {
   const container = document.createElement('div')

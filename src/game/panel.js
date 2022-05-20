@@ -1,4 +1,4 @@
-import { CONSTANTS, resetGame } from '../main'
+import { CONSTANTS, resetGame } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {

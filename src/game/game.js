@@ -1,5 +1,5 @@
 import Disc from './disc'
-import { CONSTANTS, } from '../main'
+import { CONSTANTS, } from './main'
 import Panel from './panel'
 
 export default class Game {

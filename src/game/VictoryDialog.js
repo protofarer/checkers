@@ -1,4 +1,4 @@
-import { CONSTANTS, resetGame, startGame } from '../main'
+import { CONSTANTS, resetGame, startGame } from './main'
 import Button from './Button'
 
 export default class VictoryDialog {
