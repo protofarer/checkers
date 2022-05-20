@@ -65,6 +65,9 @@ export default class Game {
       capturedReds: [],
     }
     this.hasCaptureChainStarted = false
+    
+    // AbortController is quite good
+    this.controller = new AbortController()
 
     this.boardHeight = 800
     this.boardWidth = 800
@@ -97,23 +100,6 @@ export default class Game {
       this
     )
 
-    // AbortController is quite good
-    this.controller = new AbortController()
-    this.panel.resetButton.addClickListener(
-      resetGame, 
-      { signal: this.controller.signal }
-    )
-
-    // VIGIL passTurn bind to this? or?
-    this.panel.redPassButton.addClickListener(
-      this.passTurn(CONSTANTS.RED), 
-      { signal: this.controller.signal }
-    )
-    this.panel.blackPassButton.addClickListener(
-      this.passTurn(CONSTANTS.BLACK), 
-      { signal: this.controller.signal }
-    )
-    
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelDims.w
     this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
@@ -126,12 +112,6 @@ export default class Game {
     this.initDiscs()
     this.updateDiscActors()
     this.setupEventListeners()
-  }
-
-  killEventListeners() {
-    this.ctx.canvas.removeEventListener('click', resetGame)
-    this.ctx.canvas.removeEventListener('click', this.passTurn(CONSTANTS.RED))
-    this.ctx.canvas.removeEventListener('click', this.passTurn(CONSTANTS.BLACK))
   }
 
   passTurn(playerColor) {

@@ -1,4 +1,4 @@
-import { CONSTANTS } from '../main'
+import { CONSTANTS, resetGame } from '../main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -136,6 +136,25 @@ export default class Panel {
     this.statusInfo = document.createElement('div')
     this.statusInfo.style.flexGrow = 1
     this.infoBox.append(this.statusInfo)
+    
+    // **********************************************************************
+    // ********************   EventListeners
+    // **********************************************************************
+
+    this.resetButton.addClickListener(
+      resetGame, 
+      { signal: this.game.controller.signal }
+    )
+
+    // VIGIL passTurn bind to this? or?
+    this.redPassButton.addClickListener(
+      this.game.passTurn(CONSTANTS.RED), 
+      { signal: this.game.controller.signal }
+    )
+    this.blackPassButton.addClickListener(
+      this.game.passTurn(CONSTANTS.BLACK), 
+      { signal: this.game.controller.signal }
+    )
     
   }
 
