@@ -36,6 +36,12 @@ export default function setupDebugGUI(game, ui) {
     guiGameState.add(game, 'phase').name('phase').listen()
     guiGameState.add(game, 'winner').name('winner').listen()
 
+    const matchState = gui.addFolder('MatchState')
+    matchState.add(game.match, 'matchLength').listen()
+    matchState.add(game.match, 'gameNo').listen()
+    matchState.add(game.match.score, 'red').listen()
+    matchState.add(game.match.score, 'black').listen()
+
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 

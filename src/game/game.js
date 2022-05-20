@@ -1,4 +1,5 @@
 import Disc from './disc'
+import EndDialog from './EndDialog'
 import { CONSTANTS, } from './main'
 import Panel from './panel'
 
@@ -9,6 +10,7 @@ export default class Game {
     this.debugDiscPositionMarker = ''
 
     this.match = match
+
     this.ui = ui
     this.ctx = this.ui.canvas.getContext('2d')
 
@@ -281,7 +283,7 @@ export default class Game {
   }
 
   checkVictory() {
-    if (this.enticed === 0 && this.carefrees ===0) {
+    if (this.enticed === 0 && this.carefrees === 0) {
       this.phase = CONSTANTS.PHASE_END
       this.winner = this.turnColor === CONSTANTS.RED 
         ? CONSTANTS.BLACK 
@@ -295,6 +297,15 @@ export default class Game {
       this.phase = CONSTANTS.PHASE_END
       this.winner = CONSTANTS.RED
     }
+  }
+
+  incrementMatch(match, winner) {
+    if (winner === CONSTANTS.BLACK) {
+      match.score.black++
+    } else {
+      match.score.red++
+    }
+    match.gameNo++
   }
 
   findCaptured(from, to) {
@@ -462,6 +473,7 @@ export default class Game {
     // for debug
     this.phase = CONSTANTS.PHASE_END
     this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
+    this.incrementMatch(this.match, this.winner)
   }
 
   clr() {
@@ -525,6 +537,10 @@ export default class Game {
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
+  }
 
+  end() {
+    this.incrementMatch(this.match, this.winner)
+    new EndDialog(this)
   }
 }

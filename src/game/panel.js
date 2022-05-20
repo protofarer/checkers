@@ -302,7 +302,6 @@ export default class Panel {
     this.game.ctx.fillStyle = this.turnIndicatorColor
     this.game.ctx.fill()
 
-    this.game.debugMode && this.drawDebugJail()
     this.turnInfo.innerHTML = `\
       <span>Game: ${this.game.match.gameNo}/${this.game.match.matchLength}&nbsp;&nbsp;</span><span>Turn: ${this.game.turnCount} </span>
       `
@@ -314,7 +313,8 @@ export default class Panel {
       <span style="color: black;">Black: ${this.game.match.score.black}</span>
     `
     
-    // debug styles
+    // debuggery
+    this.game.debugMode && this.drawDebugJail()
     this.infoBox.style.border = this.game.debugOverlay 
       ? '1px solid blue' 
       : 'none'

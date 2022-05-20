@@ -1,7 +1,6 @@
 import setupExternalUI from './init.js'
 import Game from './game.js'
 import setupDebugGUI from './debugGUI.js'
-import EndDialog from './EndDialog.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -76,7 +75,7 @@ export function startGame() {
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
-      new EndDialog(game, match)
+      game.end()
     }
   }
 
@@ -107,12 +106,3 @@ export function startNewMatch() {
   game.match.gameNo = 0
   resetGame(game.debugMode, game.debugOverlay)
 }
-
-
-// **********************************************************************
-// ********************   End Game: PHASE_END
-// **********************************************************************
-
-// if (game.phase === CONSTANTS.PHASE_END) {
-//   new EndDialog(game)
-// }
