@@ -43,7 +43,10 @@ export default class Panel {
         x: this.centerX - 35,
         y: this.separatorLowerY - 30 - 15,    // button height and gap
       },
-      label: 'Reset'
+      label: 'Reset',
+      labelColor: 'red',
+      areaFill: 'hsl(220,40%,97%)',
+      borderStroke: 'red'
     }
     this.resetButton = new Button(
       this.game.ctx, 
@@ -55,11 +58,9 @@ export default class Panel {
     function reactTurnColor(game, playerColor) {
       return (button) => {
         game.ctx.font = '16px Arial'
-        if (game.turnColor === playerColor) {
-          button.labelColor = 'blue'
-        } else {
-          button.labelColor = 'grey'
-        }
+        button.labelColor = game.turnColor === playerColor 
+          ? 'hsl(0, 0%, 20%)' 
+          : button.areaFill
       }
     }
     // **********************************************************************
@@ -113,25 +114,29 @@ export default class Panel {
     // **********************************************************************
     // ********************   Informational Messssage Area
     // **********************************************************************
-    this.gameInfo = document.createElement('div')
-    this.gameInfo.style.position = 'absolute'
-    this.gameInfo.style.left = `${offset.x + 25}px`
-    this.gameInfo.style.top = `${this.separatorUpperY + 15}px`
-    this.gameInfo.style.height = `${this.verticalAlignmentGap - 65}px`
-    this.gameInfo.style.width = `${this.width - 30}px`
-    this.gameInfo.style.fontFamily = 'Arial'
-    this.gameInfo.style.border = '1px solid blue'
-    this.gameInfo.style.display = 'flex'
-    this.gameInfo.style.flexFlow = 'col nowrap'
-    document.body.appendChild(this.gameInfo)
-    this.gameInfo.innerHTML = `\
-      <span>Turn ${this.game.turnCount} </span><br /><br />
-      <span style="color: blue;">${this.game.msg}</span>
-      `
+    this.infoBox = document.createElement('div')
+    this.infoBox.style.position = 'absolute'
+    this.infoBox.style.left = `${offset.x + 25}px`
+    this.infoBox.style.top = `${this.separatorUpperY + 15}px`
+    this.infoBox.style.height = `${this.verticalAlignmentGap - 65}px`
+    this.infoBox.style.width = `${this.width - 30}px`
+    this.infoBox.style.fontFamily = 'Arial'
+    this.infoBox.style.display = 'flex'
+    this.infoBox.style.flexFlow = 'column nowrap'
+    this.infoBox.style.alignItems = 'stretch'
+    this.infoBox.style.gap = '1px'
+    this.infoBox.style.padding = '1px'
+    document.body.append(this.infoBox)
+
     this.turnInfo = document.createElement('div')
-    this.turnInfo.style.alignText = 'center'
-    this.turnInfo.style.border = '1px solid orange'
-    this.gameInfo.appendChild(this.turnInfo)
+    this.turnInfo.style.flexGrow = 0
+    this.turnInfo.style.textAlign = 'center'
+    this.infoBox.append(this.turnInfo)
+
+    this.statusInfo = document.createElement('div')
+    this.statusInfo.style.flexGrow = 1
+    this.infoBox.append(this.statusInfo)
+    
   }
 
   drawDebugJail() {
@@ -236,12 +241,23 @@ export default class Panel {
     this.drawCapturedDiscs()
     this.drawableChildren.forEach(c => c.draw())
     this.game.debugMode && this.drawDebugJail()
-    this.gameInfo.innerHTML = `\
+    this.turnInfo.innerHTML = `\
       <span>Turn ${this.game.turnCount} </span><br /><br />
       `
-    this.turnInfo.innerHTML = `\
+    this.statusInfo.innerHTML = `\
       <span style="color: blue;">${this.game.msg}</span>
     `
+    
+    // debug styles
+    this.infoBox.style.border = this.game.debugOverlay 
+      ? '1px solid blue' 
+      : 'none'
+    this.turnInfo.style.border = this.game.debugOverlay 
+      ? '1px solid orange'
+      : 'none'
+    this.statusInfo.style.border = this.game.debugOverlay 
+    ? '1px solid red'
+    : 'none'
 
     // Restore from Panel Offset
     this.game.ctx.restore()

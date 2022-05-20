@@ -13,12 +13,10 @@ export default class Button {
     this.stretchWidth = buttonData.stretch?.w || 1
     this.stretchHeight = buttonData.stretch?.h || 1
 
-    this.labelColor = 'black'
+    this.labelColor = buttonData.labelColor || 'hsl(200, 20%, 30%)'
+    this.areaFill = buttonData.areaFill || 'hsl(210,60%,80%)'
+    this.borderStroke = buttonData.borderStroke || this.areaFill
 
-    console.log(`setup button: ${this.label}`, )
-    console.log(`data`, buttonData )
-    
-    
     // NTH help functions for top, bot, left, right, center
   }
 
@@ -28,7 +26,7 @@ export default class Button {
     // literal offsets account for the border itself so that clicks that register for
     // this path cover the entirety of button including button border
     this.path = new Path2D()
-    console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
+    // console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
     
     this.path.rect(
       offset.x + this.origin.x - 2, 
@@ -81,8 +79,8 @@ export default class Button {
     // and I don't want to pass in more constructor arguments to this button
     // Indeed, the button is oblivious to its environment at large
     // Thus encapsulated and simplified
-    this.ctx.strokeStyle = 'hsl(0, 0%, 25%)'
-    this.ctx.fillStyle = 'hsl(0,0%,80%)'
+    this.ctx.strokeStyle = this.borderStroke
+    this.ctx.fillStyle = this.areaFill
     this.ctx.lineWidth = 1
 
     this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.7)'
