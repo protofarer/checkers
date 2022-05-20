@@ -1,4 +1,4 @@
-import { CONSTANTS, resetGame } from './main'
+import { CONSTANTS, resetGame, startNewMatch } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -38,7 +38,7 @@ export default class Panel {
     const resetButtonData = {
       origin: {
         x: this.centerX - 35,
-        y: this.separatorLowerY - 30 - 15,    // button height and gap
+        y: this.separatorLowerY - 30 - 20,    // button height and gap
       },
       label: 'Restart',
       labelColor: 'red',
@@ -52,6 +52,30 @@ export default class Panel {
     this.resetButton.setClickArea(this.offset)
     this.drawableChildren.push(this.resetButton)
 
+    // **********************************************************************
+    // ********************   Start New Match
+    // **********************************************************************
+    const newMatchButtonData = {
+      origin: {
+        x: this.centerX - 65,
+        y: this.separatorLowerY - 15,    // button height and gap
+      },
+      base: {
+        w: 130,
+      },
+      label: 'Start New Match',
+      labelColor: 'Black',
+      areaFill: 'hsl(220,40%,97%)',
+      borderStroke: 'hsl(0,0%,5%)'
+    }
+    this.newMatchButton = new Button(
+      this.game.ctx, 
+      newMatchButtonData,
+    )
+    this.newMatchButton.setClickArea(this.offset)
+    this.drawableChildren.push(this.newMatchButton)
+
+    // Basic reactive button colors
     function reactTurnColor(game, playerColor) {
       return (button) => {
         game.ctx.font = '16px Arial'
@@ -63,6 +87,7 @@ export default class Panel {
           : 'hsl(210,20%,85%)'
       }
     }
+
     // **********************************************************************
     // ********************   Pass Buttons
     // **********************************************************************
@@ -137,15 +162,15 @@ export default class Panel {
     this.infoBox.style.padding = '1px'
     document.body.append(this.infoBox)
 
-    this.turnInfo = document.createElement('div')
-    this.turnInfo.style.flexGrow = 0
-    this.turnInfo.style.textAlign = 'center'
-    this.infoBox.append(this.turnInfo)
-
     this.scoreInfo = document.createElement('div')
     this.scoreInfo.style.flexGrow = 0
     this.scoreInfo.style.textAlign = 'center'
     this.infoBox.append(this.scoreInfo)
+
+    this.turnInfo = document.createElement('div')
+    this.turnInfo.style.flexGrow = 0
+    this.turnInfo.style.textAlign = 'center'
+    this.infoBox.append(this.turnInfo)
 
     this.statusInfo = document.createElement('div')
     this.statusInfo.style.flexGrow = 1
@@ -157,6 +182,11 @@ export default class Panel {
 
     this.resetButton.addClickListener(
       resetGame, 
+      { signal: this.game.controller.signal }
+    )
+
+    this.newMatchButton.addClickListener(
+      startNewMatch,
       { signal: this.game.controller.signal }
     )
 
@@ -274,13 +304,13 @@ export default class Panel {
 
     this.game.debugMode && this.drawDebugJail()
     this.turnInfo.innerHTML = `\
-      <span>Turn ${this.game.turnCount} </span>
+      <span>Game: ${this.game.match.gameNo}/${this.game.match.matchLength}&nbsp;&nbsp;</span><span>Turn: ${this.game.turnCount} </span>
       `
     this.statusInfo.innerHTML = `\
       <span style="color: blue;">${this.game.msg}</span>
     `
     this.scoreInfo.innerHTML = `\
-      <span style="color: crimson;">Red: ${this.game.match.score.red}</span>
+      <span style="color: crimson;">Red: ${this.game.match.score.red}</span>&nbsp;
       <span style="color: black;">Black: ${this.game.match.score.black}</span>
     `
     

@@ -13,78 +13,80 @@
     <legend><h1>Setup Match</h1></legend>
     <form action="/game/index.html" method="get">
       <fieldset>
-        <legend><h2>Select Match Type</h2></legend>
-        <h3>Local</h3>
+        <legend><h2>Select Network Type</h2></legend>
         <div>
-          <input 
-            type="radio" 
-            name="matchType" 
-            value="local-1" 
-            checked
-          >
-          <label for="matchType">Single</label>
+          <label>
+            <input 
+              type="radio" 
+              name="networkType" 
+              value="local" 
+              checked
+            > Local
+          </label>
         </div>
         <div>
-          <input 
-            type="radio" 
-            name="matchType" 
-            value="local-3" 
-          >
-          <label for="matchType">Best of 3</label>
+          <!-- <label>
+            <input 
+              type="radio" 
+              name="networkType" 
+              value="mp" 
+            >  -->
+            <em>(wip) Multiplayer</em>
+          <!-- </label> -->
+        </div>
+      </fieldset>
+        <fieldset>
+        <legend><h2>Select Match Length</h2></legend>
+        <div>
+          <label>
+            <input 
+              type="radio" 
+              name="matchLength" 
+              value="1" 
+              checked
+            > Single
+          </label>
         </div>
         <div>
+          <label>
           <input 
             type="radio" 
-            name="matchType" 
-            value="local-5" 
-          >
-          <label for="matchType">Best of 5</label>
-        </div>
-        <h3>Multiplayer</h3>
-        <div>
-          <input 
-            type="radio" 
-            name="matchType" 
-            value="mp-1" 
-            checked
-          >
-          <label for="matchType">Single</label>
+            name="matchLength" 
+            value="3" 
+            > Best of 3
+          </label>
         </div>
         <div>
-          <input 
-            type="radio" 
-            name="matchType" 
-            value="mp-3" 
-          >
-          <label for="matchType">Best of 3</label>
-        </div>
-        <div>
-          <input 
-            type="radio" 
-            name="matchType" 
-            value="mp-5" 
-          >
-          <label for="matchType">Best of 5</label>
+          <label>
+            <input 
+              type="radio" 
+              name="matchLength" 
+              value="5" 
+            > Best of 5
+          </label>
         </div>
       </fieldset>
       <fieldset>
         <legend><h2>Select privacy</h2></legend>
         <div>
-          <input 
-            type="radio"
-            name="privacy"
-            value="public"
-            checked
-          >
-          <label for="public">Public</label>
+          <label>
+            <input 
+              type="radio"
+              name="privacy"
+              value="public"
+              checked
+            > Public
+          </label>
         </div>
         <div>
-          <input 
-            type="radio"
-            name="privacy"
-            value="private"
-          >
-          <label for="private">Private</label></div>
+          <label>
+            <input 
+              type="radio"
+              name="privacy"
+              value="private"
+            > Private
+          </label>
+        </div>
       </fieldset>
       <button type="submit">Play</button>
     </form>

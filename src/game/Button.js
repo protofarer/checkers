@@ -64,7 +64,6 @@ export default class Button {
     if (this.ctx.isPointInPath(
       this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
     )) {
-      console.log(`woohoo button is clicked`, this.f.name)
       this.f()
     }
   }

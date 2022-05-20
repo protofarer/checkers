@@ -207,7 +207,7 @@ export default class Game {
           (board[disc.row + (2*disc.direction * direction)][disc.col - 2] === 0)) {
             captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col - 2 })
         }
-        if ((board[disc.row + disc.direction * direction * direction][disc.col + 1] === disc.opposite) &&
+        if ((board[disc.row + disc.direction  * direction][disc.col + 1] === disc.opposite) &&
           (board[disc.row + (2*disc.direction * direction)][disc.col + 2] === 0)) {
             captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col + 2 })
         }

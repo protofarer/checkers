@@ -1,7 +1,7 @@
 import setupExternalUI from './init.js'
 import Game from './game.js'
 import setupDebugGUI from './debugGUI.js'
-import VictoryDialog from './VictoryDialog.js'
+import EndDialog from './EndDialog.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -23,15 +23,12 @@ export const CONSTANTS = {
 // **********************************************************************
 
 const parsedURL = new URL(window.location.href)
-const matchType = parsedURL.searchParams.get('matchType')
+const networkType = parsedURL.searchParams.get('networkType')
+const matchLength = parsedURL.searchParams.get('matchLength')
 const privacy = parsedURL.searchParams.get('privacy')
-const gamesPerMatch = matchType === 'local-single'
-  ? 1
-  : matchType === 'local-bo3'
-    ? 3 : 5
 let match = {
-  matchType,
-  gamesPerMatch,
+  networkType,
+  matchLength,
   privacy,
   score: {
     red: 0,
@@ -79,7 +76,7 @@ export function startGame() {
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
-      new VictoryDialog(game, match)
+      new EndDialog(game, match)
     }
   }
 
@@ -105,10 +102,17 @@ export function resetGame(debugMode=false, debugOverlay=false) {
   debugOverlay && setupDebugGUI(game, ui)
 }
 
+export function startNewMatch() {
+  game.match.score = { red: 0, black: 0 }
+  game.match.gameNo = 0
+  resetGame(game.debugMode, game.debugOverlay)
+}
+
+
 // **********************************************************************
 // ********************   End Game: PHASE_END
 // **********************************************************************
 
 // if (game.phase === CONSTANTS.PHASE_END) {
-//   new VictoryDialog(game)
+//   new EndDialog(game)
 // }
