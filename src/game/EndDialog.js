@@ -43,7 +43,10 @@ export default class EndDialog {
       this.game.ctx,
       nextGameButtonData,
       this.offset,
-      startNewGame,
+      () => {
+        this.hide()
+        startNewGame()
+      },
       { once: true},
     )
     this.modalChildren.push(this.nextGameButton)
@@ -65,7 +68,10 @@ export default class EndDialog {
       this.game.ctx,
       anotherMatchButtonData,
       this.offset,
-      startNewMatch,
+      () => {
+        this.hide()
+        startNewMatch()
+      },
       { once: true},
     )
     this.modalChildren.push(this.anotherMatchButton)

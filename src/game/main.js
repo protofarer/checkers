@@ -63,20 +63,19 @@ let ui = setupExternalUI('htmlUI')
 // ********************   Play Game: PHASE_PLAY
 // **********************************************************************
 
-let loopID = -1
-let debugGUI = {}
+let debugGUIs = []
 export function startNewGame(debugMode=false, debugOverlay=false) {
   let game = new Game(match, ui, debugMode, debugOverlay)
 
   // will lil-gui tear itself down, assume yes once startGame completes
   // JS will cleanup
   if (import.meta.env.DEV) {
-    debugGUI = setupDebugGUI(game, ui)
+    debugGUIs = setupDebugGUI(game, ui)
     // tmp debug
     // import.meta.env.DEV && document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
   }
 
-  loopID = requestAnimationFrame(draw)
+  let loopID = requestAnimationFrame(draw)
   function draw() {
     game.clr()
     game.drawAll()
@@ -118,9 +117,11 @@ export function endGame(game) {
 
 export function teardownGame(game) {
   // Clean up before starting new game
+  // Also destroy all references so that JS will garbage collect game
+  // and associated objects
 
   // Destroy debug GUI
-  debugGUI.destroy()
+  debugGUIs.forEach(g => g.destroy())
 
   // Remove event listeners
   game.controller.abort()

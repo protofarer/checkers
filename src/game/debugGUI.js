@@ -37,11 +37,11 @@ export default function setupDebugGUI(game, ui) {
     guiGameState.add(game, 'phase').name('phase').listen()
     guiGameState.add(game, 'winner').name('winner').listen()
 
-    const matchState = gui.addFolder('MatchState')
-    matchState.add(game.match, 'matchLength').listen()
-    matchState.add(game.match, 'gameNo').listen()
-    matchState.add(game.match.score, 'red').listen()
-    matchState.add(game.match.score, 'black').listen()
+    const guiMatchState = gui.addFolder('MatchState')
+    guiMatchState.add(game.match, 'matchLength').listen()
+    guiMatchState.add(game.match, 'gameNo').listen()
+    guiMatchState.add(game.match.score, 'red').listen()
+    guiMatchState.add(game.match.score, 'black').listen()
 
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
@@ -67,5 +67,5 @@ export default function setupDebugGUI(game, ui) {
 
     gui.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
 
-    return gui
+    return [gui, guiGamePositioning, guiGameState, guiMouseTracking, guiMatchState]
   }
