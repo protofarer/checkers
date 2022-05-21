@@ -14,51 +14,37 @@ export default class Button {
   //  B. remove the added clickListener
   //  C. draw
   //  D. set its own path aka clickArea
+  // IV. Possibilities
+  //  CSDR addEventListener to something more general than a canvas.context paremeter
 
-  #defaultHandler
-  constructor(ctx, buttonData, offset) {
+  #defaultHandleClick
+  constructor(ctx, buttonData, offset, handleClick=null, listenerOptions=null) {
     this.ctx = ctx
     this.offset = offset
-    this.rect = this.ctx.canvas.getBoundingClientRect()
-    
-    this.origin = buttonData.origin
-    
-    this.label = buttonData.label || 'no-button-label-assigned'
 
+    this.rect = this.ctx.canvas.getBoundingClientRect() 
+
+    this.label = buttonData.label || 'no-button-label-assigned'
+    this.origin = buttonData.origin
     this.baseWidth = buttonData.base?.w || 70
     this.baseHeight = buttonData.base?.h || 30
     this.stretchWidth = buttonData.stretch?.w || 1
     this.stretchHeight = buttonData.stretch?.h || 1
 
-    this.labelColor = buttonData.labelColor || 'hsl(200, 20%, 30%)'
     this.areaFill = buttonData.areaFill || 'hsl(210,90%,85%)'
+    this.labelColor = buttonData.labelColor || 'hsl(200, 20%, 30%)'
     this.borderStroke = buttonData.borderStroke || this.areaFill
 
-    this.setPath()
-    this.controller = new AbortController()
-    this.setClickHandler()
-    // NTH help functions for top, bot, left, right, center
-  }
+    this.top = this.origin.y
+    this.bottom = this.origin.y + this.baseHeight * this.stretchHeight
+    this.left = this.origin.x
+    this.right = this.origin.x + this.baseWidth * this.stretchWidth
+    this.center = {
+      x: this.origin.x + (this.baseWidth * this.stretchWidth) / 2,
+      y: this.origin.y + (this.baseHeight * this.stretchHeight) / 2,
+    }
 
-  setPath() {
-    this.path = new Path2D()
-    // console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
-    
-    this.path.rect(
-      this.offset.x + this.origin.x - 2, 
-      this.offset.y + this.origin.y - 2,
-      this.baseWidth * this.stretchWidth + 4,
-      this.baseHeight * this.stretchHeight + 4,
-    )
-  }
-
-  setClickHandler() {
-    // Invoked upon Button initialization
-
-    // literal offsets account for the border itself so that clicks that register for
-    // this path cover the entirety of button including button border
-
-    this.#defaultHandler = (e) => {
+    this.#defaultHandleClick = (e) => {
       console.log(`${this.label} button's default handler coordsX.`, e.clientX - this.rect.left)
       if (this.ctx.isPointInPath(
         this.path,
@@ -68,22 +54,36 @@ export default class Button {
         console.log(`some Button's onclick is undefined`)
       }
     }
-    this.ctx.canvas.addEventListener(
-      'click', 
-      this.#defaultHandler, 
+    this.handleClick = handleClick || this.#defaultHandleClick
+    this.listenerOptions = listenerOptions
+
+    this.setPath()
+    this.controller = new AbortController()
+    this.addClickListener(this.handleClick, this.listenerOptions)
+  }
+
+  setPath() {
+    this.path = new Path2D()
+    // console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
+    this.path.rect(
+      this.offset.x + this.origin.x - 2, 
+      this.offset.y + this.origin.y - 2,
+      this.baseWidth * this.stretchWidth + 4,
+      this.baseHeight * this.stretchHeight + 4,
     )
   }
 
-  addClickListener(f, options) {
+  addClickListener(newHandleClick, listenerOptions) {
     // Only one click listener, remove default before adding new handler
     // pass in EventTarget.addEventListener options
     
-    this.ctx.canvas.removeEventListener('click', this.#defaultHandler)
+    this.ctx.canvas.removeEventListener('click', this.handleClick)
 
     // Click detection handled handled here instead of outside of it!
     // Assuming handler listening to canvas
-    this.f = f
-    this.ctx.canvas.addEventListener('click', this.handleClick.bind(this), options)
+    this.handleClick = newHandleClick
+    this.listenerOptions = listenerOptions
+    this.ctx.canvas.addEventListener('click', this.handleClick.bind(this), listenerOptions)
   }
 
   handleClick(e) {
