@@ -1,7 +1,24 @@
 export default class Button {
+  // I. Principles
+  //  A. The most common and simple button, persistent and unreactive
+  //  When used it persistently consumes space on the screen
+  //  and invokes a function when clicked
+  // II. Properties:
+  //  A. positions and dimensions
+  //  B. visual styling
+  //  C. a default click handler that's overwritten with explicit handler
+  //  D. click detection based on mouse client coords (scroll not implemented)
+  //  E. sensible defaults for properties
+  // III. Methods:
+  //  A. add an click listener that can be passed with addEventListener options
+  //  B. remove the added clickListener
+  //  C. draw
+  //  D. set its own path aka clickArea
+
   #defaultHandler
-  constructor(ctx, buttonData) {
+  constructor(ctx, buttonData, offset) {
     this.ctx = ctx
+    this.offset = offset
     this.rect = this.ctx.canvas.getBoundingClientRect()
     
     this.origin = buttonData.origin
@@ -17,23 +34,29 @@ export default class Button {
     this.areaFill = buttonData.areaFill || 'hsl(210,90%,85%)'
     this.borderStroke = buttonData.borderStroke || this.areaFill
 
+    this.setPath()
+    this.controller = new AbortController()
+    this.setClickHandler()
     // NTH help functions for top, bot, left, right, center
   }
 
-  setClickArea(offset) {
-    // Parent must invoke to enable clickArea and default click handler
-
-    // literal offsets account for the border itself so that clicks that register for
-    // this path cover the entirety of button including button border
+  setPath() {
     this.path = new Path2D()
     // console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
     
     this.path.rect(
-      offset.x + this.origin.x - 2, 
-      offset.y + this.origin.y - 2,
+      this.offset.x + this.origin.x - 2, 
+      this.offset.y + this.origin.y - 2,
       this.baseWidth * this.stretchWidth + 4,
       this.baseHeight * this.stretchHeight + 4,
     )
+  }
+
+  setClickHandler() {
+    // Invoked upon Button initialization
+
+    // literal offsets account for the border itself so that clicks that register for
+    // this path cover the entirety of button including button border
 
     this.#defaultHandler = (e) => {
       console.log(`${this.label} button's default handler coordsX.`, e.clientX - this.rect.left)
@@ -45,7 +68,10 @@ export default class Button {
         console.log(`some Button's onclick is undefined`)
       }
     }
-    this.ctx.canvas.addEventListener('click', this.#defaultHandler)
+    this.ctx.canvas.addEventListener(
+      'click', 
+      this.#defaultHandler, 
+    )
   }
 
   addClickListener(f, options) {
@@ -73,7 +99,7 @@ export default class Button {
     this.ctx.canvas.removeEventListener('click', this.handleClick)
   }
 
-  draw () {
+  draw() {
     // Init clickArea path here because Panel draw does offset for its components
     // and I don't want to pass in more constructor arguments to this button
     // Indeed, the button is oblivious to its environment at large

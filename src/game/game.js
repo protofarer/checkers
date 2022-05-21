@@ -473,7 +473,7 @@ export default class Game {
     // for debug
     this.phase = CONSTANTS.PHASE_END
     this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-    this.incrementMatch(this.match, this.winner)
+    // this.incrementMatch(this.match, this.winner)
   }
 
   clr() {
@@ -537,10 +537,5 @@ export default class Game {
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
     }
-  }
-
-  end() {
-    this.incrementMatch(this.match, this.winner)
-    new EndDialog(this)
   }
 }

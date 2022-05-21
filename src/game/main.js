@@ -1,6 +1,7 @@
 import setupExternalUI from './init.js'
 import Game from './game.js'
 import setupDebugGUI from './debugGUI.js'
+import EndDialog from './EndDialog.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -59,6 +60,7 @@ if (import.meta.env.DEV) {
 
 let ui = setupExternalUI('htmlUI')
 let game = new Game(match, ui, initDebugMode, initDebugOverlay)
+let endDialog = new EndDialog(game, false)
 import.meta.env.DEV && setupDebugGUI(game, ui)
 
 
@@ -67,6 +69,8 @@ import.meta.env.DEV && setupDebugGUI(game, ui)
 // **********************************************************************
 
 export function startGame() {
+  console.log(`startGame match`, match)
+  
   let loopID = requestAnimationFrame(draw)
 
   function draw() {
@@ -75,7 +79,7 @@ export function startGame() {
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
-      game.end()
+      endGame()
     }
   }
 
@@ -90,6 +94,11 @@ export function startGame() {
 }
 startGame()
 
+export function endGame() {
+  game.incrementMatch(game.match, game.winner)
+  endDialog.show()
+}
+
 export function resetGame(debugMode=false, debugOverlay=false) {
   // Remove event listeners
   game.controller.abort()
@@ -102,6 +111,7 @@ export function resetGame(debugMode=false, debugOverlay=false) {
 }
 
 export function startNewMatch() {
+  endDialog.hide()
   game.match.score = { red: 0, black: 0 }
   game.match.gameNo = 0
   resetGame(game.debugMode, game.debugOverlay)

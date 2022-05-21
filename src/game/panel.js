@@ -48,8 +48,8 @@ export default class Panel {
     this.resetButton = new Button(
       this.game.ctx, 
       resetButtonData,
+      this.offset,
     )
-    this.resetButton.setClickArea(this.offset)
     this.drawableChildren.push(this.resetButton)
 
     // **********************************************************************
@@ -71,8 +71,8 @@ export default class Panel {
     this.newMatchButton = new Button(
       this.game.ctx, 
       newMatchButtonData,
+      this.offset,
     )
-    this.newMatchButton.setClickArea(this.offset)
     this.drawableChildren.push(this.newMatchButton)
 
     // Basic reactive button colors
@@ -110,9 +110,9 @@ export default class Panel {
     this.redPassButton = new ReactiveButton(
       this.game.ctx, 
       redPassButtonData,
+      this.offset,
       reactTurnColor(game, CONSTANTS.RED)
     )
-    this.redPassButton.setClickArea(this.offset)
     this.drawableChildren.push(this.redPassButton)
 
     // **********************************************************************
@@ -131,9 +131,9 @@ export default class Panel {
     this.blackPassButton = new ReactiveButton(
       this.game.ctx, 
       blackPassButtonData,
+      this.offset,
       reactTurnColor(game, CONSTANTS.BLACK)
     )
-    this.blackPassButton.setClickArea(this.offset)
     this.drawableChildren.push(this.blackPassButton)
 
     // **********************************************************************
