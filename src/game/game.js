@@ -1,7 +1,7 @@
 import Disc from './disc'
-import EndDialog from './EndDialog'
 import { CONSTANTS, } from './main'
 import Panel from './panel'
+import EndDialog from './EndDialog'
 
 export default class Game {
   constructor (match, ui, debugMode=false, debugOverlay=false) {
@@ -110,6 +110,8 @@ export default class Game {
     this.rect = this.ui.canvas.getBoundingClientRect()
 
     this.ghostSourceDisc = null
+
+    this.endDialog = new EndDialog(this)
 
     this.initDiscs()
     this.updateDiscActors()
@@ -469,13 +471,6 @@ export default class Game {
     this.discs.forEach(disc => { disc.isKing = !disc.isKing })
   }
   
-  debugTriggerVictory = () => {
-    // for debug
-    this.phase = CONSTANTS.PHASE_END
-    this.winner = this.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-    // this.incrementMatch(this.match, this.winner)
-  }
-
   clr() {
     this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height)
   }

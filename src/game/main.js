@@ -1,7 +1,6 @@
 import setupExternalUI from './init.js'
 import Game from './game.js'
 import setupDebugGUI from './debugGUI.js'
-import EndDialog from './EndDialog.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -51,7 +50,6 @@ if (import.meta.env.PROD) {
   initDebugMode = window.location.hash === 'debugmode' ? true : false
   initDebugOverlay = false
 }
-
 // Debug setup for dev
 if (import.meta.env.DEV) {
   initDebugMode = true
@@ -59,60 +57,85 @@ if (import.meta.env.DEV) {
 }
 
 let ui = setupExternalUI('htmlUI')
-let game = new Game(match, ui, initDebugMode, initDebugOverlay)
-let endDialog = new EndDialog(game, false)
-import.meta.env.DEV && setupDebugGUI(game, ui)
 
 
 // **********************************************************************
 // ********************   Play Game: PHASE_PLAY
 // **********************************************************************
 
-export function startGame() {
-  console.log(`startGame match`, match)
-  
-  let loopID = requestAnimationFrame(draw)
+let loopID = -1
+let debugGUI = {}
+export function startNewGame(debugMode=false, debugOverlay=false) {
+  let game = new Game(match, ui, debugMode, debugOverlay)
 
+  // will lil-gui tear itself down, assume yes once startGame completes
+  // JS will cleanup
+  if (import.meta.env.DEV) {
+    debugGUI = setupDebugGUI(game, ui)
+    // tmp debug
+    // import.meta.env.DEV && document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
+  }
+
+  loopID = requestAnimationFrame(draw)
   function draw() {
     game.clr()
     game.drawAll()
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
-      endGame()
+      endGame(game)
     }
   }
 
-  function handleKeyPress(e) {
-    if (e.key === 'v') {
-      console.log(`v pressed, loopID`, loopID )
-      cancelAnimationFrame(loopID)
-    }
-  }
-
-  document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
+  // function handleKeyPress(e) {
+  //   if (e.key === 'v') {
+  //     console.log(`v pressed, loopID`, loopID )
+  //     cancelAnimationFrame(loopID)
+  //   }
+  // }
 }
-startGame()
+startNewGame(initDebugMode, initDebugOverlay)
 
-export function endGame() {
+// CSDR un-exporting
+export function endGame(game) {
+  // Execute end game phase
+  
+  // Process data
   game.incrementMatch(game.match, game.winner)
-  endDialog.show()
+
+
+  // Present modal view and "escape" options
+  game.endDialog.show()
+
+  // Teardown game scaffolding since this is point of no return
+  // either: 
+  //    a. new game  
+  //    b. new match  
+  //    c. refresh browser
+  //    d. back to game settings
+  teardownGame(game)
 }
 
-export function resetGame(debugMode=false, debugOverlay=false) {
+export function teardownGame(game) {
+  // Clean up before starting new game
+
+  // Destroy debug GUI
+  debugGUI.destroy()
+
   // Remove event listeners
   game.controller.abort()
 
   // Remove html overlay elements
   document.body.removeChild(game.panel.infoBox)
 
-  game = new Game(match, ui, debugMode, debugOverlay)
-  debugOverlay && setupDebugGUI(game, ui)
+  // Kill end dialog event listeners
+  // Even though the buttons have listenerOptions: once: true
+  // Low cost safeguard
+  game.endDialog.hide()
 }
 
 export function startNewMatch() {
-  endDialog.hide()
-  game.match.score = { red: 0, black: 0 }
-  game.match.gameNo = 0
-  resetGame(game.debugMode, game.debugOverlay)
+  match.score = { red: 0, black: 0 }
+  match.gameNo = 0
+  startNewGame()
 }

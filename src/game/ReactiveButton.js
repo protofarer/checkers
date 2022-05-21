@@ -5,8 +5,8 @@ export default class ReactiveButton extends Button {
   // a change in some state variable
   //    f: acts on prop and changes something
   //      about the button's draw, eg fill color for text
-  constructor(ctx, buttonData, offset, fn) {
-    super(ctx, buttonData, offset)
+  constructor(ctx, buttonData, offset, handleClick, listenerOptions, fn) {
+    super(ctx, buttonData, offset, handleClick, listenerOptions)
     this.fn = fn
   }
   

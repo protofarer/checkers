@@ -1,5 +1,6 @@
 import GUI from 'lil-gui'
-import { resetGame } from './main.js'
+import { CONSTANTS } from './main'
+import { teardownGame, startNewGame } from './main'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()
@@ -45,10 +46,22 @@ export default function setupDebugGUI(game, ui) {
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 
-    gui.add({ resetGame }, 'resetGame').name('reset - prod')
-    gui.add({ debugreset() { resetGame(true, true) } }, 'debugreset').name('reset - full debug')
+    gui.add({ resetGame() { teardownGame(game); startNewGame()} }, 
+      'resetGame')
+      .name('reset - prod')
 
-    gui.add({ triggerVictory() {game.debugTriggerVictory()} }, 'triggerVictory')
+    gui.add({ debugreset() { teardownGame(game); startNewGame(true, true)} }, 
+      'debugreset')
+      .name('reset - full debug')
+
+    const debugTriggerVictory = () => {
+      // for debug
+      game.phase = CONSTANTS.PHASE_END
+      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
+      // this.incrementMatch(this.match, this.winner)
+    }
+
+    gui.add({ debugTriggerVictory }, 'debugTriggerVictory')
 
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 

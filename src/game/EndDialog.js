@@ -1,6 +1,5 @@
-import { CONSTANTS, resetGame, startGame, startNewMatch } from './main'
-import Button from './Button'
-
+import { CONSTANTS, startNewGame, startNewMatch, } from './main'
+import ModalButton from './ModalButton'
 export default class EndDialog {
   // Stops and Starts the play loop
   // CSDR removing start stop and letting draw run in background
@@ -9,7 +8,7 @@ export default class EndDialog {
     this.game = game
 
     this.isShown = false
-    this.modalComponents = []
+    this.modalChildren = []
 
     this.size = {
       w: 600,
@@ -25,7 +24,7 @@ export default class EndDialog {
       left: 200,
       right: this.offset.x + this.size.w,
       bottom: this.offset.y + this.size.h
-    } 
+    }
 
     // **********************************************************************
     // ********************   Next Game Button
@@ -40,19 +39,14 @@ export default class EndDialog {
         w: 110
       }
     }
-    this.nextGameButton = new Button(
+    this.nextGameButton = new ModalButton(
       this.game.ctx,
       nextGameButtonData,
-      this.offset
+      this.offset,
+      startNewGame,
+      { once: true},
     )
-    this.nextGameButton.addClickListener(
-      () => { 
-        resetGame(this.game.debugMode, this.game.debugOverlay) 
-        startGame()
-      },
-      { once: true}
-    )
-    this.modalComponents.push(this.nextGameButton)
+    this.modalChildren.push(this.nextGameButton)
 
     // **********************************************************************
     // ********************   Another Match Button
@@ -67,36 +61,29 @@ export default class EndDialog {
         w: 150
       }
     }
-    this.anotherMatchButton = new Button(
+    this.anotherMatchButton = new ModalButton(
       this.game.ctx,
       anotherMatchButtonData,
-      this.offset
+      this.offset,
+      startNewMatch,
+      { once: true},
     )
-    this.anotherMatchButton.addClickListener(
-      () => { 
-        startNewMatch()
-        startGame()
-      },
-      { once: true}
-    )
-    this.modalComponents.push(this.anotherMatchButton)
-    this.modalComponents.forEach(c => c.hide())
-
-    // Add "quit checkers"
-    // Add "start new match"
-    this.show()
+    this.modalChildren.push(this.anotherMatchButton)
   }
 
   hide() {
     // This Modal Dialog must stop drawing when in a hidden state 
     // (teardown as needed)
-    this.modalComponents.forEach(c => c.hide())
+    this.isShown = false
+    this.modalChildren.forEach(c => c.hide())
   }
 
   show() {
     // This Modal Dialog start drawing in shown state 
     // (setup as needed)
-    this.modalComponents.forEach(c => c.show())
+    this.isShown = true
+    this.modalChildren.forEach(c => c.show())
+    this.draw()
   }
 
   draw() {
@@ -154,6 +141,8 @@ export default class EndDialog {
       }
 
       this.game.ctx.restore()
+    } else {
+      console.log(`cannot animate EndDialog, isShown=false`, )
     }
   }
 }

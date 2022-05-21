@@ -19,13 +19,28 @@ export default class Button {
 
   #defaultHandleClick
   constructor(ctx, buttonData, offset, handleClick=null, listenerOptions=null) {
+    if (ctx === null || ctx === undefined || ctx === {}) {
+      throw new TypeError('A button\'s offsets weren\'t defined')
+    }
+    if (!buttonData?.origin?.x || !buttonData?.origin?.y) {
+      throw new TypeError('A button\'s origin coordinates weren\'t defined')
+    }
+    // if (!offset?.x || !offset?.y) {
+    //   throw new TypeError('A button\'s offsets weren\'t defined')
+    // }
+    // if (!handleClick) {
+    //   throw new TypeError('A button\'s handleClick wasn\'t defined')
+    // }
+
+    this.name = buttonData.name || 'unnamed'
+
     this.ctx = ctx
     this.offset = offset
 
     this.rect = this.ctx.canvas.getBoundingClientRect() 
 
-    this.label = buttonData.label || 'no-button-label-assigned'
     this.origin = buttonData.origin
+    this.label = buttonData.label || 'no-button-label-assigned'
     this.baseWidth = buttonData.base?.w || 70
     this.baseHeight = buttonData.base?.h || 30
     this.stretchWidth = buttonData.stretch?.w || 1
@@ -44,27 +59,22 @@ export default class Button {
       y: this.origin.y + (this.baseHeight * this.stretchHeight) / 2,
     }
 
-    this.#defaultHandleClick = (e) => {
-      console.log(`${this.label} button's default handler coordsX.`, e.clientX - this.rect.left)
-      if (this.ctx.isPointInPath(
-        this.path,
-        e.clientX - this.rect.left, 
-        e.clientY - this.rect.top
-      )) {
-        console.log(`some Button's onclick is undefined`)
-      }
+    this.setPath()
+    this.#defaultHandleClick = function dHC() {
+      console.log(`${this.label} button's default handler triggered.`)
     }
     this.handleClick = handleClick || this.#defaultHandleClick
     this.listenerOptions = listenerOptions
 
-    this.setPath()
-    this.controller = new AbortController()
     this.addClickListener(this.handleClick, this.listenerOptions)
   }
 
   setPath() {
     this.path = new Path2D()
-    // console.log(`setting button ${this.label} at x,y:`, offset.x + this.origin.x - 2, offset.y + this.origin.y - 2 )
+    // console.log(`Button setPath @${this.label} at x,y:`, 
+    //   this.offset.x + this.origin.x - 2, 
+    //   this.offset.y + this.origin.y - 2
+    // )
     this.path.rect(
       this.offset.x + this.origin.x - 2, 
       this.offset.y + this.origin.y - 2,
@@ -74,29 +84,41 @@ export default class Button {
   }
 
   addClickListener(newHandleClick, listenerOptions) {
-    // Only one click listener, remove default before adding new handler
-    // pass in EventTarget.addEventListener options
-    
-    this.ctx.canvas.removeEventListener('click', this.handleClick)
-
     // Click detection handled handled here instead of outside of it!
     // Assuming handler listening to canvas
     this.handleClick = newHandleClick
     this.listenerOptions = listenerOptions
-    this.ctx.canvas.addEventListener('click', this.handleClick.bind(this), listenerOptions)
-  }
 
-  handleClick(e) {
-    if (this.ctx.isPointInPath(
-      this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
-    )) {
-      this.f()
+    // this.handleButtonClick = function hBC(e) {
+    function hBC(e) {
+      if (this.ctx.isPointInPath(
+        this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
+      )) {
+        console.log(`${this.label}'s handleButtonClicked`, )
+        this.handleClick()
+      }
     }
+    // console.log(`handleButtonClick fn`, this.handleButtonClick)
+    
+    // console.log(`listeneropts`, listenerOptions)
+    
+    this.ctx.canvas.addEventListener('click', hBC.bind(this), listenerOptions)
   }
 
   removeClickListener() {
     console.log(`Button removeClickListener invoked`, )
-    this.ctx.canvas.removeEventListener('click', this.handleClick)
+    this.ctx.canvas.removeEventListener('click', this.handleButtonClick)
+  }
+
+  replaceClickListener(newHandleClick, listenerOptions) {
+    this.removeClickListener()
+    this.addClickListener(newHandleClick, listenerOptions)
+  }
+
+  reactivateClickListener() {
+    // Uses stored handleClick to add clickListener after removal, useful for modal
+    // functionality
+    this.addClickListener(this.handleClick, this.listenerOptions)
   }
 
   draw() {

@@ -1,4 +1,4 @@
-import { CONSTANTS, resetGame, startNewMatch } from './main'
+import { CONSTANTS, startNewGame, startNewMatch, teardownGame } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -31,7 +31,31 @@ export default class Panel {
     this.blackJailOffsetX = 20
     this.blackJailOffsetY = this.height - 20
 
-    
+
+    // **********************************************************************
+    // ********************   TMP DEBUG ONLY for removeListeners tx
+    // **********************************************************************
+    // const fooButtonData = {
+    //   origin: {
+    //     x: this.centerX - 300,
+    //     y: this.separatorLowerY - 200,    // button height and gap
+    //   },
+    //   label: 'FOO!',
+    //   labelColor: 'red',
+    //   areaFill: 'hsl(220,40%,97%)',
+    //   borderStroke: 'red',
+    //   name: 'fookwah',
+    // }
+    // this.fooButton = new Button(
+    //   this.game.ctx, 
+    //   fooButtonData,
+    //   this.offset,
+    //   () => { console.log('foo clicky')},
+    //   { signal: this.game.controller.signal }
+    // )
+    // this.drawableChildren.push(this.fooButton)
+
+
     // **********************************************************************
     // ********************   Reset Button
     // **********************************************************************
@@ -49,6 +73,11 @@ export default class Panel {
       this.game.ctx, 
       resetButtonData,
       this.offset,
+      () => {
+        teardownGame(this.game)
+        startNewGame()
+      },
+      { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.resetButton)
 
@@ -72,6 +101,8 @@ export default class Panel {
       this.game.ctx, 
       newMatchButtonData,
       this.offset,
+      startNewMatch,
+      { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.newMatchButton)
 
@@ -111,10 +142,11 @@ export default class Panel {
       this.game.ctx, 
       redPassButtonData,
       this.offset,
-      reactTurnColor(game, CONSTANTS.RED)
+      this.game.passTurn(CONSTANTS.RED), 
+      { signal: this.game.controller.signal },
+      reactTurnColor(game, CONSTANTS.RED),
     )
     this.drawableChildren.push(this.redPassButton)
-
     // **********************************************************************
     // ********************   Black Pass Button
     // **********************************************************************
@@ -132,7 +164,9 @@ export default class Panel {
       this.game.ctx, 
       blackPassButtonData,
       this.offset,
-      reactTurnColor(game, CONSTANTS.BLACK)
+      this.game.passTurn(CONSTANTS.BLACK), 
+      { signal: this.game.controller.signal },
+      reactTurnColor(game, CONSTANTS.BLACK),
     )
     this.drawableChildren.push(this.blackPassButton)
 
@@ -175,31 +209,6 @@ export default class Panel {
     this.statusInfo = document.createElement('div')
     this.statusInfo.style.flexGrow = 1
     this.infoBox.append(this.statusInfo)
-    
-    // **********************************************************************
-    // ********************   EventListeners
-    // **********************************************************************
-
-    this.resetButton.addClickListener(
-      resetGame, 
-      { signal: this.game.controller.signal }
-    )
-
-    this.newMatchButton.addClickListener(
-      startNewMatch,
-      { signal: this.game.controller.signal }
-    )
-
-    // VIGIL passTurn bind to this? or?
-    this.redPassButton.addClickListener(
-      this.game.passTurn(CONSTANTS.RED), 
-      { signal: this.game.controller.signal }
-    )
-    this.blackPassButton.addClickListener(
-      this.game.passTurn(CONSTANTS.BLACK), 
-      { signal: this.game.controller.signal }
-    )
-    
   }
 
   drawDebugJail() {
