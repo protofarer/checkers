@@ -1,4 +1,4 @@
-import { CONSTANTS, startNewGame, startNewMatch, } from './main'
+import { CONSTANTS, resetMatch, } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -57,39 +57,39 @@ export default class Panel {
 
 
     // **********************************************************************
-    // ********************   Reset Button
+    // ********************   Reset Button (deprecated, placeholder for new button)
     // **********************************************************************
-    const resetButtonData = {
-      origin: {
-        x: this.centerX - 35,
-        y: this.separatorLowerY - 30 - 20,    // button height and gap
-      },
-      label: 'Restart',
-      labelColor: 'red',
-      areaFill: 'hsl(220,40%,97%)',
-      borderStroke: 'red'
-    }
-    this.resetButton = new Button(
-      this.game.ctx, 
-      resetButtonData,
-      this.offset,
-      startNewGame,
-      { signal: this.game.controller.signal }
-    )
-    this.drawableChildren.push(this.resetButton)
+    // const resetButtonData = {
+    //   origin: {
+    //     x: this.centerX - 35,
+    //     y: this.separatorLowerY - 30 - 20,    // button height and gap
+    //   },
+    //   label: 'Restart',
+    //   labelColor: 'red',
+    //   areaFill: 'hsl(220,40%,97%)',
+    //   borderStroke: 'red'
+    // }
+    // this.resetButton = new Button(
+    //   this.game.ctx, 
+    //   resetButtonData,
+    //   this.offset,
+    //   startNewGame,
+    //   { signal: this.game.controller.signal }
+    // )
+    // this.drawableChildren.push(this.resetButton)
 
     // **********************************************************************
-    // ********************   Start New Match
+    // ******************** New Match
     // **********************************************************************
     const newMatchButtonData = {
       origin: {
-        x: this.centerX - 65,
-        y: this.separatorLowerY - 15,    // button height and gap
+        x: this.centerX - 80,
+        y: this.separatorLowerY - 45,    // button height and gap
       },
       base: {
-        w: 130,
+        w: 160,
       },
-      label: 'Start New Match',
+      label: 'Setup New Match',
       labelColor: 'Black',
       areaFill: 'hsl(220,40%,97%)',
       borderStroke: 'hsl(0,0%,5%)'
@@ -98,7 +98,7 @@ export default class Panel {
       this.game.ctx, 
       newMatchButtonData,
       this.offset,
-      startNewMatch,
+      resetMatch,
       { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.newMatchButton)
@@ -290,6 +290,10 @@ export default class Panel {
       this.turnIndicatorCenterY - this.turnIndicatorVerticalGap/2, 
       this.turnIndicatorRadius, 0, 2*Math.PI
     )
+    this.game.ctx.fillStyle = 'hsl(0, 0%, 88%)'
+    this.game.ctx.fill()
+    this.game.ctx.lineWidth = 1
+    this.game.ctx.strokeStyle = 'hsl(0, 0%, 30%)'
     this.game.ctx.stroke()
 
     // Black's empty turn indicator
@@ -298,7 +302,10 @@ export default class Panel {
       this.turnIndicatorX, 
       this.turnIndicatorCenterY + this.turnIndicatorVerticalGap/2,
       this.turnIndicatorRadius, 0, 2*Math.PI)
+    this.game.ctx.fillStyle = 'hsl(0, 0%, 88%)'
+    this.game.ctx.fill()
     this.game.ctx.lineWidth = 1
+    this.game.ctx.strokeStyle = 'hsl(0, 0%, 30%)'
     this.game.ctx.stroke()
 
     this.game.ctx.beginPath()

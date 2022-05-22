@@ -48,13 +48,24 @@ let match = {
 let initDebugMode = false
 let initDebugOverlay = false
 if (import.meta.env.PROD) {
-  initDebugMode = window.location.hash === 'debugmode' ? true : false
+  initDebugMode = window.location.hash === '#debugmode' ? true : false
   initDebugOverlay = false
 }
 // Debug setup for dev
 if (import.meta.env.DEV) {
-  initDebugMode = true
-  initDebugOverlay = true
+  // anchor #nodebug when testing production board state and match progressions
+  // set via debugGUI "reset - prod" or "next - prod"
+
+  // No hash is specified when game is routed from setup menu
+  //  thus start with debugMode on
+  // Yet enable debugMode off on gameNo 0
+  // For subsequent games allow anchor to determine debugMode
+  if (parsedURL.searchParams.get('gameNo') === '0' 
+    && window.location.hash === '') {
+      window.location.hash = '#debugMode'
+  }
+  initDebugMode = window.location.hash === '#debugMode' ? true : false
+  initDebugOverlay = window.location.hash === '#debugMode' ? true : false
 }
 
 let ui = setupExternalUI('htmlUI')
@@ -63,14 +74,13 @@ let ui = setupExternalUI('htmlUI')
 // ********************   Play Game: PHASE_PLAY
 // **********************************************************************
 
-let debugGUIs = []
 export function startNewGame(debugMode=false, debugOverlay=false) {
   let game = new Game(match, ui, debugMode, debugOverlay)
 
   // will lil-gui tear itself down, assume yes once startGame completes
   // JS will cleanup
   if (import.meta.env.DEV) {
-    debugGUIs = setupDebugGUI(game, ui)
+    setupDebugGUI(game, ui)
     // tmp debug
     // import.meta.env.DEV && document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
   }
@@ -115,24 +125,46 @@ function incrementMatch(winner) {
   match.gameNo++
 }
 
-export function startNewMatch() {
-  match.score = { red: 0, black: 0 }
-  match.gameNo = 0
-  startNewGame()
+export function resetMatch() {
+  match.red = match.black = match.gameNo = 0
+  nextGame()
 }
 
 export function nextGame() {
-  // Update match state with already incremented match state and load new game
-  // EndDialog button
+  // Update match state with already incremented match state 
+  //  and load next, new game by replacing URL (no history) with incremented
+  //  (or non-incremented eg: restart or debug reset) match search params
+  // Accessible via EndDialog button and debugGUI
 
-  // Use document instead of window since app may be enapsulated in 
-  // a window hierarchy, eg iframe
+  // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
+  const currURL = new URL(window.location.href)
+  const currDebugMode = window.location.hash
+  let nextSearchParams = new URLSearchParams(currURL.search)
 
-  const currURL = new URL(location.href)
-  let nextSearchParams = new URLSearchParams(currURL)
   for (let k of nextSearchParams.keys()) {
     nextSearchParams.set(k, match[k])
   }
-  console.log(`nextSearchParams`, nextSearchParams)
-  location.replace(location.href + nextSearchParams.toString())
+  
+  location.replace(
+    location.origin 
+    + '/game/index.html?' 
+    + nextSearchParams.toString()
+    + currDebugMode
+  )
+}
+
+export function resetGame(toDebug=false) {
+  const currURL = new URL(window.location.href)
+  if (import.meta.env.DEV) {
+    currURL.hash = toDebug ? '#debugMode' : '#nodebug'
+  }
+  location.replace(currURL.toString())
+  location.reload()
+}
+
+export function debugIncrementToNextGame() {
+  // skips end dialog
+  match.black++
+  match.gameNo++
+  nextGame()
 }

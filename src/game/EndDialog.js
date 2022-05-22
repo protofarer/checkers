@@ -1,4 +1,4 @@
-import { CONSTANTS, startNewGame, startNewMatch, } from './main'
+import { CONSTANTS, resetMatch, nextGame } from './main'
 import ModalButton from './ModalButton'
 export default class EndDialog {
   // Stops and Starts the play loop
@@ -45,7 +45,7 @@ export default class EndDialog {
       this.offset,
       () => {
         this.hide()
-        startNewGame()
+        nextGame()
       },
       { once: true},
     )
@@ -70,7 +70,7 @@ export default class EndDialog {
       this.offset,
       () => {
         this.hide()
-        startNewMatch()
+        resetMatch()
       },
       { once: true},
     )

@@ -1,6 +1,6 @@
 import GUI from 'lil-gui'
 import { CONSTANTS } from './main'
-import { startNewGame, nextGame } from './main'
+import { resetMatch, nextGame, resetGame, debugIncrementToNextGame } from './main'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()
@@ -46,11 +46,15 @@ export default function setupDebugGUI(game, ui) {
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 
-    gui.add({ resetGame() { startNewGame()} }, 
+    // **********************************************************************
+    // ********************   GAMETEST
+    // **********************************************************************
+    const guiGameTest = gui.addFolder('GameTest')
+    guiGameTest.add({ resetGame }, 
       'resetGame')
       .name('reset - prod')
 
-    gui.add({ debugreset() { startNewGame(true, true)} }, 
+    guiGameTest.add({ debugreset() { resetGame(true)} }, 
       'debugreset')
       .name('reset - full debug')
 
@@ -61,14 +65,21 @@ export default function setupDebugGUI(game, ui) {
       // this.incrementMatch(this.match, this.winner)
     }
 
-    gui.add({ debugTriggerVictory }, 'debugTriggerVictory')
+    guiGameTest.add({ debugTriggerVictory }, 'debugTriggerVictory')
 
-    gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
+    guiGameTest.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
 
-    gui.add({ nextGame }, 'nextGame')
+    // Match function testing
+    const guiMatchTest = gui.addFolder('MatchTest')
+    guiMatchTest.add({ resetMatch }, 'resetMatch')
+    guiMatchTest.add({ nextGame }, 'nextGame')
+    guiMatchTest.add({ debugIncrementToNextGame }, 'debugIncrementToNextGame')
 
-    gui.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
+    guiMatchTest.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
 
-    return [gui, guiGamePositioning, guiGameState, guiMouseTracking, guiMatchState]
+    guiGamePositioning.show(false)
+    guiMouseTracking.show(false)
+
+    return [gui, guiGamePositioning, guiGameState, guiMouseTracking, guiMatchState, guiGameTest, guiMatchTest]
   }
