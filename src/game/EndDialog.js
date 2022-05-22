@@ -79,7 +79,6 @@ export default class EndDialog {
 
   hide() {
     // This Modal Dialog must stop drawing when in a hidden state 
-    // (teardown as needed)
     this.isShown = false
     this.modalChildren.forEach(c => c.hide())
   }
@@ -130,12 +129,12 @@ export default class EndDialog {
       this.game.ctx.font = 'bold 20px Arial'
       this.game.ctx.fillStyle = 'crimson'
       this.game.ctx.fillText(
-        `RED: ${this.game.match.score.red}`,
+        `RED: ${this.game.match.red}`,
         200, 250
       ) 
       this.game.ctx.fillStyle = 'black'
       this.game.ctx.fillText(
-        `BLACK: ${this.game.match.score.black}`,
+        `BLACK: ${this.game.match.black}`,
         200, 300
       )
 

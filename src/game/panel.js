@@ -1,4 +1,4 @@
-import { CONSTANTS, startNewGame, startNewMatch, teardownGame } from './main'
+import { CONSTANTS, startNewGame, startNewMatch, } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -73,10 +73,7 @@ export default class Panel {
       this.game.ctx, 
       resetButtonData,
       this.offset,
-      () => {
-        teardownGame(this.game)
-        startNewGame()
-      },
+      startNewGame,
       { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.resetButton)
@@ -318,8 +315,8 @@ export default class Panel {
       <span style="color: blue;">${this.game.msg}</span>
     `
     this.scoreInfo.innerHTML = `\
-      <span style="color: crimson;">Red: ${this.game.match.score.red}</span>&nbsp;
-      <span style="color: black;">Black: ${this.game.match.score.black}</span>
+      <span style="color: crimson;">Red: ${this.game.match.red}</span>&nbsp;
+      <span style="color: black;">Black: ${this.game.match.black}</span>
     `
     
     // debuggery

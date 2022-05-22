@@ -20,6 +20,7 @@ export const CONSTANTS = {
 // ********************   Setup Game: PHASE_SETUP
 // **********************************************************************
 
+// Read URL for match state (till proper match store solution)
 const parsedURL = new URL(window.location.href)
 const networkType = parsedURL.searchParams.get('networkType')
 const matchLength = parsedURL.searchParams.get('matchLength')
@@ -30,12 +31,10 @@ const gameNo = parsedURL.searchParams.get('gameNo')
 let match = {
   networkType,
   matchLength,
+  gameNo,
   privacy,
-  score: {
-    red: 0,
-    black: 0,
-  },
-  gameNo: 0,
+  red,
+  black,
 }
 
 // DEF debugMode true: debug board arrangement with debugOverlay
@@ -101,40 +100,19 @@ export function endGame(game) {
   // Execute end game phase
   
   // Process data
-  game.incrementMatch(game.match, game.winner)
-
-  // Teardown game scaffolding since this is point of no return
-  // either: 
-  //    a. new game  
-  //    b. new match  
-  //    c. refresh browser
-  //    d. back to game settings
-  teardownGame(game)
+  incrementMatch(match, game.winner)
 
   // Present modal view and "escape" options
   game.endDialog.show()
 }
 
-export function teardownGame(game) {
-  // Clean up before starting new game
-  // Also destroy all references so that JS will garbage collect game
-  // and associated objects
-
-  // Destroy debug GUI
-  debugGUIs.forEach(g => g.destroy())
-
-  // Remove event listeners
-  game.controller.abort()
-
-  // Remove html overlay elements
-  document.body.removeChild(game.panel.infoBox)   // try without using game
-
-  // TODO teardown panel? It connects game with various elements
-
-  // Kill end dialog event listeners
-  // Even though the buttons have listenerOptions: once: true
-  // Low cost safeguard
-  game.endDialog.hide()
+function incrementMatch(winner) {
+  if (winner === CONSTANTS.BLACK) {
+    match.black++
+  } else {
+    match.red++
+  }
+  match.gameNo++
 }
 
 export function startNewMatch() {
@@ -144,6 +122,17 @@ export function startNewMatch() {
 }
 
 export function nextGame() {
-  // Update match state with game results and load new game
+  // Update match state with already incremented match state and load new game
+  // EndDialog button
 
+  // Use document instead of window since app may be enapsulated in 
+  // a window hierarchy, eg iframe
+
+  const currURL = new URL(location.href)
+  let nextSearchParams = new URLSearchParams(currURL)
+  for (let k of nextSearchParams.keys()) {
+    nextSearchParams.set(k, match[k])
+  }
+  console.log(`nextSearchParams`, nextSearchParams)
+  location.replace(location.href + nextSearchParams.toString())
 }

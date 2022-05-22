@@ -1,6 +1,6 @@
 import GUI from 'lil-gui'
 import { CONSTANTS } from './main'
-import { teardownGame, startNewGame, nextGame } from './main'
+import { startNewGame, nextGame } from './main'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()
@@ -40,17 +40,17 @@ export default function setupDebugGUI(game, ui) {
     const guiMatchState = gui.addFolder('MatchState')
     guiMatchState.add(game.match, 'matchLength').listen()
     guiMatchState.add(game.match, 'gameNo').listen()
-    guiMatchState.add(game.match.score, 'red').listen()
-    guiMatchState.add(game.match.score, 'black').listen()
+    guiMatchState.add(game.match, 'red').listen()
+    guiMatchState.add(game.match, 'black').listen()
 
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 
-    gui.add({ resetGame() { teardownGame(game); startNewGame()} }, 
+    gui.add({ resetGame() { startNewGame()} }, 
       'resetGame')
       .name('reset - prod')
 
-    gui.add({ debugreset() { teardownGame(game); startNewGame(true, true)} }, 
+    gui.add({ debugreset() { startNewGame(true, true)} }, 
       'debugreset')
       .name('reset - full debug')
 
@@ -64,6 +64,7 @@ export default function setupDebugGUI(game, ui) {
     gui.add({ debugTriggerVictory }, 'debugTriggerVictory')
 
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
+
 
     gui.add({ nextGame }, 'nextGame')
 

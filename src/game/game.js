@@ -301,15 +301,6 @@ export default class Game {
     }
   }
 
-  incrementMatch(match, winner) {
-    if (winner === CONSTANTS.BLACK) {
-      match.score.black++
-    } else {
-      match.score.red++
-    }
-    match.gameNo++
-  }
-
   findCaptured(from, to) {
     let col = (to.col - from.col) / Math.abs(to.col - from.col)
     col += from.col
