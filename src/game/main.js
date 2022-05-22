@@ -1,5 +1,5 @@
-import setupExternalUI from './init.js'
 import Game from './game.js'
+import setupExternalUI from './init.js'
 import setupDebugGUI from './debugGUI.js'
 
 export const ENV = new (function() {
@@ -16,7 +16,6 @@ export const CONSTANTS = {
   PHASE_END: 6,
 }
 
-
 // **********************************************************************
 // ********************   Setup Game: PHASE_SETUP
 // **********************************************************************
@@ -25,6 +24,9 @@ const parsedURL = new URL(window.location.href)
 const networkType = parsedURL.searchParams.get('networkType')
 const matchLength = parsedURL.searchParams.get('matchLength')
 const privacy = parsedURL.searchParams.get('privacy')
+const red = parsedURL.searchParams.get('red')
+const black = parsedURL.searchParams.get('black')
+const gameNo = parsedURL.searchParams.get('gameNo')
 let match = {
   networkType,
   matchLength,
@@ -57,7 +59,6 @@ if (import.meta.env.DEV) {
 }
 
 let ui = setupExternalUI('htmlUI')
-
 
 // **********************************************************************
 // ********************   Play Game: PHASE_PLAY
@@ -102,10 +103,6 @@ export function endGame(game) {
   // Process data
   game.incrementMatch(game.match, game.winner)
 
-
-  // Present modal view and "escape" options
-  game.endDialog.show()
-
   // Teardown game scaffolding since this is point of no return
   // either: 
   //    a. new game  
@@ -113,6 +110,9 @@ export function endGame(game) {
   //    c. refresh browser
   //    d. back to game settings
   teardownGame(game)
+
+  // Present modal view and "escape" options
+  game.endDialog.show()
 }
 
 export function teardownGame(game) {
@@ -127,7 +127,9 @@ export function teardownGame(game) {
   game.controller.abort()
 
   // Remove html overlay elements
-  document.body.removeChild(game.panel.infoBox)
+  document.body.removeChild(game.panel.infoBox)   // try without using game
+
+  // TODO teardown panel? It connects game with various elements
 
   // Kill end dialog event listeners
   // Even though the buttons have listenerOptions: once: true
@@ -139,4 +141,9 @@ export function startNewMatch() {
   match.score = { red: 0, black: 0 }
   match.gameNo = 0
   startNewGame()
+}
+
+export function nextGame() {
+  // Update match state with game results and load new game
+
 }

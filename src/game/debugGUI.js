@@ -1,6 +1,6 @@
 import GUI from 'lil-gui'
 import { CONSTANTS } from './main'
-import { teardownGame, startNewGame } from './main'
+import { teardownGame, startNewGame, nextGame } from './main'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()
@@ -64,6 +64,8 @@ export default function setupDebugGUI(game, ui) {
     gui.add({ debugTriggerVictory }, 'debugTriggerVictory')
 
     gui.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
+
+    gui.add({ nextGame }, 'nextGame')
 
     gui.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
 
