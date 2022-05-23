@@ -23,11 +23,12 @@ export const CONSTANTS = {
 // Read URL for match state (till proper match store solution)
 const parsedURL = new URL(window.location.href)
 const networkType = parsedURL.searchParams.get('networkType')
-const matchLength = parsedURL.searchParams.get('matchLength')
+const matchLength = Number(parsedURL.searchParams.get('matchLength'))
 const privacy = parsedURL.searchParams.get('privacy')
-const red = parsedURL.searchParams.get('red')
-const black = parsedURL.searchParams.get('black')
-const gameNo = parsedURL.searchParams.get('gameNo')
+const red = Number(parsedURL.searchParams.get('red'))
+const black = Number(parsedURL.searchParams.get('black'))
+const gameNo = Number(parsedURL.searchParams.get('gameNo'))
+
 let match = {
   networkType,
   matchLength,
@@ -60,7 +61,7 @@ if (import.meta.env.DEV) {
   //  thus start with debugMode on
   // Yet enable debugMode off on gameNo 0
   // For subsequent games allow anchor to determine debugMode
-  if (parsedURL.searchParams.get('gameNo') === '0' 
+  if (parsedURL.searchParams.get('gameNo') === '1' 
     && window.location.hash === '') {
       window.location.hash = '#debugmode'
   }
@@ -126,13 +127,13 @@ function incrementMatch(winner) {
 }
 
 export function resetMatch() {
-  match.red = match.black = match.gameNo = 0
+  match.red = match.black = 0
+  match.gameNo = 1
   nextGame()
 }
 
 export function nextGame() {
-  // Update match state with already incremented match state 
-  //  and load next, new game by replacing URL (no history) with incremented
+  // Load next, new game by replacing URL (no history) with incremented
   //  (or non-incremented eg: restart or debug reset) match search params
   // Accessible via EndDialog button and debugGUI
 

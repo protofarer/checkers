@@ -29,9 +29,7 @@ export default class ModalButton extends Button {
   
   hide() {
     this.isShown = false
-
-    // Unneeded because of listenerOption once: true
-    // super.removeClickListener()
+    super.removeClickListener()
   }
 
   show() {

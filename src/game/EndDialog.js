@@ -87,7 +87,6 @@ export default class EndDialog {
     // This Modal Dialog start drawing in shown state 
     // (setup as needed)
     this.isShown = true
-    this.modalChildren.forEach(c => c.show())
     this.draw()
   }
 
@@ -122,7 +121,7 @@ export default class EndDialog {
       this.game.ctx.decoration = 'underlined'
       this.game.ctx.fillStyle = 'black'
       this.game.ctx.fillText(
-        `End of Game ${this.game.match.gameNo} of ${this.game.match.matchLength}`,
+        `End of Game ${this.game.match.gameNo - 1} of ${this.game.match.matchLength}`,
         200, 200
       )
 
@@ -138,12 +137,16 @@ export default class EndDialog {
         200, 300
       )
 
+    if ((this.game.match.gameNo - 1) / this.game.match.matchLength > 0.5) {
+      this.nextGameButton.hide()
+      this.anotherMatchButton.isShown = true
+      this.anotherMatchButton.show()
+    } else {
+      this.anotherMatchButton.hide()
+      this.nextGameButton.isShown = true
+      this.anotherMatchButton.show()
+    }
 
-      if (this.game.match.gameNo / this.game.match.matchLength > 0.5) {
-        this.anotherMatchButton.show()
-      } else {
-        this.nextGameButton.show()
-      }
 
       this.game.ctx.restore()
     } else {
