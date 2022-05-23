@@ -1,6 +1,6 @@
-import Disc from './disc'
+import Disc from './Disc'
 import { CONSTANTS, } from './main'
-import Panel from './panel'
+import Panel from './Panel'
 import EndDialog from './EndDialog'
 
 export default class Game {
