@@ -40,26 +40,10 @@ export default class EndDialog {
       name: 'ED-nextGame',
     }
 
-    // function nextgamebutthandler() {
-    //     this.hide()
-    //     // console.log(`IN nextbutthandler this.game`, this.game.match)
-    //     // console.log(`IN endDialog nextGameButt handler, match`, this.game.match)
-    //     this.nextGame()
-    // }
-
-    // tmp debug
-    // const nextgamebuttonfn = () => console.log('hookie')
-
     this.nextGameButton = new ModalButton(
       this.game.ctx,
       nextGameButtonData,
       this.offset,
-      // () => console.log(`poop`, ),
-      
-      // () => window.location.replace(
-      //   'http://localhost:3000/game/index.html?networkType=local&matchLength=3&privacy=public&red=1&black=1&gameNo=2#debugmode'),
-      // nextgamebuttonfn,
-      
       this.nextGame.bind(this),
       { once: true},
     )
@@ -79,18 +63,14 @@ export default class EndDialog {
       },
       name: 'ED-newMatch'
     }
-    // function resetmatchbutthandler() {
-    //     this.hide()
-    //     this.resetMatch()
-    // }
-    // this.newMatchButton = new ModalButton(
-    //   this.game.ctx,
-    //   newMatchButtonData,
-    //   this.offset,
-    //   resetmatchbutthandler.bind(this),
-    //   { once: true},
-    // )
-    // this.modalChildren.push(this.newMatchButton)
+    this.newMatchButton = new ModalButton(
+      this.game.ctx,
+      newMatchButtonData,
+      this.offset,
+      this.resetMatch.bind(this),
+      { once: true},
+    )
+    this.modalChildren.push(this.newMatchButton)
 
     // Start this and its children initialize hidden
     this.hide()
@@ -189,10 +169,8 @@ export default class EndDialog {
       )
 
       if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5) {
-        // this.nextGameButton.hide()
-        // this.newMatchButton.show()
+        this.newMatchButton.show()
       } else {
-        // this.newMatchButton.hide()
         this.nextGameButton.show()
       }
 

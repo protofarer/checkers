@@ -67,16 +67,11 @@ export default class Button {
     this.controller = new AbortController()
     this.listenerOptions.signal = this.controller.signal
 
-
     this.addClickListener(this.handleClick, this.listenerOptions)
   }
 
   setPath() {
     this.path = new Path2D()
-    // console.log(`Button setPath @${this.label} at x,y:`, 
-    //   this.offset.x + this.origin.x - 2, 
-    //   this.offset.y + this.origin.y - 2
-    // )
     this.path.rect(
       this.offset.x + this.origin.x - 2, 
       this.offset.y + this.origin.y - 2,
@@ -99,15 +94,7 @@ export default class Button {
           console.log(`${this.label}'s handleButtonClicked`, )
           this.handleClick()
         }
-        // console.log('%cIN hBC, if twice bad juju', 'color: orange', this.name)
     }
-    
-    // if (this.name === 'ED-nextGame') {
-    // console.log(`IN aCL this.handleButtonClick`, this.handleButtonClick)
-    // console.log(`IN aCL listOpts`, this.listenerOptions)
-    // console.log(`IN aCL this.hBC.bind(this)`, this.handleButtonClick.bind(this))
-    // }
-    
     this.ctx.canvas.addEventListener('click', this.handleButtonClick.bind(this), this.listenerOptions)
   }
 
@@ -117,14 +104,7 @@ export default class Button {
   }
 
   removeClickListener() {
-    // if (this.name === 'ED-nextGame') {
-    // console.log(`IN rmCL this.handleButtonClick`, this.handleButtonClick )
-    // console.log(`IN rmCL listOpts`, this.listenerOptions)
-    // console.log(`IN rmCL this.hBC.bind(this)`, this.handleButtonClick.bind(this))
-    // }
-    
     this.controller.abort()
-    // this.ctx.canvas.removeEventListener('click', this.handleButtonClick.bind(this), this.listenerOptions)
   }
 
   draw() {

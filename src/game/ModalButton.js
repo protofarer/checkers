@@ -40,7 +40,6 @@ export default class ModalButton extends Button {
     // overlaid on a suddenly un-animated background
     this.isShown = true
     super.addClickListener()
-    // super.addClickListener()
     this.draw()
   }
 

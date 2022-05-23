@@ -69,9 +69,7 @@ export default function setupDebugGUI(game, ui) {
 
     guiGameTest.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
-
     // Match function testing
-
     const guiMatchTest = gui.addFolder('MatchTest')
     guiMatchTest.add({ resetMatchBo3() {game.endDialog.resetMatch()} }, 'resetMatchBo3')
     guiMatchTest.add({ nextGame() { game.endDialog.nextGame() }}, 'nextGame')

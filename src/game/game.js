@@ -104,7 +104,6 @@ export default class Game {
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap + panelDims.w
     this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
-    // this.ui.canvas.style.border = '1px solid red'
 
     this.rect = this.ui.canvas.getBoundingClientRect()
 
@@ -469,9 +468,6 @@ export default class Game {
     } else {
       this.match.red++
     }
-    // console.log(`IN endGame, match post-inc`, this.match )
-    // console.log(`IN endGame, game.winner`, this.winner)
-    
     // Present modal view and "escape" options
     this.endDialog.show()
   }
@@ -536,6 +532,9 @@ export default class Game {
 
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
+      this.ui.canvas.style.border = '1px solid red'
+    } else {
+      this.ui.canvas.style.border = 'none'
     }
   }
 }
