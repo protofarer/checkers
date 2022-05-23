@@ -62,10 +62,10 @@ if (import.meta.env.DEV) {
   // For subsequent games allow anchor to determine debugMode
   if (parsedURL.searchParams.get('gameNo') === '0' 
     && window.location.hash === '') {
-      window.location.hash = '#debugMode'
+      window.location.hash = '#debugmode'
   }
-  initDebugMode = window.location.hash === '#debugMode' ? true : false
-  initDebugOverlay = window.location.hash === '#debugMode' ? true : false
+  initDebugMode = window.location.hash === '#debugmode' ? true : false
+  initDebugOverlay = window.location.hash === '#debugmode' ? true : false
 }
 
 let ui = setupExternalUI('htmlUI')
@@ -110,7 +110,7 @@ export function endGame(game) {
   // Execute end game phase
   
   // Process data
-  incrementMatch(match, game.winner)
+  incrementMatch(game.winner)
 
   // Present modal view and "escape" options
   game.endDialog.show()
@@ -156,7 +156,7 @@ export function nextGame() {
 export function resetGame(toDebug=false) {
   const currURL = new URL(window.location.href)
   if (import.meta.env.DEV) {
-    currURL.hash = toDebug ? '#debugMode' : '#nodebug'
+    currURL.hash = toDebug ? '#debugmode' : '#nodebug'
   }
   location.replace(currURL.toString())
   location.reload()
