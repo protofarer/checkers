@@ -6,6 +6,8 @@ export default class EndDialog {
   // for simplicity sake, after playing with this approach
   constructor(game) {
     this.game = game
+    console.log(`IN ED this.game`, this.game)
+    
 
     this.isShown = false
     this.modalChildren = []

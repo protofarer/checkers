@@ -99,7 +99,7 @@ export default class Panel {
       this.game.ctx, 
       newMatchButtonData,
       this.offset,
-      this.game.endDialog.resetMatch,
+      this.game.endDialog.resetMatch.bind(this.game.endDialog), // access via wormhole
       // { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.newMatchButton)
