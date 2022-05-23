@@ -121,7 +121,7 @@ export default class EndDialog {
       this.game.ctx.decoration = 'underlined'
       this.game.ctx.fillStyle = 'black'
       this.game.ctx.fillText(
-        `End of Game ${this.game.match.gameNo - 1} of ${this.game.match.matchLength}`,
+        `End of Game ${this.game.match.gameNo} of ${this.game.match.matchLength}`,
         200, 200
       )
 
@@ -137,7 +137,7 @@ export default class EndDialog {
         200, 300
       )
 
-    if ((this.game.match.gameNo - 1) / this.game.match.matchLength > 0.5) {
+    if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5) {
       this.nextGameButton.hide()
       this.anotherMatchButton.isShown = true
       this.anotherMatchButton.show()

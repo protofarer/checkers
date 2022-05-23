@@ -58,14 +58,14 @@ export default function setupDebugGUI(game, ui) {
       'debugreset')
       .name('reset - full debug')
 
-    const debugTriggerVictory = () => {
+    const debugTriggerVictory = (color) => {
       // for debug
       game.phase = CONSTANTS.PHASE_END
-      game.winner = game.winner === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
-      // this.incrementMatch(this.match, this.winner)
+      game.winner = color 
     }
 
-    guiGameTest.add({ debugTriggerVictory }, 'debugTriggerVictory')
+    guiGameTest.add({ debugTriggerVictoryRed() {debugTriggerVictory(CONSTANTS.RED)}}, 'debugTriggerVictoryRed')
+    guiGameTest.add({ debugTriggerVictoryBlack() {debugTriggerVictory(CONSTANTS.BLACK)}}, 'debugTriggerVictoryBlack')
 
     guiGameTest.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 

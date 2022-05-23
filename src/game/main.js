@@ -111,19 +111,15 @@ export function endGame(game) {
   // Execute end game phase
   
   // Process data
-  incrementMatch(game.winner)
-
-  // Present modal view and "escape" options
-  game.endDialog.show()
-}
-
-function incrementMatch(winner) {
-  if (winner === CONSTANTS.BLACK) {
+  if (game.winner === CONSTANTS.BLACK) {
     match.black++
   } else {
     match.red++
   }
-  match.gameNo++
+  
+
+  // Present modal view and "escape" options
+  game.endDialog.show()
 }
 
 export function resetMatch() {
@@ -136,6 +132,8 @@ export function nextGame() {
   // Load next, new game by replacing URL (no history) with incremented
   //  (or non-incremented eg: restart or debug reset) match search params
   // Accessible via EndDialog button and debugGUI
+
+  match.gameNo++
 
   // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
   const currURL = new URL(window.location.href)
