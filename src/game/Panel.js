@@ -1,4 +1,4 @@
-import { CONSTANTS, resetMatch, } from './main'
+import { CONSTANTS, } from './main'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
@@ -89,17 +89,18 @@ export default class Panel {
       base: {
         w: 160,
       },
+      name: 'Pan-newMatch',
       label: 'Setup New Match',
       labelColor: 'Black',
       areaFill: 'hsl(220,40%,97%)',
-      borderStroke: 'hsl(0,0%,5%)'
+      borderStroke: 'hsl(0,0%,5%)',
     }
     this.newMatchButton = new Button(
       this.game.ctx, 
       newMatchButtonData,
       this.offset,
-      resetMatch,
-      { signal: this.game.controller.signal }
+      this.game.endDialog.resetMatch,
+      // { signal: this.game.controller.signal }
     )
     this.drawableChildren.push(this.newMatchButton)
 
@@ -133,6 +134,7 @@ export default class Panel {
       base: {
         w: passButtonDims.w
       },
+      name: 'redPass',
       label: 'Pass',
     }
     this.redPassButton = new ReactiveButton(
@@ -140,7 +142,7 @@ export default class Panel {
       redPassButtonData,
       this.offset,
       this.game.passTurn(CONSTANTS.RED), 
-      { signal: this.game.controller.signal },
+      {}, // { signal: this.game.controller.signal },
       reactTurnColor(game, CONSTANTS.RED),
     )
     this.drawableChildren.push(this.redPassButton)
@@ -155,6 +157,7 @@ export default class Panel {
       base: {
         w: passButtonDims.w
       },
+      name: 'blackPass',
       label: 'Pass',
     }
     this.blackPassButton = new ReactiveButton(
@@ -162,7 +165,7 @@ export default class Panel {
       blackPassButtonData,
       this.offset,
       this.game.passTurn(CONSTANTS.BLACK), 
-      { signal: this.game.controller.signal },
+      {}, // { signal: this.game.controller.signal },
       reactTurnColor(game, CONSTANTS.BLACK),
     )
     this.drawableChildren.push(this.blackPassButton)

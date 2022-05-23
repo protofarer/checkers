@@ -1,4 +1,4 @@
-import { CONSTANTS, resetMatch, nextGame } from './main'
+import { CONSTANTS, } from './main'
 import ModalButton from './ModalButton'
 export default class EndDialog {
   // Stops and Starts the play loop
@@ -18,7 +18,6 @@ export default class EndDialog {
       x: 100,
       y: 200,      
     }
-      
     this.pos = {
       top: 200,
       left: 200,
@@ -37,16 +36,31 @@ export default class EndDialog {
       label: 'Next Game',
       base: {
         w: 110
-      }
+      },
+      name: 'ED-nextGame',
     }
+
+    // function nextgamebutthandler() {
+    //     this.hide()
+    //     // console.log(`IN nextbutthandler this.game`, this.game.match)
+    //     // console.log(`IN endDialog nextGameButt handler, match`, this.game.match)
+    //     this.nextGame()
+    // }
+
+    // tmp debug
+    // const nextgamebuttonfn = () => console.log('hookie')
+
     this.nextGameButton = new ModalButton(
       this.game.ctx,
       nextGameButtonData,
       this.offset,
-      () => {
-        this.hide()
-        nextGame()
-      },
+      // () => console.log(`poop`, ),
+      
+      // () => window.location.replace(
+      //   'http://localhost:3000/game/index.html?networkType=local&matchLength=3&privacy=public&red=1&black=1&gameNo=2#debugmode'),
+      // nextgamebuttonfn,
+      
+      this.nextGame.bind(this),
       { once: true},
     )
     this.modalChildren.push(this.nextGameButton)
@@ -54,7 +68,7 @@ export default class EndDialog {
     // **********************************************************************
     // ********************   Another Match Button
     // **********************************************************************
-    const anotherMatchButtonData = {
+    const newMatchButtonData = {
       origin: {
         x: 200,
         y: 350,
@@ -62,25 +76,64 @@ export default class EndDialog {
       label: 'Start New Match?',
       base: {
         w: 150
-      }
-    }
-    this.anotherMatchButton = new ModalButton(
-      this.game.ctx,
-      anotherMatchButtonData,
-      this.offset,
-      () => {
-        this.hide()
-        resetMatch()
       },
-      { once: true},
-    )
-    this.modalChildren.push(this.anotherMatchButton)
+      name: 'ED-newMatch'
+    }
+    // function resetmatchbutthandler() {
+    //     this.hide()
+    //     this.resetMatch()
+    // }
+    // this.newMatchButton = new ModalButton(
+    //   this.game.ctx,
+    //   newMatchButtonData,
+    //   this.offset,
+    //   resetmatchbutthandler.bind(this),
+    //   { once: true},
+    // )
+    // this.modalChildren.push(this.newMatchButton)
+
+    // Start this and its children initialize hidden
+    this.hide()
+  }
+
+  resetMatch() {
+    this.game.match.red = this.game.match.black = 0
+    this.game.match.gameNo = 0
+    this.nextGame()
+  }
+
+  nextGame() {
+    // Load next, new game by replacing URL (no history) with incremented
+    //  (or non-incremented eg: restart or debug reset) match search params
+    // Accessible via EndDialog button and debugGUI
+    console.log(`%cIN nextgame 1st line, match`, 'color:orange', this.game.match)
+    
+    this.game.match.gameNo++
+
+    // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
+    const currURL = new URL(window.location.href)
+    const currDebugMode = window.location.hash
+    let nextSearchParams = new URLSearchParams(currURL.search)
+
+    for (let k of nextSearchParams.keys()) {
+      nextSearchParams.set(k, this.game.match[k])
+      // console.log(`setting nextSearchParams`,k, this.game.match[k] )
+    }
+    const newURL = location.origin 
+      + '/game/index.html?' 
+      + nextSearchParams.toString()
+      + currDebugMode
+
+    console.log(`newURL`, newURL)
+    window.location.assign(newURL)
   }
 
   hide() {
     // This Modal Dialog must stop drawing when in a hidden state 
     this.isShown = false
-    this.modalChildren.forEach(c => c.hide())
+    this.modalChildren.forEach(c => {
+      c.isShown && c.hide()
+    })
   }
 
   show() {
@@ -92,8 +145,6 @@ export default class EndDialog {
 
   draw() {
     if (this.isShown) {
-      console.log('enddialog.show match', this.game.match)
-
       this.game.ctx.save()
       this.game.ctx.translate(this.offset.x, this.offset.y)
 
@@ -137,20 +188,17 @@ export default class EndDialog {
         200, 300
       )
 
-    if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5) {
-      this.nextGameButton.hide()
-      this.anotherMatchButton.isShown = true
-      this.anotherMatchButton.show()
-    } else {
-      this.anotherMatchButton.hide()
-      this.nextGameButton.isShown = true
-      this.anotherMatchButton.show()
-    }
-
+      if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5) {
+        // this.nextGameButton.hide()
+        // this.newMatchButton.show()
+      } else {
+        // this.newMatchButton.hide()
+        this.nextGameButton.show()
+      }
 
       this.game.ctx.restore()
     } else {
-      console.log(`cannot animate EndDialog, isShown=false`, )
+      console.log(`Attempted to draw EndDialog while isShown=false`, )
     }
   }
 }

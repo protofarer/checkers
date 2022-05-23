@@ -24,7 +24,10 @@ export default class ModalButton extends Button {
     // isParentShown is a variable by reference (eg object property)
     // that determines whether this shows or hides
     super(ctx, buttonData, offset, handleClick, listenerOptions)
+
+    // Assuming Modal Object is initialized without being shown/activated
     this.isShown = false
+    this.hide()
   }
   
   hide() {
@@ -36,7 +39,8 @@ export default class ModalButton extends Button {
     // Upon show, draw once as is the expected usage of Modal Components
     // overlaid on a suddenly un-animated background
     this.isShown = true
-    super.reactivateClickListener()
+    super.addClickListener()
+    // super.addClickListener()
     this.draw()
   }
 

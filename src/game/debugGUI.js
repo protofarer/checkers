@@ -1,6 +1,6 @@
 import GUI from 'lil-gui'
 import { CONSTANTS } from './main'
-import { resetMatch, nextGame, resetGame, debugIncrementToNextGame } from './main'
+import { resetGame, } from './main'
 
 export default function setupDebugGUI(game, ui) {
     const gui = new GUI()
@@ -71,9 +71,18 @@ export default function setupDebugGUI(game, ui) {
 
 
     // Match function testing
+
     const guiMatchTest = gui.addFolder('MatchTest')
-    guiMatchTest.add({ resetMatch }, 'resetMatch')
-    guiMatchTest.add({ nextGame }, 'nextGame')
+    guiMatchTest.add({ resetMatchBo3() {game.endDialog.resetMatch()} }, 'resetMatchBo3')
+    guiMatchTest.add({ nextGame() { game.endDialog.nextGame() }}, 'nextGame')
+
+    function debugIncrementToNextGame() {
+      // skips end dialog
+      game.match.black++
+      game.match.gameNo++
+      game.endDialog.nextGame()
+    }
+
     guiMatchTest.add({ debugIncrementToNextGame }, 'debugIncrementToNextGame')
 
     guiMatchTest.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')

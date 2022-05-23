@@ -16,11 +16,9 @@ export default class Button {
   //  D. set its own path aka clickArea
   // IV. Possibilities
   //  CSDR addEventListener to something more general than a canvas.context paremeter
-
-  #defaultHandleClick
   constructor(ctx, buttonData, offset, handleClick=null, listenerOptions=null) {
     if (ctx === null || ctx === undefined || ctx === {}) {
-      throw new TypeError('A button\'s offsets weren\'t defined')
+      throw new TypeError('A button\'s context wasn\'t defined')
     }
     if (!buttonData?.origin?.x || !buttonData?.origin?.y) {
       throw new TypeError('A button\'s origin coordinates weren\'t defined')
@@ -60,11 +58,15 @@ export default class Button {
     }
 
     this.setPath()
-    this.#defaultHandleClick = function dHC() {
+    function defaultHandleClick() {
       console.log(`${this.label} button's default handler triggered.`)
     }
-    this.handleClick = handleClick || this.#defaultHandleClick
-    this.listenerOptions = listenerOptions
+    this.handleClick = handleClick || defaultHandleClick
+    this.listenerOptions = listenerOptions || {}
+
+    this.controller = new AbortController()
+    this.listenerOptions.signal = this.controller.signal
+
 
     this.addClickListener(this.handleClick, this.listenerOptions)
   }
@@ -86,28 +88,27 @@ export default class Button {
   addClickListener(newHandleClick, listenerOptions) {
     // Click detection handled handled here instead of outside of it!
     // Assuming handler listening to canvas
-    this.handleClick = newHandleClick
-    this.listenerOptions = listenerOptions
+    // Reuses stored handleClick and listenerOpts if arguments null
+    this.handleClick = newHandleClick ? newHandleClick : this.handleClick
+    this.listenerOptions = listenerOptions ? listenerOptions : this.handleClick
 
-    // this.handleButtonClick = function hBC(e) {
-    function hBC(e) {
-      if (this.ctx.isPointInPath(
-        this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
-      )) {
-        console.log(`${this.label}'s handleButtonClicked`, )
-        this.handleClick()
-      }
+    this.handleButtonClick = function hBC(e) {
+        if (this.ctx.isPointInPath(
+          this.path, e.clientX - this.rect.left, e.clientY - this.rect.top
+        )) {
+          console.log(`${this.label}'s handleButtonClicked`, )
+          this.handleClick()
+        }
+        // console.log('%cIN hBC, if twice bad juju', 'color: orange', this.name)
     }
-    // console.log(`handleButtonClick fn`, this.handleButtonClick)
     
-    // console.log(`listeneropts`, listenerOptions)
+    // if (this.name === 'ED-nextGame') {
+    // console.log(`IN aCL this.handleButtonClick`, this.handleButtonClick)
+    // console.log(`IN aCL listOpts`, this.listenerOptions)
+    // console.log(`IN aCL this.hBC.bind(this)`, this.handleButtonClick.bind(this))
+    // }
     
-    this.ctx.canvas.addEventListener('click', hBC.bind(this), listenerOptions)
-  }
-
-  removeClickListener() {
-    console.log(`Button removeClickListener invoked`, )
-    this.ctx.canvas.removeEventListener('click', this.handleButtonClick)
+    this.ctx.canvas.addEventListener('click', this.handleButtonClick.bind(this), this.listenerOptions)
   }
 
   replaceClickListener(newHandleClick, listenerOptions) {
@@ -115,10 +116,15 @@ export default class Button {
     this.addClickListener(newHandleClick, listenerOptions)
   }
 
-  reactivateClickListener() {
-    // Uses stored handleClick to add clickListener after removal, useful for modal
-    // functionality
-    this.addClickListener(this.handleClick, this.listenerOptions)
+  removeClickListener() {
+    // if (this.name === 'ED-nextGame') {
+    // console.log(`IN rmCL this.handleButtonClick`, this.handleButtonClick )
+    // console.log(`IN rmCL listOpts`, this.listenerOptions)
+    // console.log(`IN rmCL this.hBC.bind(this)`, this.handleButtonClick.bind(this))
+    // }
+    
+    this.controller.abort()
+    // this.ctx.canvas.removeEventListener('click', this.handleButtonClick.bind(this), this.listenerOptions)
   }
 
   draw() {

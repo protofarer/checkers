@@ -31,9 +31,9 @@ const gameNo = Number(parsedURL.searchParams.get('gameNo'))
 
 let match = {
   networkType,
+  privacy,
   matchLength,
   gameNo,
-  privacy,
   red,
   black,
 }
@@ -82,8 +82,6 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   // JS will cleanup
   if (import.meta.env.DEV) {
     setupDebugGUI(game, ui)
-    // tmp debug
-    // import.meta.env.DEV && document.body.addEventListener('keypress', handleKeyPress.bind(this), { once: true })
   }
 
   let loopID = requestAnimationFrame(draw)
@@ -93,64 +91,11 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
     loopID = requestAnimationFrame(draw)
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
-      endGame(game)
+      game.end()
     }
   }
-
-  // function handleKeyPress(e) {
-  //   if (e.key === 'v') {
-  //     console.log(`v pressed, loopID`, loopID )
-  //     cancelAnimationFrame(loopID)
-  //   }
-  // }
 }
 startNewGame(initDebugMode, initDebugOverlay)
-
-// CSDR un-exporting
-export function endGame(game) {
-  // Execute end game phase
-  
-  // Process data
-  if (game.winner === CONSTANTS.BLACK) {
-    match.black++
-  } else {
-    match.red++
-  }
-  
-
-  // Present modal view and "escape" options
-  game.endDialog.show()
-}
-
-export function resetMatch() {
-  match.red = match.black = 0
-  match.gameNo = 1
-  nextGame()
-}
-
-export function nextGame() {
-  // Load next, new game by replacing URL (no history) with incremented
-  //  (or non-incremented eg: restart or debug reset) match search params
-  // Accessible via EndDialog button and debugGUI
-
-  match.gameNo++
-
-  // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
-  const currURL = new URL(window.location.href)
-  const currDebugMode = window.location.hash
-  let nextSearchParams = new URLSearchParams(currURL.search)
-
-  for (let k of nextSearchParams.keys()) {
-    nextSearchParams.set(k, match[k])
-  }
-  
-  location.replace(
-    location.origin 
-    + '/game/index.html?' 
-    + nextSearchParams.toString()
-    + currDebugMode
-  )
-}
 
 export function resetGame(toDebug=false) {
   const currURL = new URL(window.location.href)
@@ -159,11 +104,4 @@ export function resetGame(toDebug=false) {
   }
   location.replace(currURL.toString())
   location.reload()
-}
-
-export function debugIncrementToNextGame() {
-  // skips end dialog
-  match.black++
-  match.gameNo++
-  nextGame()
 }

@@ -68,9 +68,6 @@ export default class Game {
     }
     this.hasCaptureChainStarted = false
     
-    // AbortController is quite good
-    this.controller = new AbortController()
-
     this.boardHeight = 800
     this.boardWidth = 800
     this.baseThickness = 40      // decorative graphic around board
@@ -87,6 +84,8 @@ export default class Game {
     }
 
     this.boardPanelGap = 15
+
+    this.endDialog = new EndDialog(this)
 
     const panelOffset = {
       x: this.boardWidth + 2 * this.baseThickness + this.boardPanelGap,
@@ -111,7 +110,6 @@ export default class Game {
 
     this.ghostSourceDisc = null
 
-    this.endDialog = new EndDialog(this)
 
     this.initDiscs()
     this.updateDiscActors()
@@ -461,7 +459,23 @@ export default class Game {
   toggleKings = () => {
     this.discs.forEach(disc => { disc.isKing = !disc.isKing })
   }
-  
+
+  end() {
+    // Initiate end game phase
+    
+    // Process data
+    if (this.winner === CONSTANTS.BLACK) {
+      this.match.black++
+    } else {
+      this.match.red++
+    }
+    // console.log(`IN endGame, match post-inc`, this.match )
+    // console.log(`IN endGame, game.winner`, this.winner)
+    
+    // Present modal view and "escape" options
+    this.endDialog.show()
+  }
+
   clr() {
     this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height)
   }
