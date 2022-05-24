@@ -138,6 +138,41 @@ export default class EndDialog {
     this.draw()
   }
 
+  drawEndOfGame() {
+    this.game.ctx.fillStyle = this.game.winner === CONSTANTS.RED 
+      ? 'crimson'
+      : this.game.winner === CONSTANTS.BLACK
+        ? 'black'
+        : 'grey'
+    this.game.ctx.fillText(
+      `${this.game.winner === CONSTANTS.RED 
+          ? 'RED' 
+          : this.game.winner === CONSTANTS.BLACK 
+            ? 'BLACK'
+            : 'DRAW'
+        }`,
+      200, 100
+    )
+    if (this.game.winner !== CONSTANTS.BLANK) {
+      this.game.ctx.fillStyle = 'green'
+      if (
+        this.game.match.red === Math.ceil(this.game.match.matchLength / 2) ||
+        this.game.match.black === Math.ceil(this.game.match.matchLength / 2)
+      ) {
+        this.game.ctx.font = 'bold 48px Arial'
+        this.game.ctx.fillText(
+          'WINS Game and Match!',
+          25, 155
+        )
+        } else {
+          this.game.ctx.fillText(
+            'WINS!',
+            200, 155
+          )
+        }
+    }
+  }
+
   draw() {
     if (this.isShown) {
       this.game.ctx.save()
@@ -149,28 +184,9 @@ export default class EndDialog {
 
       this.game.ctx.font = 'bold 60px Arial'
       
-      this.game.ctx.fillStyle = this.game.winner === CONSTANTS.RED 
-        ? 'crimson'
-        : this.game.winner === CONSTANTS.BLACK
-          ? 'black'
-          : 'grey'
-      this.game.ctx.fillText(
-        `${this.game.winner === CONSTANTS.RED 
-            ? 'RED' 
-            : this.game.winner === CONSTANTS.BLACK 
-              ? 'BLACK'
-              : 'DRAW'
-          }`,
-        200, 100
-      )
-      if (this.game.winner !== CONSTANTS.BLANK) {
-        this.game.ctx.fillStyle = 'green'
-        this.game.ctx.fillText(
-          'WINS!',
-          200, 155
-        )
-      }
+      this.drawEndOfGame()
 
+      // Present Game Number
       this.game.ctx.font = 'bold 20px Arial'
       this.game.ctx.decoration = 'underlined'
       this.game.ctx.fillStyle = 'black'
@@ -179,6 +195,7 @@ export default class EndDialog {
         200, 200
       )
 
+      // Present Score Summary
       this.game.ctx.font = 'bold 20px Arial'
       this.game.ctx.fillStyle = 'crimson'
       this.game.ctx.fillText(
@@ -191,12 +208,13 @@ export default class EndDialog {
         200, 300
       )
 
-      if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5) {
+      // Present appropriate action
+      if ((this.game.match.gameNo) / this.game.match.matchLength > 0.5
+        && Math.abs(this.game.match.red - this.game.match.black) > 0) {
         this.newMatchButton.show()
       } else {
         this.nextGameButton.show()
       }
-
       this.game.ctx.restore()
     } else {
       console.log(`Attempted to draw EndDialog while isShown=false`, )

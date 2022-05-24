@@ -1,5 +1,5 @@
 import Disc from './Disc'
-import { CONSTANTS, } from './main'
+import { CONSTANTS, shootSound, } from './main'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
 
@@ -240,6 +240,8 @@ export default class Game {
   }
 
   move(grabbedDisc, to) {
+    shootSound.currentTime = 0
+    shootSound.play()
     this.board[grabbedDisc.row][grabbedDisc.col] = 0
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row

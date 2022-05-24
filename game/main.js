@@ -17,6 +17,32 @@ export const CONSTANTS = {
 }
 
 // **********************************************************************
+// ********************   Load Assets
+// **********************************************************************
+let assetsToLoad = [] 
+let assetsLoaded = 0
+const music = document.querySelector('#music')
+music.addEventListener('canplaythrough', loadHandler, false)
+music.load()
+assetsToLoad.push(music)
+
+export const shootSound = document.querySelector('#shootSound')
+shootSound.addEventListener('canplaythrough', loadHandler, false)
+shootSound.load()
+assetsToLoad.push(shootSound)
+
+function loadHandler() {
+  assetsLoaded++
+  music.removeEventListener('canplaythrough', loadHandler, false)
+  shootSound.removeEventListener('canplaythrough', loadHandler, false)
+  music.play()
+  music.volume = 0.1
+}
+
+
+
+
+// **********************************************************************
 // ********************   Setup Game: PHASE_SETUP
 // **********************************************************************
 
