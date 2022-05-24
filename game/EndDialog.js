@@ -6,8 +6,6 @@ export default class EndDialog {
   // for simplicity sake, after playing with this approach
   constructor(game) {
     this.game = game
-    console.log(`IN ED this.game`, this.game)
-    
 
     this.isShown = false
     this.modalChildren = []
@@ -90,7 +88,9 @@ export default class EndDialog {
     // Accessible via EndDialog button and debugGUI
     console.log(`%cIN nextgame 1st line, match`, 'color:orange', this.game.match)
     
-    this.game.match.gameNo++
+    if (this.game.winner !== CONSTANTS.BLANK) {
+      this.game.match.gameNo++
+    }
 
     // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
     const currURL = new URL(window.location.href)
@@ -106,8 +106,21 @@ export default class EndDialog {
       + nextSearchParams.toString()
       + currDebugMode
 
-    console.log(`newURL`, newURL)
-    window.location.assign(newURL)
+    if (currURL === newURL) {
+      // DRAW, reset state
+      // WARN problematic in so far as no new information is recorded for
+      //  draws, eg in the future, should system keep track of an 
+      //  account's games played, draws would have to be recorded
+      //  to the account as soon as they are decided and have little impact
+      //  elsewhere.
+      //
+      //  Also, the URL for games has yet to be robustly schemed out
+      //
+      //  Will cause bugs when there is incidental diff in location.hash
+      //  due to debugmode activation.
+      window.location.reload()
+    }
+    window.location.replace(newURL)
   }
 
   hide() {
@@ -138,17 +151,25 @@ export default class EndDialog {
       
       this.game.ctx.fillStyle = this.game.winner === CONSTANTS.RED 
         ? 'crimson'
-        : 'black'
-
+        : this.game.winner === CONSTANTS.BLACK
+          ? 'black'
+          : 'grey'
       this.game.ctx.fillText(
-        `${this.game.winner === CONSTANTS.RED ? 'RED' : 'BLACK'}`,
+        `${this.game.winner === CONSTANTS.RED 
+            ? 'RED' 
+            : this.game.winner === CONSTANTS.BLACK 
+              ? 'BLACK'
+              : 'DRAW'
+          }`,
         200, 100
       )
-      this.game.ctx.fillStyle = 'green'
-      this.game.ctx.fillText(
-        'WINS!',
-        200, 155
-      )
+      if (this.game.winner !== CONSTANTS.BLANK) {
+        this.game.ctx.fillStyle = 'green'
+        this.game.ctx.fillText(
+          'WINS!',
+          200, 155
+        )
+      }
 
       this.game.ctx.font = 'bold 20px Arial'
       this.game.ctx.decoration = 'underlined'

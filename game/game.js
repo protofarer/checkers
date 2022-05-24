@@ -58,7 +58,7 @@ export default class Game {
     this.enticed = []
     
     this.msg = ''
-    this.turnCount = 0
+    this.turnCount = 1
     this.turnColor = CONSTANTS.BLACK
     this.phase = CONSTANTS.PHASE_PLAY    // new, playing, end
     this.winner = ''
@@ -67,6 +67,8 @@ export default class Game {
       capturedReds: [],
     }
     this.hasCaptureChainStarted = false
+    this.lastPassedTurn = -1
+    this.wasThisTurnPassed = false
     
     this.boardHeight = 800
     this.boardWidth = 800
@@ -118,6 +120,7 @@ export default class Game {
   passTurn(playerColor) {
     return () => {
       if (this.turnColor === playerColor) {
+        this.wasThisTurnPassed = true
         this.nextTurn()
       }
     }
@@ -276,13 +279,13 @@ export default class Game {
     )
     capturedDisc.row = capturedDisc.col = 9
 
-    this.checkVictory()
 
     this.hasCaptureChainStarted = true
   }
 
-  checkVictory() {
+  checkEndCondition() {
     if (this.enticed === 0 && this.carefrees === 0) {
+      // DISPATCH WIN BY STALEMATE
       this.phase = CONSTANTS.PHASE_END
       this.winner = this.turnColor === CONSTANTS.RED 
         ? CONSTANTS.BLACK 
@@ -295,6 +298,12 @@ export default class Game {
       // DISPATCH RED WINS
       this.phase = CONSTANTS.PHASE_END
       this.winner = CONSTANTS.RED
+    } else if (this.wasThisTurnPassed) {
+      if (this.lastPassedTurn === this.turnCount - 1) {
+        // DISPATCH DRAW WHEN PLAYERS PASS ONE AFTER ANOTHER
+        this.phase = CONSTANTS.PHASE_END
+        this.winner = CONSTANTS.BLANK
+      }
     }
   }
 
@@ -306,8 +315,10 @@ export default class Game {
     return this.discs.filter(disc => disc.col === col && disc.row === row)[0]
   }
 
-
   nextTurn() {
+    this.checkEndCondition()
+    this.lastPassedTurn = this.turnCount
+    this.wasThisTurnPassed = false
     this.turnCount++
     this.turnColor = this.turnColor === CONSTANTS.RED 
       ? CONSTANTS.BLACK 
@@ -465,7 +476,7 @@ export default class Game {
     // Process data
     if (this.winner === CONSTANTS.BLACK) {
       this.match.black++
-    } else {
+    } else if (this.winner === CONSTANTS.RED) {
       this.match.red++
     }
     // Present modal view and "escape" options

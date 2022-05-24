@@ -89,6 +89,8 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
     game.clr()
     game.drawAll()
     loopID = requestAnimationFrame(draw)
+
+    // Enter PHASE_END via game.checkEndCondition()
     if (game.phase === CONSTANTS.PHASE_END) {
       cancelAnimationFrame(loopID)
       game.end()
