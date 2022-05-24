@@ -106,7 +106,7 @@ export default class EndDialog {
       + nextSearchParams.toString()
       + currDebugMode
 
-    if (currURL === newURL) {
+    if (this.game.winner === CONSTANTS.BLANK) {
       // DRAW, reset state
       // WARN problematic in so far as no new information is recorded for
       //  draws, eg in the future, should system keep track of an 

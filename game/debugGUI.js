@@ -36,6 +36,8 @@ export default function setupDebugGUI(game, ui) {
     guiGameState.add(game, 'turnColor').name('turnColor').listen()
     guiGameState.add(game, 'phase').name('phase').listen()
     guiGameState.add(game, 'winner').name('winner').listen()
+    guiGameState.add(game, 'wasThisTurnPassed').listen()
+    guiGameState.add(game, 'lastPassedTurn').listen()
 
     const guiMatchState = gui.addFolder('MatchState')
     guiMatchState.add(game.match, 'matchLength').listen()

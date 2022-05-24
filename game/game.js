@@ -317,7 +317,9 @@ export default class Game {
 
   nextTurn() {
     this.checkEndCondition()
-    this.lastPassedTurn = this.turnCount
+    this.lastPassedTurn = this.wasThisTurnPassed 
+      ? this.turnCount 
+      : this.lastPassedTurn
     this.wasThisTurnPassed = false
     this.turnCount++
     this.turnColor = this.turnColor === CONSTANTS.RED 
