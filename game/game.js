@@ -1,5 +1,8 @@
 import Disc from './Disc'
-import { shootSound, explosionSound } from './main'
+import { 
+  moveSound,
+  captureSound
+} from './main'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
@@ -438,8 +441,8 @@ export default class Game {
             // DISPATCH valid capture move
             this.capture(grabbedDisc, validCaptureMove)
             this.move(grabbedDisc, validCaptureMove)
-            explosionSound.currentTime = 0
-            explosionSound.play()
+            captureSound.currentTime = 0
+            captureSound.play()
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = 'Not a valid capture move'
@@ -450,11 +453,10 @@ export default class Game {
             isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
           )
           if (nonCaptureMove) {
-            // DISPATCH valid mover move
+            // DISPATCH valid carefree move
             this.move(grabbedDisc, nonCaptureMove)
-            shootSound.currentTime = 0
-            shootSound.play()
-            // DISPATCH nextTurn
+            moveSound.currentTime = 0
+            moveSound.play()
           } else {
             // DISPATCH invalid-mover-move msg
             this.msg = 'Invalid move. Try again'

@@ -9,35 +9,56 @@ export const ENV = new (function() {
 
 
 // **********************************************************************
-// ********************   Load Assets
+// ********************   Load Audio Assets
 // **********************************************************************
 let assetsToLoad = [] 
 // eslint-disable-next-line no-unused-vars
 let assetsLoaded = 0
-const music = document.querySelector('#music')
-music.addEventListener('canplaythrough', loadHandler, false)
-music.load()
-assetsToLoad.push(music)
 
-export const shootSound = document.querySelector('#shootSound')
-shootSound.addEventListener('canplaythrough', loadHandler, false)
-shootSound.load()
-assetsToLoad.push(shootSound)
+const introMusic = document.querySelector(
+  Math.random() > 0.5 ? '#introMusic1' : '#introMusic2'
+)
+introMusic.addEventListener('canplaythrough', loadHandler, false)
+introMusic.load()
+assetsToLoad.push(introMusic)
 
-export const explosionSound = document.querySelector('#explosionSound')
-explosionSound.addEventListener('canplaythrough', loadHandler, false)
-explosionSound.load()
-assetsToLoad.push(explosionSound)
+const moveSound1 = document.querySelector('#move1')
+moveSound1.addEventListener('canplaythrough', loadHandler, false)
+moveSound1.load()
+assetsToLoad.push(moveSound1)
+const moveSound2 = document.querySelector('#move1')
+moveSound2.addEventListener('canplaythrough', loadHandler, false)
+moveSound2.load()
+assetsToLoad.push(moveSound2)
+
+export const captureSound = document.querySelector('#explosionSound')
+captureSound.addEventListener('canplaythrough', loadHandler, false)
+captureSound.load()
+assetsToLoad.push(captureSound)
 
 function loadHandler() {
   assetsLoaded++
   
-  music.removeEventListener('canplaythrough', loadHandler, false)
-  shootSound.removeEventListener('canplaythrough', loadHandler, false)
-  // music.play()
-  music.volume = 0.1
+  // introMusic.removeEventListener('canplaythrough', loadHandler, false)
+  moveSound1.removeEventListener('canplaythrough', loadHandler, false)
+  captureSound.removeEventListener('canplaythrough', loadHandler, false)
+  introMusic.play()
+  introMusic.volume = 0.1
 }
 
+// Setup Web Audio
+const actx = new (window.AudioContext || window.webkitAudioContext)()
+
+const move1Src = actx.createMediaElementSource(moveSound1)
+move1Src.connect(actx.destination)
+const move2Src = actx.createMediaElementSource(moveSound1)
+move2Src.connect(actx.destination)
+const captureSrc = actx.createMediaElementSource(captureSound)
+captureSrc.connect(actx.destination)
+
+export function playMoveSound() {
+  
+}
 
 // **********************************************************************
 // ********************   Setup Game: PHASE_SETUP

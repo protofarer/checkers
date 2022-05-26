@@ -12,3 +12,15 @@ formEle.addEventListener('formdata', (e) => {
     window.sessionStorage.setItem(key, val)
   }
 })
+
+
+const settingsMusic = document.querySelector('#settingsMusic')
+settingsMusic.addEventListener('canplaythrough', loadHandler, false)
+settingsMusic.load()
+
+function loadHandler() {
+  settingsMusic.removeEventListener('canplaythrough', loadHandler, false)
+  settingsMusic.play()
+  settingsMusic.volume = 0.3
+}
+// CSDR import.meta.env.DEV && options to start game in prod or debug
