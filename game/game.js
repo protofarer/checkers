@@ -1,5 +1,5 @@
 import Disc from './Disc'
-import { CONSTANTS, shootSound, } from './main'
+import { CONSTANTS, shootSound, explosionSound } from './main'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
 
@@ -240,8 +240,6 @@ export default class Game {
   }
 
   move(grabbedDisc, to) {
-    shootSound.currentTime = 0
-    shootSound.play()
     this.board[grabbedDisc.row][grabbedDisc.col] = 0
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
@@ -439,6 +437,8 @@ export default class Game {
             // DISPATCH valid capture move
             this.capture(grabbedDisc, validCaptureMove)
             this.move(grabbedDisc, validCaptureMove)
+            explosionSound.currentTime = 0
+            explosionSound.play()
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = 'Not a valid capture move'
@@ -451,6 +451,8 @@ export default class Game {
           if (nonCaptureMove) {
             // DISPATCH valid mover move
             this.move(grabbedDisc, nonCaptureMove)
+            shootSound.currentTime = 0
+            shootSound.play()
             // DISPATCH nextTurn
           } else {
             // DISPATCH invalid-mover-move msg

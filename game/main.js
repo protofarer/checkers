@@ -31,15 +31,18 @@ shootSound.addEventListener('canplaythrough', loadHandler, false)
 shootSound.load()
 assetsToLoad.push(shootSound)
 
+export const explosionSound = document.querySelector('#explosionSound')
+explosionSound.addEventListener('canplaythrough', loadHandler, false)
+explosionSound.load()
+assetsToLoad.push(explosionSound)
+
 function loadHandler() {
   assetsLoaded++
   music.removeEventListener('canplaythrough', loadHandler, false)
   shootSound.removeEventListener('canplaythrough', loadHandler, false)
-  music.play()
+  // music.play()
   music.volume = 0.1
 }
-
-
 
 
 // **********************************************************************
@@ -63,6 +66,33 @@ let match = {
   red,
   black,
 }
+console.log(`oldmatch`, match)
+
+// TODO if no sessionStorage values, send an alert to do game settings
+//    and location.replace to game settings page
+let newmatch = {
+  networkType: sessionStorage.getItem('networkType'),
+  privacy: sessionStorage.getItem('privacy'),
+  matchLength: sessionStorage.getItem('matchLength'),
+  gameNo: sessionStorage.getItem('gameNo'),
+  red: sessionStorage.getItem('red'),
+  black: sessionStorage.getItem('black'),
+}
+console.log(`newmatch`, newmatch)
+
+for (let [key,val] of Object.entries(newmatch)) {
+  // conditional is conservative and knowably overdetermined
+  if (val === '' || val === null || val === undefined) {
+    console.log(`badval detected via for...of`, key, ':', val)
+  }
+}
+
+if (Object.values(newmatch).some(val => val === '' || val === null || val === undefined)) {
+  console.log(`badval detected via functional conditional`, )
+}
+
+
+
 
 // DEF debugMode true: debug board arrangement with debugOverlay
 // DEF debugMode false: production board arrangement w/o debugOverlay
