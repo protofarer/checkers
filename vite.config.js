@@ -13,7 +13,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: 'game/main.js',
+      input: {
+        menu: 'game/main.js',
+        game: 'index.js',
+      },
       output: {
         dir: 'dist'
       },

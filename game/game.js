@@ -4,7 +4,7 @@ import {
   playRandomCaptureSound,
   kingdeathSound,
   kingcrownSound,
-} from './main'
+} from '.'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
