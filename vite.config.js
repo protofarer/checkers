@@ -14,7 +14,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        menu: 'game/main.js',
+        menu: 'game/index.js',
         game: 'index.js',
       },
       output: {
