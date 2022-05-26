@@ -264,7 +264,7 @@ export default class Game {
       // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
       grabbedDisc.isKing = true
       if (deathSound !== null) {
-        deathSound.addEventListener('ended', (e) => {
+        deathSound.addEventListener('ended', () => {
           kingcrownSound.currentTime = 0
           kingcrownSound.play()
         }, { once: true })

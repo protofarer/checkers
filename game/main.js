@@ -100,13 +100,16 @@ death2Src.connect(actx.destination)
 export const playRandomDeathSound = playRandomSoundType(deathSounds)
 
 export const playRandomCaptureSound = (disc=null) => {
+  // A sequence of attack then death sound for each capture
+  // Death sounds differs for kings
+  // 
   const playCaptureSound = playRandomSoundType(captureSounds)
   const captureSound = playCaptureSound(disc)
   // TODO add delay by reacting to animate loop time passed
   //  or using audoEle.ended state
   // setTimeout(playRandomDeathSound(), 1000)
   let deathSound
-  captureSound.addEventListener('ended', (e) => {
+  captureSound.addEventListener('ended', () => {
     if (disc?.isKing) {
       kingdeathSound.currentTime = 0
       kingdeathSound.play()
@@ -121,7 +124,7 @@ export const playRandomCaptureSound = (disc=null) => {
 export const playRandomMoveSound = playRandomSoundType(moveSounds)
 
 function playRandomSoundType(sounds) {
-  return (disc=null) => {
+  return () => {
     const sound = sounds[Math.floor(Math.random() * sounds.length)]
     sound.currentTime = 0
     sound.play()
