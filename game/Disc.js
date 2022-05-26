@@ -1,4 +1,4 @@
-import { CONSTANTS } from './main.js'
+import CONSTANTS from './Constants'
 
 export default class Disc {
   constructor(ctx, row, col, offset, color) {

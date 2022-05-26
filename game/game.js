@@ -1,5 +1,6 @@
 import Disc from './Disc'
-import { CONSTANTS, shootSound, explosionSound } from './main'
+import { shootSound, explosionSound } from './main'
+import CONSTANTS from './Constants'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
 

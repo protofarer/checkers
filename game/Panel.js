@@ -1,4 +1,4 @@
-import { CONSTANTS, } from './main'
+import CONSTANTS from './Constants'
 import Button from './Button'
 import ReactiveButton from './ReactiveButton'
 export default class Panel {
