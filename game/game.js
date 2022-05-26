@@ -1,7 +1,9 @@
 import Disc from './Disc'
 import { 
-  moveSound,
-  captureSound
+  playRandomMoveSound,
+  playRandomCaptureSound,
+  kingdeathSound,
+  kingcrownSound,
 } from './main'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
@@ -243,7 +245,7 @@ export default class Game {
     return carefrees
   }
 
-  move(grabbedDisc, to) {
+  move(grabbedDisc, to, deathSound=null) {
     this.board[grabbedDisc.row][grabbedDisc.col] = 0
     this.board[to.row][to.col] = grabbedDisc.color
     grabbedDisc.row = to.row
@@ -261,6 +263,15 @@ export default class Game {
       // 1.16 When a man reaches the farthest row forward (known as the “king-row” or “crown-head”) it becomes a king, and this completes the turn of play. 
       // 1.19 If a jump creates an immediate further capturing opportunity, then the capturing move of the piece (man or king) is continued until all the jumps are completed. The only exception is that if a man reaches the king-row by means of a capturing move it then becomes a king but may not make any further jumps until their opponent has moved.
       grabbedDisc.isKing = true
+      if (deathSound !== null) {
+        deathSound.addEventListener('ended', (e) => {
+          kingcrownSound.currentTime = 0
+          kingcrownSound.play()
+        }, { once: true })
+      } else {
+        kingcrownSound.currentTime = 0
+        kingcrownSound.play()
+      }
       this.nextTurn()
     } else if (this.hasCaptureChainStarted && this.enticed.length === 0) {
       // DISPATCH
@@ -283,8 +294,8 @@ export default class Game {
     )
     capturedDisc.row = capturedDisc.col = 9
 
-
     this.hasCaptureChainStarted = true
+    return capturedDisc
   }
 
   checkEndCondition() {
@@ -439,10 +450,15 @@ export default class Game {
           )
           if (validCaptureMove) {
             // DISPATCH valid capture move
-            this.capture(grabbedDisc, validCaptureMove)
-            this.move(grabbedDisc, validCaptureMove)
-            captureSound.currentTime = 0
-            captureSound.play()
+            const capturedDisc = this.capture(grabbedDisc, validCaptureMove)
+            let deathSound
+            if (capturedDisc.isKing) {
+              kingdeathSound.currentTime = 0
+              kingdeathSound.play()
+            } else {
+              deathSound = playRandomCaptureSound()
+            }
+            this.move(grabbedDisc, validCaptureMove, deathSound)
           } else {
             // DISPATCH not-valid-capture msg
             this.msg = 'Not a valid capture move'
@@ -455,8 +471,7 @@ export default class Game {
           if (nonCaptureMove) {
             // DISPATCH valid carefree move
             this.move(grabbedDisc, nonCaptureMove)
-            moveSound.currentTime = 0
-            moveSound.play()
+            playRandomMoveSound()
           } else {
             // DISPATCH invalid-mover-move msg
             this.msg = 'Invalid move. Try again'
