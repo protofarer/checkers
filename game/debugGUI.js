@@ -73,7 +73,10 @@ export default function setupDebugGUI(game, ui) {
 
     // Match function testing
     const guiMatchTest = gui.addFolder('MatchTest')
-    guiMatchTest.add({ resetMatchBo3() {game.endDialog.resetMatch()} }, 'resetMatchBo3')
+    guiMatchTest.add({ resetMatchBo3() {
+      game.match.matchLength = 3
+      game.endDialog.resetMatch()
+    } }, 'resetMatchBo3')
     guiMatchTest.add({ nextGame() { game.endDialog.nextGame() }}, 'nextGame')
 
     function debugIncrementToNextGame() {

@@ -20,6 +20,7 @@ export const CONSTANTS = {
 // ********************   Load Assets
 // **********************************************************************
 let assetsToLoad = [] 
+// eslint-disable-next-line no-unused-vars
 let assetsLoaded = 0
 const music = document.querySelector('#music')
 music.addEventListener('canplaythrough', loadHandler, false)
@@ -38,6 +39,7 @@ assetsToLoad.push(explosionSound)
 
 function loadHandler() {
   assetsLoaded++
+  
   music.removeEventListener('canplaythrough', loadHandler, false)
   shootSound.removeEventListener('canplaythrough', loadHandler, false)
   // music.play()
@@ -49,46 +51,36 @@ function loadHandler() {
 // ********************   Setup Game: PHASE_SETUP
 // **********************************************************************
 
-// Read URL for match state (till proper match store solution)
-const parsedURL = new URL(window.location.href)
-const networkType = parsedURL.searchParams.get('networkType')
-const matchLength = Number(parsedURL.searchParams.get('matchLength'))
-const privacy = parsedURL.searchParams.get('privacy')
-const red = Number(parsedURL.searchParams.get('red'))
-const black = Number(parsedURL.searchParams.get('black'))
-const gameNo = Number(parsedURL.searchParams.get('gameNo'))
-
-let match = {
-  networkType,
-  privacy,
-  matchLength,
-  gameNo,
-  red,
-  black,
-}
-console.log(`oldmatch`, match)
-
 // TODO if no sessionStorage values, send an alert to do game settings
 //    and location.replace to game settings page
-let newmatch = {
-  networkType: sessionStorage.getItem('networkType'),
-  privacy: sessionStorage.getItem('privacy'),
-  matchLength: sessionStorage.getItem('matchLength'),
-  gameNo: sessionStorage.getItem('gameNo'),
-  red: sessionStorage.getItem('red'),
-  black: sessionStorage.getItem('black'),
-}
-console.log(`newmatch`, newmatch)
 
-for (let [key,val] of Object.entries(newmatch)) {
-  // conditional is conservative and knowably overdetermined
-  if (val === '' || val === null || val === undefined) {
-    console.log(`badval detected via for...of`, key, ':', val)
+let match = {}
+try {
+  match = initMatch()
+} catch (err) {
+  alert('Session data missing or incomplete, setup a new match')
+  window.location.replace('/')
+}
+
+function initMatch() {
+  let match = {
+    networkType: sessionStorage.getItem('networkType'),
+    privacy: sessionStorage.getItem('privacy'),
+    matchLength: Number(sessionStorage.getItem('matchLength')),
+    gameNo: Number(sessionStorage.getItem('gameNo')),
+    red: Number(sessionStorage.getItem('red')),
+    black: Number(sessionStorage.getItem('black')),
   }
-}
+  console.log(`initialized match:`, match)
 
-if (Object.values(newmatch).some(val => val === '' || val === null || val === undefined)) {
-  console.log(`badval detected via functional conditional`, )
+  for (let [key,val] of Object.entries(match)) {
+    // conditional is conservative and knowably overdetermined
+    if (val === '' || val === null || val === undefined) {
+      console.log(`badval detected via for...of`, key, ':', val)
+      throw new Error(`Detected missing match value, corrupt sessionStorage. key,val: ${key}: ${val}`)
+    }
+  }
+  return match
 }
 
 
@@ -117,7 +109,7 @@ if (import.meta.env.DEV) {
   //  thus start with debugMode on
   // Yet enable debugMode off on gameNo 0
   // For subsequent games allow anchor to determine debugMode
-  if (parsedURL.searchParams.get('gameNo') === '1' 
+  if (match.gameNo === 1 
     && window.location.hash === '') {
       window.location.hash = '#debugmode'
   }

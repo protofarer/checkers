@@ -50,7 +50,7 @@ export default class EndDialog {
     this.modalChildren.push(this.nextGameButton)
 
     // **********************************************************************
-    // ********************   Another Match Button
+    // ********************   Start New Match Button
     // **********************************************************************
     const newMatchButtonData = {
       origin: {
@@ -83,44 +83,20 @@ export default class EndDialog {
   }
 
   nextGame() {
-    // Load next, new game by replacing URL (no history) with incremented
-    //  (or non-incremented eg: restart or debug reset) match search params
-    // Accessible via EndDialog button and debugGUI
+    // Accessed by EndDialog button and debugGUI
+    // Solely responsible for sessionStorage management
+    //   While game is running easier to use match object
     console.log(`%cIN nextgame 1st line, match`, 'color:orange', this.game.match)
     
     if (this.game.winner !== CONSTANTS.BLANK) {
       this.game.match.gameNo++
     }
 
-    // Use window instead of document: https://stackoverflow.com/questions/2430936/whats-the-difference-between-window-location-and-document-location-in-javascrip
-    const currURL = new URL(window.location.href)
-    const currDebugMode = window.location.hash
-    let nextSearchParams = new URLSearchParams(currURL.search)
-
-    for (let k of nextSearchParams.keys()) {
-      nextSearchParams.set(k, this.game.match[k])
-      // console.log(`setting nextSearchParams`,k, this.game.match[k] )
+    for (let [key, val] of Object.entries(this.game.match)) {
+      sessionStorage.setItem(key, val)
     }
-    const newURL = location.origin 
-      + '/game/index.html?' 
-      + nextSearchParams.toString()
-      + currDebugMode
 
-    if (this.game.winner === CONSTANTS.BLANK) {
-      // DRAW, reset state
-      // WARN problematic in so far as no new information is recorded for
-      //  draws, eg in the future, should system keep track of an 
-      //  account's games played, draws would have to be recorded
-      //  to the account as soon as they are decided and have little impact
-      //  elsewhere.
-      //
-      //  Also, the URL for games has yet to be robustly schemed out
-      //
-      //  Will cause bugs when there is incidental diff in location.hash
-      //  due to debugmode activation.
-      window.location.reload()
-    }
-    window.location.replace(newURL)
+    window.location.reload()
   }
 
   hide() {
