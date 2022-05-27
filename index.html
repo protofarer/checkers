@@ -5,17 +5,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any">
-  <title>Checkers Start Menu</title>
+  <link rel="stylesheet" href="/index.css">
+  <title>DAoC Setup</title>
 </head>
 <body>
   <audio id="settingsMusic">
     <source src="game/sounds/music/play.mp3" type="audio/mpeg" loop>
   </audio>
-  <a href="/game/index.html">Game</a>
-  <fieldset>
-    <legend><h1>Setup Match</h1></legend>
+    <div class="superheader">
+      <div id="topDiscs"></div>
+      <div class="header">
+        <canvas id="leftDisc"></canvas>
+        <canvas id="animatedText"></canvas>
+        <canvas id="rightDisc"></canvas>
+      </div>
+      <div id="botDiscs"></div>
+    </div>
     <form action="/game/index.html" method="get">
-      <fieldset>
+      <fieldset class="group">
         <legend><h2>Select Network Type</h2></legend>
         <div>
           <label>
@@ -38,7 +45,7 @@
           <!-- </label> -->
         </div>
       </fieldset>
-        <fieldset>
+      <fieldset class="group">
         <legend><h2>Select Match Length</h2></legend>
         <div>
           <label>
@@ -69,7 +76,7 @@
           </label>
         </div>
       </fieldset>
-      <fieldset>
+      <fieldset class="group">
         <legend><h2>Select privacy</h2></legend>
         <div>
           <label>
@@ -108,7 +115,6 @@
       >
       <button type="submit">Play</button>
     </form>
-    </fieldset>
-    <script src="/index.js"></script>
+    <script src="/index.js" type="module"></script>
 </body>
 </html>

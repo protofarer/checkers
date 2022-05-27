@@ -1,0 +1,52 @@
+
+body {
+  margin: 0;
+  padding: 10px;
+  font-family: Arial;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+}
+button {
+  margin: 10px;
+  font-size: x-large;
+}
+fieldset {
+  border-radius: 10px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.superheader {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.header {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+#topDiscs, #botDiscs {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.group > div {
+  width: 100%;
+  font-size: larger;
+}
+
+@media screen and (min-width: 600px) {
+  body {
+    width: 600px;
+  }
+  
+  .contentContainer {
+    padding: 1rem;
+  }
+} 
