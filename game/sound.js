@@ -16,6 +16,7 @@ export default function initSounds() {
     click: [],
     victory: [],
     king: [],     // 1: kingcrown, 2: kingdeath
+    draw: []
   }
 
   const music1 = document.querySelector('#introMusic1')
@@ -57,8 +58,11 @@ export default function initSounds() {
   const kingcrownSound = document.querySelector('#kingcrown')
   sounds.king.push(kingcrownSound)
 
- const kingdeathSound = document.querySelector('#kingdeath')
+  const kingdeathSound = document.querySelector('#kingdeath')
   sounds.king.push(kingdeathSound)
+
+  const drawSound = document.querySelector('#draw')
+  sounds.draw.push(drawSound)
 
   function loadSounds() {
     for (let soundsOfType of Object.values(sounds)) {

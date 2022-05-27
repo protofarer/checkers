@@ -110,7 +110,12 @@ export default class EndDialog {
   show() {
     // This Modal Dialog start drawing in shown state 
     // (setup as needed)
-    this.game.winner !== CONSTANTS.BLANK && this.game.play.playRandomVictorySound()
+    if (this.game.winner !== CONSTANTS.BLANK) {
+      this.game.play.playRandomVictorySound()
+    } else {
+      this.game.sounds.draw[0].currentTime = 0
+      this.game.sounds.draw[0].play()
+    }
     this.isShown = true
     this.draw()
   }
