@@ -22,26 +22,8 @@ export default class Game {
     this.ctx = this.ui.canvas.getContext('2d')
 
     this.board = this.debugMode
-      ? [ 
-          [0,0,0,0,0,0,0,0],
-          [1,0,0,0,2,0,2,0],
-          [0,2,0,0,0,0,0,0],
-          [2,0,0,0,2,0,0,0],
-          [0,0,0,0,0,1,0,1],
-          [0,0,0,0,1,0,0,0],
-          [0,1,0,0,0,1,0,2],
-          [0,0,0,0,0,0,0,0]
-        ]
-      : [ 
-          [0,2,0,2,0,2,0,2],
-          [2,0,2,0,2,0,2,0],
-          [0,2,0,2,0,2,0,2],
-          [0,0,0,0,0,0,0,0],
-          [0,0,0,0,0,0,0,0],
-          [1,0,1,0,1,0,1,0],
-          [0,1,0,1,0,1,0,1],
-          [1,0,1,0,1,0,1,0],
-        ]
+      ? CONSTANTS.BOARD_INIT_DEBUG
+      : CONSTANTS.BOARD_INIT_PROD
 
     this.discs = []
     
@@ -117,7 +99,6 @@ export default class Game {
     this.rect = this.ui.canvas.getBoundingClientRect()
 
     this.ghostSourceDisc = null
-
 
     this.initDiscs()
     this.updateDiscActors()
