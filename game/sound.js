@@ -66,11 +66,7 @@ export default function initSounds() {
 
   function loadSounds() {
     for (let soundsOfType of Object.values(sounds)) {
-      console.log(`soundType`, soundsOfType)
-      
       soundsOfType.forEach(s => {
-        console.log(`sound`, s)
-        
         s.addEventListener('canplaythrough', soundLoadHandler, false)
         s.load()
       })

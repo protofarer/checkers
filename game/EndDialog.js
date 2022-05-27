@@ -74,6 +74,7 @@ export default class EndDialog {
 
     // Start this and its children initialize hidden
     this.hide()
+    this.animateStep = 0
   }
 
   resetMatch() {
@@ -86,7 +87,7 @@ export default class EndDialog {
     // Accessed by EndDialog button and debugGUI
     // Solely responsible for sessionStorage management
     //   While game is running easier to use match object
-    console.log(`%cIN nextgame 1st line, match`, 'color:orange', this.game.match)
+    // console.log(`%cIN nextgame 1st line, match`, 'color:orange', this.game.match)
     
     if (this.game.winner !== CONSTANTS.BLANK) {
       this.game.match.gameNo++
@@ -137,21 +138,12 @@ export default class EndDialog {
     )
     if (this.game.winner !== CONSTANTS.BLANK) {
       this.game.ctx.fillStyle = 'green'
-      if (
-        this.game.match.red === Math.ceil(this.game.match.matchLength / 2) ||
-        this.game.match.black === Math.ceil(this.game.match.matchLength / 2)
-      ) {
-        this.game.ctx.font = 'bold 48px Arial'
-        this.game.ctx.fillText(
-          'WINS Game and Match!',
-          25, 155
-        )
-        } else {
+      if (this.game.match.gameNo < Math.ceil(this.game.match.matchLength / 2)) {
           this.game.ctx.fillText(
             'WINS!',
             200, 155
           )
-        }
+      }
     }
   }
 
@@ -198,8 +190,58 @@ export default class EndDialog {
         this.nextGameButton.show()
       }
       this.game.ctx.restore()
+
+      if (
+        this.game.match.red === Math.ceil(this.game.match.matchLength / 2) ||
+        this.game.match.black === Math.ceil(this.game.match.matchLength / 2)
+      ) {
+        // this.game.ctx.font = 'bold 48px Arial'
+        // this.game.ctx.fillText(
+        //   'WINS Game and Match!',
+        //   25, 155
+        // )
+        this.animateMatchVictoryText()
+      }
     } else {
       console.log(`Attempted to draw EndDialog while isShown=false`, )
     }
+  }
+
+  drawMatchVictoryText() {
+    // canvas.style.border = '1px dotted green'
+    this.animateStep++
+    
+    this.game.ctx.font = 'bold 48px courier'
+    this.game.ctx.fillStyle = 'hsl(0, 50%, 50%)'
+
+    const drawLetter = (char, x, y, phase=0, ) => {
+
+      const colorAngle = Math.floor((this.animateStep + phase)) % 360
+      this.game.ctx.fillStyle = `hsl(${colorAngle}, 100%, 40%)`
+      this.game.ctx.fillText(char, x + 5, y)
+
+    }
+
+    const text = 'Wins Game and Match!'
+    
+    return () => {
+      for (let i = 0; i < text.length; i++) {
+        if (text[i] !== ' ') {
+          drawLetter(text[i], i*30, 150, i*20)
+        }
+      }
+    }
+  }
+
+  animateMatchVictoryText() {
+    this.game.ctx.save()
+    this.game.ctx.translate(this.offset.x, this.offset.y)
+
+    // this.game.ctx.clearRect(0, 0, 600, 40)
+    this.drawMatchVictoryText()()
+
+    this.game.ctx.restore()
+
+    requestAnimationFrame(this.animateMatchVictoryText.bind(this))
   }
 }
