@@ -14,9 +14,21 @@ export const ENV = new (function() {
 // eslint-disable-next-line no-unused-vars
 let assetsLoaded = 0
 
+
+let sounds = {
+  move: [],
+  capture: [],
+  death: [],
+  music: [],
+  click: [],
+  victory: [],
+}
 let moveSounds = []
 let captureSounds = []
 let deathSounds = []
+let musics = []
+let clickSounds = []
+let victorySounds = []
 
 const introMusic = document.querySelector(
   Math.random() > 0.5 ? '#introMusic1' : '#introMusic2'
@@ -25,74 +37,74 @@ introMusic.addEventListener('canplaythrough', loadHandler, false)
 introMusic.load()
 
 const moveSound1 = document.querySelector('#move1')
-moveSound1.addEventListener('canplaythrough', loadHandler, false)
-moveSound1.load()
-moveSounds.push(moveSound1)
+sounds.move.push(moveSound1)
 
 const moveSound2 = document.querySelector('#move2')
-moveSound2.addEventListener('canplaythrough', loadHandler, false)
-moveSound2.load()
-moveSounds.push(moveSound2)
+sounds.move.push(moveSound2)
 
 const captureSound1 = document.querySelector('#capture1')
-captureSound1.addEventListener('canplaythrough', loadHandler, false)
-captureSound1.load()
-captureSounds.push(captureSound1)
+sounds.capture.push(captureSound1)
 
 const captureSound2 = document.querySelector('#capture2')
-captureSound2.addEventListener('canplaythrough', loadHandler, false)
-captureSound2.load()
-captureSounds.push(captureSound2)
+sounds.capture.push(captureSound2)
 
 const deathSound1 = document.querySelector('#death1')
-deathSound1.addEventListener('canplaythrough', loadHandler, false)
-deathSound1.load()
-deathSounds.push(deathSound1)
+sounds.death.push(deathSound1)
 
 const deathSound2 = document.querySelector('#death2')
-deathSound2.addEventListener('canplaythrough', loadHandler, false)
-deathSound2.load()
-deathSounds.push(deathSound2)
+sounds.death.push(deathSound2)
 
 const deathSound3 = document.querySelector('#death3')
-deathSound3.addEventListener('canplaythrough', loadHandler, false)
-deathSound3.load()
-deathSounds.push(deathSound3)
+sounds.death.push(deathSound3)
 
 export const kingcrownSound = document.querySelector('#kingcrown')
-kingcrownSound.addEventListener('canplaythrough', loadHandler, false)
+kingcrownSound.addEventListener('canplaythrough', soundLoadHandler, false)
 kingcrownSound.load()
 
 export const kingdeathSound = document.querySelector('#kingdeath')
-kingdeathSound.addEventListener('canplaythrough', loadHandler, false)
+kingdeathSound.addEventListener('canplaythrough', soundLoadHandler, false)
 kingdeathSound.load()
 
-let clickSounds = []
 const boardClickSound1 = document.querySelector('#boardClick1')
-boardClickSound1.addEventListener('canplaythrough', loadHandler, false)
-boardClickSound1.load()
-clickSounds.push(boardClickSound1)
+sounds.click.push(boardClickSound1)
 
 const boardClickSound2 = document.querySelector('#boardClick2')
-boardClickSound2.addEventListener('canplaythrough', loadHandler, false)
-boardClickSound2.load()
-clickSounds.push(boardClickSound2)
+sounds.click.push(boardClickSound2)
 
 const boardClickSound3 = document.querySelector('#boardClick3')
-boardClickSound3.addEventListener('canplaythrough', loadHandler, false)
-boardClickSound3.load()
-clickSounds.push(boardClickSound3)
+sounds.click.push(boardClickSound3)
 
-function loadHandler() {
+const victorySound1 = document.querySelector('#victory1')
+sounds.victory.push(victorySound1)
+
+const victorySound2 = document.querySelector('#victory2')
+sounds.victory.push(victorySound2)
+
+function loadSounds() {
+  for (let soundsOfType of Object.values(sounds)) {
+    console.log(`soundType`, soundsOfType)
+    
+    soundsOfType.forEach(s => {
+      console.log(`sound`, s)
+      
+      s.addEventListener('canplaythrough', soundLoadHandler, false)
+      s.load()
+    })
+  }
+}
+loadSounds()
+
+function soundLoadHandler() {
   assetsLoaded++
   
   // introMusic.removeEventListener('canplaythrough', loadHandler, false)
-  moveSound1.removeEventListener('canplaythrough', loadHandler, false)
-  moveSound2.removeEventListener('canplaythrough', loadHandler, false)
-  captureSound1.removeEventListener('canplaythrough', loadHandler, false)
-  captureSound2.removeEventListener('canplaythrough', loadHandler, false)
-  deathSound2.removeEventListener('canplaythrough', loadHandler, false)
-  deathSound2.removeEventListener('canplaythrough', loadHandler, false)
+  for (let soundsOfType of Object.values(sounds)) {
+    soundsOfType.forEach(s => {
+      s.removeEventListener('canplaythrough', soundLoadHandler, false)
+    })
+  }
+  kingcrownSound.removeEventListener('canplaythrough', soundLoadHandler, false)
+  kingdeathSound.removeEventListener('canplaythrough', soundLoadHandler, false)
   introMusic.play()
   introMusic.volume = 0.1
 }
@@ -137,8 +149,9 @@ export const playRandomCaptureSound = (disc=null) => {
   return deathSound
 }
 
-export const playRandomMoveSound = playRandomSoundType(moveSounds)
+export const playRandomMoveSound = playRandomSoundType(sounds.move)
 export const playRandomClickSound = playRandomSoundType(clickSounds)
+export const playRandomVictorySound = playRandomSoundType(victorySounds)
 
 function playRandomSoundType(sounds) {
   return () => {

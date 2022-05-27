@@ -1,5 +1,6 @@
 import ModalButton from './ModalButton'
 import CONSTANTS from './Constants'
+import { playRandomVictorySound } from '.'
 export default class EndDialog {
   // Stops and Starts the play loop
   // CSDR removing start stop and letting draw run in background
@@ -110,6 +111,7 @@ export default class EndDialog {
   show() {
     // This Modal Dialog start drawing in shown state 
     // (setup as needed)
+    this.game.winner !== CONSTANTS.BLANK && playRandomVictorySound()
     this.isShown = true
     this.draw()
   }

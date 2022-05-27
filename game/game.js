@@ -481,7 +481,6 @@ export default class Game {
   end() {
     // Initiate end game phase
     
-    // Process data
     if (this.winner === CONSTANTS.BLACK) {
       this.match.black++
     } else if (this.winner === CONSTANTS.RED) {
