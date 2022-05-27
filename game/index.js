@@ -67,6 +67,22 @@ export const kingdeathSound = document.querySelector('#kingdeath')
 kingdeathSound.addEventListener('canplaythrough', loadHandler, false)
 kingdeathSound.load()
 
+let clickSounds = []
+const boardClickSound1 = document.querySelector('#boardClick1')
+boardClickSound1.addEventListener('canplaythrough', loadHandler, false)
+boardClickSound1.load()
+clickSounds.push(boardClickSound1)
+
+const boardClickSound2 = document.querySelector('#boardClick2')
+boardClickSound2.addEventListener('canplaythrough', loadHandler, false)
+boardClickSound2.load()
+clickSounds.push(boardClickSound2)
+
+const boardClickSound3 = document.querySelector('#boardClick3')
+boardClickSound3.addEventListener('canplaythrough', loadHandler, false)
+boardClickSound3.load()
+clickSounds.push(boardClickSound3)
+
 function loadHandler() {
   assetsLoaded++
   
@@ -122,6 +138,7 @@ export const playRandomCaptureSound = (disc=null) => {
 }
 
 export const playRandomMoveSound = playRandomSoundType(moveSounds)
+export const playRandomClickSound = playRandomSoundType(clickSounds)
 
 function playRandomSoundType(sounds) {
   return () => {

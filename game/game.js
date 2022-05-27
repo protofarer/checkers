@@ -4,6 +4,7 @@ import {
   playRandomCaptureSound,
   kingdeathSound,
   kingcrownSound,
+  playRandomClickSound,
 } from '.'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
@@ -422,6 +423,8 @@ export default class Game {
         } else {
           this.msg = 'That isn\'t your disc'
         }
+      } else {
+        playRandomClickSound()
       }
     }
 
