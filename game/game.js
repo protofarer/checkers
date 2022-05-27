@@ -1,14 +1,8 @@
 import Disc from './Disc'
-import { 
-  playRandomMoveSound,
-  playRandomCaptureSound,
-  kingdeathSound,
-  kingcrownSound,
-  playRandomClickSound,
-} from '.'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
+import initSounds from './sound'
 
 export default class Game {
   constructor (match, ui, debugMode=false, debugOverlay=false) {
@@ -103,6 +97,10 @@ export default class Game {
     this.initDiscs()
     this.updateDiscActors()
     this.setupEventListeners()
+
+    const Sounds = initSounds()
+    this.sounds = Sounds.sounds
+    this.play = Sounds.play
   }
 
   passTurn(playerColor) {
@@ -247,12 +245,12 @@ export default class Game {
       grabbedDisc.isKing = true
       if (deathSound !== null) {
         deathSound.addEventListener('ended', () => {
-          kingcrownSound.currentTime = 0
-          kingcrownSound.play()
+          this.sounds.king[0].currentTime = 0
+          this.sounds.king[0].play()
         }, { once: true })
       } else {
-        kingcrownSound.currentTime = 0
-        kingcrownSound.play()
+        this.sounds.king[0].currentTime = 0
+        this.sounds.king[0].play()
       }
       this.nextTurn()
     } else if (this.hasCaptureChainStarted && this.enticed.length === 0) {
@@ -405,7 +403,7 @@ export default class Game {
           this.msg = 'That isn\'t your disc'
         }
       } else {
-        playRandomClickSound()
+        this.play.playRandomClickSound()
       }
     }
 
@@ -437,10 +435,10 @@ export default class Game {
             const capturedDisc = this.capture(grabbedDisc, validCaptureMove)
             let deathSound
             if (capturedDisc.isKing) {
-              kingdeathSound.currentTime = 0
-              kingdeathSound.play()
+              this.sounds.king[1].currentTime = 0
+              this.sounds.king[1].play()
             } else {
-              deathSound = playRandomCaptureSound()
+              deathSound = this.play.playRandomCaptureSound()
             }
             this.move(grabbedDisc, validCaptureMove, deathSound)
           } else {
@@ -455,7 +453,7 @@ export default class Game {
           if (nonCaptureMove) {
             // DISPATCH valid carefree move
             this.move(grabbedDisc, nonCaptureMove)
-            playRandomMoveSound()
+            this.play.playRandomMoveSound()
           } else {
             // DISPATCH invalid-mover-move msg
             this.msg = 'Invalid move. Try again'
