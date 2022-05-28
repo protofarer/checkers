@@ -67,7 +67,11 @@ export default function initSounds() {
   function loadSounds() {
     for (let soundsOfType of Object.values(sounds)) {
       soundsOfType.forEach(s => {
-        s.addEventListener('canplaythrough', soundLoadHandler, false)
+        s.addEventListener(
+          'canplaythrough', 
+          soundLoadHandler, 
+          { capture: false, once: true }
+        )
         s.load()
       })
     }
@@ -77,14 +81,11 @@ export default function initSounds() {
   function soundLoadHandler() {
     assetsLoaded++
     
-    for (let soundsOfType of Object.values(sounds)) {
-      soundsOfType.forEach(s => {
-        s.removeEventListener('canplaythrough', soundLoadHandler, false)
-      })
-    }
-
-    kingcrownSound.removeEventListener('canplaythrough', soundLoadHandler, false)
-    kingdeathSound.removeEventListener('canplaythrough', soundLoadHandler, false)
+    // for (let soundsOfType of Object.values(sounds)) {
+    //   soundsOfType.forEach(s => {
+    //     s.removeEventListener('canplaythrough', soundLoadHandler, false)
+    //   })
+    // }
 
     let randomMusic = playRandomMusic()
     randomMusic.volume = 0.1
