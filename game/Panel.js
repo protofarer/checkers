@@ -31,31 +31,6 @@ export default class Panel {
     this.blackJailOffsetX = 20
     this.blackJailOffsetY = this.height - 20
 
-
-    // **********************************************************************
-    // ********************   TMP DEBUG ONLY for removeListeners tx
-    // **********************************************************************
-    // const fooButtonData = {
-    //   origin: {
-    //     x: this.centerX - 300,
-    //     y: this.separatorLowerY - 200,    // button height and gap
-    //   },
-    //   label: 'FOO!',
-    //   labelColor: 'red',
-    //   areaFill: 'hsl(220,40%,97%)',
-    //   borderStroke: 'red',
-    //   name: 'fookwah',
-    // }
-    // this.fooButton = new Button(
-    //   this.game.ctx, 
-    //   fooButtonData,
-    //   this.offset,
-    //   () => { console.log('foo clicky')},
-    //   { signal: this.game.controller.signal }
-    // )
-    // this.drawableChildren.push(this.fooButton)
-
-
     // **********************************************************************
     // ********************   Reset Button (deprecated, placeholder for new button)
     // **********************************************************************
@@ -275,6 +250,8 @@ export default class Panel {
     this.game.ctx.lineWidth = 1
     this.game.ctx.strokeStyle = 'rgb(0,0,0,0.5)'
     this.game.ctx.strokeRect(0, 2, this.width - 2, this.height - 4)
+    this.game.ctx.fillStyle = 'hsl(45,80%,93%)'
+    this.game.ctx.fillRect(0, 2, this.width - 2, this.height - 4)
 
     // Dividing line between players' respective info subpanels
     this.game.ctx.moveTo(15, this.separatorUpperY)

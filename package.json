@@ -6,6 +6,7 @@
     "dev": "vite --host",
     "build": "NODE_ENV=production vite build",
     "deploy": "sh deploy.sh",
+    "qdeploy": "sh deploy.sh quick",
     "preview": "vite preview",
     "lint": "eslint src"
   },

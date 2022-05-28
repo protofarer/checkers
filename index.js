@@ -94,7 +94,7 @@ function drawDAOC() {
 
   function drawLetter(char, x, y, phase=0, ) {
     const colorAngle = Math.floor((animateStep + phase)) % 360
-    ctx.fillStyle = `hsl(${colorAngle}, 100%, 40%)`
+    ctx.fillStyle = `hsl(${colorAngle}, 100%, 50%)`
     ctx.fillText(char, x, y)
   }
 
@@ -105,7 +105,7 @@ function drawDAOC() {
     ctx.scale(1,2)
     for (let i = 0; i < text.length; i++) {
       if (text[i] !== ' ') {
-        drawLetter(text[i], i*17, 45, i*20)
+        drawLetter(text[i], i*17, 45, i*135)
       }
     }
     ctx.restore()

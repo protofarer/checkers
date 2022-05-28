@@ -68,7 +68,7 @@ export default class Game {
       y: this.baseThickness,
     }
 
-    this.boardPanelGap = 15
+    this.boardPanelGap = 8
 
     this.endDialog = new EndDialog(this)
 
@@ -495,8 +495,10 @@ export default class Game {
   drawBoard() {
     const darkHue = 18
     const lightHue = 45
+
     this.ctx.save()
     this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
+
     for (let row = 0;row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath()
@@ -523,18 +525,50 @@ export default class Game {
   drawBaseBoard() {
     // RFCT reference directly
     const origin = { x: 0, y: 0 }
-    this.ctx.beginPath()
 
     // Filler
+    this.ctx.beginPath()
     this.ctx.fillStyle = 'hsla(28, 55%, 55%, 1)'
-    this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
+    // this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
+
+    this.ctx.strokeStyle = 'hsla(28, 55%, 55%, 1)'
+    this.ctx.lineWidth = this.baseThickness
+    this.ctx.lineCap = 'round'
+    this.ctx.miterLimit = 1
+
+    this.ctx.moveTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
+    this.ctx.lineTo(this.boardWidth + 1.5*this.baseThickness, origin.y + this.baseThickness/2)
+    this.ctx.stroke()
+
+    this.ctx.lineTo(this.boardWidth + 1.5*this.baseThickness, this.boardHeight + 1.5 * this.baseThickness)
+    this.ctx.stroke()
+
+    this.ctx.lineTo(origin.x + this.baseThickness/2,  this.boardHeight + 1.5 * this.baseThickness)
+    this.ctx.stroke()
+
+    this.ctx.lineTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
+    this.ctx.stroke()
 
     // Joints
-    this.ctx.strokeStyle = 'black'
-    this.ctx.moveTo(origin.x, origin.y)
-    this.ctx.lineTo(this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
-    this.ctx.moveTo(origin.x, origin.y + this.boardHeight + 2 * this.baseThickness)
-    this.ctx.lineTo(origin.x + this.boardWidth + 2 * this.baseThickness, origin.y)
+    this.ctx.beginPath()
+    this.ctx.strokeStyle = 'hsla(28, 55%, 40%,1)'
+    this.ctx.lineWidth = 2
+    this.ctx.moveTo(
+      origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
+      origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
+    )
+    this.ctx.lineTo(
+      this.boardWidth - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2), 
+      this.boardHeight - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2)
+    )
+    this.ctx.moveTo(
+      origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
+      origin.y - 1 + this.boardHeight + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2)
+    )
+    this.ctx.lineTo(
+      origin.x - 1 + this.boardWidth + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2), 
+      origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
+    )
     this.ctx.stroke()
   }
 
