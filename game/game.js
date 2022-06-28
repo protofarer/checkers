@@ -2,7 +2,7 @@ import Disc from './Disc'
 import CONSTANTS from './Constants'
 import Panel from './Panel'
 import EndDialog from './EndDialog'
-import initSounds from './sound'
+import initSounds from './audio'
 
 export default class Game {
   constructor (match, ui, debugMode=false, debugOverlay=false) {

@@ -63,6 +63,8 @@ export default function initSounds() {
 
   const drawSound = document.querySelector('#draw')
   sounds.draw.push(drawSound)
+  
+  const playRandomMusic = playRandomSoundType(sounds.music)
 
   function loadSounds() {
     for (let soundsOfType of Object.values(sounds)) {
@@ -75,6 +77,9 @@ export default function initSounds() {
         s.load()
       })
     }
+    
+    let randomMusic = playRandomMusic()
+    randomMusic.volume = 0.1
   }
   loadSounds()
 
@@ -87,8 +92,7 @@ export default function initSounds() {
     //   })
     // }
 
-    let randomMusic = playRandomMusic()
-    randomMusic.volume = 0.1
+
   }
 
   // **********************************************************************
@@ -132,7 +136,6 @@ export default function initSounds() {
   const playRandomMoveSound = playRandomSoundType(sounds.move)
   const playRandomClickSound = playRandomSoundType(sounds.click)
   const playRandomVictorySound = playRandomSoundType(sounds.victory)
-  const playRandomMusic = playRandomSoundType(sounds.music)
   return { 
     sounds, 
     play: {
