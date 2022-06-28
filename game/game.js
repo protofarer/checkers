@@ -503,7 +503,7 @@ export default class Game {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath()
         if (( row + col) % 2 === 0) {
-          this.ctx.fillStyle = `hsl(${lightHue}, 70%, 72%)`
+          this.ctx.fillStyle = `hsl(${lightHue}, 70%, 80%)`
           this.ctx.fillRect(col * 100, row * 100, 100, 100)
         } else {
           this.ctx.fillStyle = `hsl(${darkHue}, 25%, 30%)`
