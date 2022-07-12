@@ -94,18 +94,18 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   // * debuggery
   // **********************************************************************
 
-  let frames = { fps: 0, times: [] }
-  if (import.meta.env.DEV) {
-    setupDebugGUI(game, ui, frames)
-  }
+  // let frames = { fps: 0, times: [] }
+  // if (import.meta.env.DEV) {
+  //   setupDebugGUI(game, ui, frames)
+  // }
 
-  function calcFPS(t, frames) {
-    while (frames.times.length > 0 && frames.times[0] <= t - 1000) {
-      frames.times.shift()
-    }
-    frames.times.push(t)
-    frames.fps = frames.times.length
-  }
+  // function calcFPS(t, frames) {
+  //   while (frames.times.length > 0 && frames.times[0] <= t - 1000) {
+  //     frames.times.shift()
+  //   }
+  //   frames.times.push(t)
+  //   frames.fps = frames.times.length
+  // }
 
   // **********************************************************************
   // **********************************************************************
@@ -116,7 +116,7 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
     game.drawAll()
     loopID = requestAnimationFrame(draw)
 
-    calcFPS(t, frames)
+    // calcFPS(t, frames)
 
     // Enter PHASE_END via game.checkEndCondition()
     if (game.phase === CONSTANTS.PHASE_END) {
