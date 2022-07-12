@@ -90,17 +90,33 @@ let ui = setupExternalUI('htmlUI')
 export function startNewGame(debugMode=false, debugOverlay=false) {
   let game = new Game(match, ui, debugMode, debugOverlay)
 
-  // will lil-gui tear itself down, assume yes once startGame completes
-  // JS will cleanup
+  // **********************************************************************
+  // * debuggery
+  // **********************************************************************
+
+  let frames = { fps: 0, times: [] }
   if (import.meta.env.DEV) {
-    setupDebugGUI(game, ui)
+    setupDebugGUI(game, ui, frames)
   }
 
+  function calcFPS(t, frames) {
+    while (frames.times.length > 0 && frames.times[0] <= t - 1000) {
+      frames.times.shift()
+    }
+    frames.times.push(t)
+    frames.fps = frames.times.length
+  }
+
+  // **********************************************************************
+  // **********************************************************************
+
   let loopID = requestAnimationFrame(draw)
-  function draw() {
+  function draw(t) {
     game.clr()
     game.drawAll()
     loopID = requestAnimationFrame(draw)
+
+    calcFPS(t, frames)
 
     // Enter PHASE_END via game.checkEndCondition()
     if (game.phase === CONSTANTS.PHASE_END) {
@@ -108,6 +124,7 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
       game.end()
     }
   }
+
 }
 startNewGame(initDebugMode, initDebugOverlay)
 

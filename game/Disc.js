@@ -118,8 +118,8 @@ export default class Disc {
     this.perimeter.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)
   }
 
-  isClicked(mouseCanvasX, mouseCanvasY) {
-    return this.ctx.isPointInPath(this.perimeter, mouseCanvasX, mouseCanvasY, 'nonzero')
+  isClicked(pointerCanvasX, pointerCanvasY) {
+    return this.ctx.isPointInPath(this.perimeter, pointerCanvasX, pointerCanvasY, 'nonzero')
   }
 
   toString() {

@@ -5,6 +5,12 @@ body {
   background-color: black;
   color: white;
 }
+#gameBody {
+  background-color: white;
+}
+#gameCanvas {
+  touch-action: none;
+}
 .container {
   display: flex;
   flex-flow: column nowrap;

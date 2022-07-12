@@ -2,7 +2,7 @@ import GUI from 'lil-gui'
 import CONSTANTS from './Constants'
 import { resetGame, } from '.'
 
-export default function setupDebugGUI(game, ui) {
+export default function setupDebugGUI(game, ui, frames) {
     const gui = new GUI()
     const rectpos = {
       left: `${Math.floor(game.rect.left)}`,
@@ -45,6 +45,7 @@ export default function setupDebugGUI(game, ui) {
     guiMatchState.add(game.match, 'red').listen()
     guiMatchState.add(game.match, 'black').listen()
 
+    gui.add(frames, 'fps').listen()
     gui.add(game, 'debugOverlay').listen()
     gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
 
@@ -87,11 +88,23 @@ export default function setupDebugGUI(game, ui) {
     }
 
     guiMatchTest.add({ debugIncrementToNextGame }, 'debugIncrementToNextGame')
-
     guiMatchTest.add({ navToRoot() { window.location.assign('/')}}, 'navToRoot')
+    
+    const guiPointerTracking = gui.addFolder('PointerTracking')
+    guiPointerTracking.add(game.pointerCoords.client, 'x').name('client.x').listen()
+    guiPointerTracking.add(game.pointerCoords.client, 'y').name('client.y').listen()
+    guiPointerTracking.add(game.pointerCoords.canvas, 'x').name('canvas.x').listen()
+    guiPointerTracking.add(game.pointerCoords.canvas, 'y').name('canvas.y').listen()
+    guiPointerTracking.add(game.pointerCoords.board, 'x').name('board.x').listen()
+    guiPointerTracking.add(game.pointerCoords.board, 'y').name('board.y').listen()
+    guiPointerTracking.add(game.pointerCoords.square, 'col').name('pointer.col').listen()
+    guiPointerTracking.add(game.pointerCoords.square, 'row').name('pointer.row').listen()
 
+    guiMatchState.show(false)
+    guiMatchTest.show(false)
     guiGamePositioning.show(false)
     guiMouseTracking.show(false)
+    guiPointerTracking.show(false)
 
     return [gui, guiGamePositioning, guiGameState, guiMouseTracking, guiMatchState, guiGameTest, guiMatchTest]
   }

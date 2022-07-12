@@ -136,6 +136,7 @@ export default function initSounds() {
   const playRandomMoveSound = playRandomSoundType(sounds.move)
   const playRandomClickSound = playRandomSoundType(sounds.click)
   const playRandomVictorySound = playRandomSoundType(sounds.victory)
+  
   return { 
     sounds, 
     play: {
