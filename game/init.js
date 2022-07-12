@@ -99,8 +99,8 @@ export default function setupExternalUI(id) {
   matchNo.innerText = 'Game: 1/3'
   turn.innerText = 'Turn: 1'
   status.innerText = 'Here is where messages for the players show up.'
-  turnIndicatorBlack.innerText = 'O'
-  turnIndicatorRed.innerText = 'O'
+  // turnIndicatorBlack.innerText = 'O'
+  // turnIndicatorRed.innerText = 'O'
 
   
   return { canvas }

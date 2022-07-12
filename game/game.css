@@ -26,7 +26,7 @@
 }
 
 .jail {
-  border: 1px dashed purple;
+  /* border: 1px dashed purple; */
   min-height: 15em;
 }
 
@@ -34,17 +34,25 @@
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  border: 1px dotted green;
+  align-items: center;
+  gap: 0.3em;
+  /* border: 1px dotted green; */
 }
 
 .turn-indicator {
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  width: 1em;
+  height: 1em;
+  background: grey;
+  border-radius: 50%;
   flex: 0 0 auto;
 }
 
 button {
   margin: 0 0.3em 0 0.3em;
   padding: 0.5em;
+  font-size: larger;
+  font-family: Arial;
   border-radius: 6px;
   border: none;
   box-shadow: 0 5px 10px hsl(0, 0%, 40%);
@@ -83,7 +91,7 @@ button:hover {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
-  border: 1px dotted green;
+  /* border: 1px dotted green; */
   border-bottom: 1px solid black;
 }
 
@@ -101,11 +109,29 @@ button:hover {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-evenly;
-  border: 1px dotted orange;
+  /* border: 1px dotted orange; */
   border-bottom: 1px solid black;
 }
 
 #info-status {
-  padding: 0.3em;
-  border: 1px dotted orange;
+  margin-top: 0.3em;
+  margin-left: 0.5em;
+  font-size: smaller;
+  background: white;
+  border-radius: 15px;
+  padding: 0.7em;
+  position: relative;
+  /* border: 1px dotted orange; */
+}
+
+#info-status:before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 1em;
+  width: 0;
+  height: 0;
+  border-top: 0.7em solid transparent;
+  border-right: 1.2em solid white;
+  border-bottom: 0.7em solid transparent;
 }
