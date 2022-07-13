@@ -1,7 +1,7 @@
-import Disc from './Disc'
+import Disc from './CanvasComponents/Disc'
 import CONSTANTS from './Constants'
-import Panel from './Panel'
-import EndDialog from './EndDialog'
+import Panel from './CanvasComponents/Panel'
+import EndDialog from './CanvasComponents/EndDialog'
 import initSounds from './audio'
 
 export default class Game {
@@ -12,15 +12,6 @@ export default class Game {
 
     this.match = match
 
-    this.ui = ui
-    this.ctx = this.ui.canvas.getContext('2d')
-
-    this.board = this.debugMode
-      ? CONSTANTS.BOARD_INIT_DEBUG
-      : CONSTANTS.BOARD_INIT_PROD
-
-    this.discs = []
-    
     this.mouseCoords = { 
       canvas: {
         x: 0, y: 0
@@ -39,7 +30,7 @@ export default class Game {
     // Captors and Movers determined only after a disc has changed positions.
     this.carefrees = []
     this.enticed = []
-    
+
     this.msg = ''
     this.turnCount = 1
     this.turnColor = CONSTANTS.BLACK
@@ -52,6 +43,17 @@ export default class Game {
     this.hasCaptureChainStarted = false
     this.lastPassedTurn = -1
     this.wasThisTurnPassed = false
+
+    this.ui = ui
+    this.ui.update(this)
+    this.ctx = this.ui.canvas.getContext('2d')
+
+    this.board = this.debugMode
+      ? CONSTANTS.BOARD_INIT_DEBUG
+      : CONSTANTS.BOARD_INIT_PROD
+
+    this.discs = []
+    
     
     this.boardHeight = 800
     this.boardWidth = 800
@@ -134,12 +136,12 @@ export default class Game {
         switch(this.board[i][j]) {
           case CONSTANTS.RED:
             this.discs.push(
-              new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.RED)
+              new Disc(this.ui.canvas, i, j, this.playAreaOffset, CONSTANTS.RED)
             )
             break
           case CONSTANTS.BLACK:
             this.discs.push(
-              new Disc(this.ctx, i, j, this.playAreaOffset, CONSTANTS.BLACK)
+              new Disc(this.ui.canvas, i, j, this.playAreaOffset, CONSTANTS.BLACK)
             )
             break
           case CONSTANTS.BLANK:
@@ -152,8 +154,8 @@ export default class Game {
     }
     if (this.debugMode) {
       for (let i = 0; i < 11; i++) {
-      this.captures.capturedBlacks.push(new Disc(this.ctx,9,9,this.playAreaOffset,CONSTANTS.BLACK))
-      this.captures.capturedReds.push(new Disc(this.ctx,9,9,this.playAreaOffset,CONSTANTS.RED))
+      this.captures.capturedBlacks.push(new Disc(this.ui.canvas,9,9,this.playAreaOffset,CONSTANTS.BLACK))
+      this.captures.capturedReds.push(new Disc(this.ui.canvas,9,9,this.playAreaOffset,CONSTANTS.RED))
       }
       this.captures.capturedBlacks[0].isKing = true
       this.captures.capturedReds[0].isKing = true
@@ -206,14 +208,15 @@ export default class Game {
     }
 
     function captureByDirection(direction, board) {
+      const opposingColor = disc.color === CONSTANTS.RED ? CONSTANTS.BLACK : CONSTANTS.RED
       // CSDR somehow binding board to this.board of Game
       if (disc.row + (2*disc.direction * direction) >= 0 &&
           disc.row + (2*disc.direction * direction) < 8) {
-        if ((board[disc.row + disc.direction * direction][disc.col - 1] === disc.opposite) && 
+        if ((board[disc.row + disc.direction * direction][disc.col - 1] === opposingColor) && 
           (board[disc.row + (2*disc.direction * direction)][disc.col - 2] === 0)) {
             captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col - 2 })
         }
-        if ((board[disc.row + disc.direction  * direction][disc.col + 1] === disc.opposite) &&
+        if ((board[disc.row + disc.direction  * direction][disc.col + 1] === opposingColor) &&
           (board[disc.row + (2*disc.direction * direction)][disc.col + 2] === 0)) {
             captureMoves.push({ row: disc.row + (2*disc.direction * direction), col: disc.col + 2 })
         }
@@ -291,6 +294,7 @@ export default class Game {
     capturedDisc.row = capturedDisc.col = 9
 
     this.hasCaptureChainStarted = true
+    this.ui.update(this)
     return capturedDisc
   }
 
@@ -339,6 +343,7 @@ export default class Game {
     this.msg = ''
     this.hasCaptureChainStarted = false
     this.updateDiscActors()
+    this.ui.update(this)
   }
 
   getActorType(disc) {
@@ -567,7 +572,7 @@ export default class Game {
       }
       console.log(`pointerup`, )
       const idx = this.ongoingTouchIndexById(e.pointerId)
-      this.ongoingTouches.splice(idx, 1);
+      this.ongoingTouches.splice(idx, 1)
       
 
       // WARN may not copy disc.center.x|y
@@ -591,7 +596,7 @@ export default class Game {
             const capturedDisc = this.capture(grabbedDisc, validCaptureMove)
             let deathSound
             if (capturedDisc.isKing) {
-              this.sounds.king[1].currentTime = 0
+              his.sounds.king[1].currentTime = 0
               this.sounds.king[1].play()
             } else {
               deathSound = this.play.playRandomCaptureSound()

@@ -1,6 +1,6 @@
 import Game from './game.js'
-import setupExternalUI from './init.js'
-import setupDebugGUI from './debugGUI.js'
+import externalUI from './WebComponents/PanelUI.js'
+import setupDebugGUI from './WebComponents/debugGUI.js'
 import CONSTANTS from './Constants'
 
 export const ENV = new (function() {
@@ -38,7 +38,7 @@ function initMatch() {
     red: Number(sessionStorage.getItem('red')),
     black: Number(sessionStorage.getItem('black')),
   }
-  console.log(`initialized match:`, match)
+  console.info(`Match initialized`, match)
 
   for (let [key,val] of Object.entries(match)) {
     // conditional is conservative and knowably overdetermined
@@ -81,13 +81,13 @@ if (import.meta.env.DEV) {
   initDebugOverlay = window.location.hash === '#debugmode' ? true : false
 }
 
-let ui = setupExternalUI('htmlUI')
 
 // **********************************************************************
 // ********************   Play Game: PHASE_PLAY
 // **********************************************************************
 
 export function startNewGame(debugMode=false, debugOverlay=false) {
+  let ui = new externalUI()
   let game = new Game(match, ui, debugMode, debugOverlay)
 
   // **********************************************************************

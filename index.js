@@ -1,4 +1,4 @@
-import Disc from './game/Disc'
+import BoardDisc from './game/CanvasComponents/Disc'
 
 const formEle = document.querySelector('form')
 
@@ -36,11 +36,11 @@ const ctxRight = canvasRight.getContext('2d')
 
 canvasLeft.width = canvasRight.width = canvasLeft.height = canvasRight.height = 105
 
-const disc1 = new Disc(ctxLeft, 0, 0, {x:1, y:1} , 1)
+const disc1 = new BoardDisc(canvasLeft, 0, 0, {x:1, y:1} , 1)
 disc1.radius = 20
 disc1.isKing = true
 
-const disc2 = new Disc(ctxRight, 0, 0, {x:1, y:1} , 1)
+const disc2 = new BoardDisc(canvasRight, 0, 0, {x:1, y:1} , 1)
 disc2.radius = 20
 disc2.isKing = true
 
@@ -52,7 +52,7 @@ function createDisc(color=null) {
   canvas.width = canvas.height = 105
   // canvas.style.border = '1px solid red'
 
-  const disc = new Disc(ctx, 0, 0, {x:1, y:1} , discColor)
+  const disc = new BoardDisc(canvas, 0, 0, {x:1, y:1} , discColor)
   disc.radius = 20
   disc.isKing = true
   return { disc, canvas, ctx }

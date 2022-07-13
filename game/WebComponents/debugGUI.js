@@ -1,6 +1,6 @@
 import GUI from 'lil-gui'
-import CONSTANTS from './Constants'
-import { resetGame, } from '.'
+import CONSTANTS from '../Constants'
+import { resetGame, } from '..'
 
 export default function setupDebugGUI(game, ui, frames) {
     const gui = new GUI()
@@ -8,12 +8,6 @@ export default function setupDebugGUI(game, ui, frames) {
       left: `${Math.floor(game.rect.left)}`,
       top: `${Math.floor(game.rect.top)}`
     }
-
-    // gui.add(
-    //   { pos: 'topright'}, 
-    //   'pos', 
-    //   ['topleft', 'botleft', 'botright', 'topright'])
-    //   .onChange(val =>  )
 
     const guiGamePositioning = gui.addFolder('GamePositioning') 
     guiGamePositioning.add(rectpos, 'left').name('rect.left').listen()
@@ -47,7 +41,10 @@ export default function setupDebugGUI(game, ui, frames) {
 
     gui.add(frames, 'fps').listen()
     gui.add(game, 'debugOverlay').listen()
-    gui.add(game, 'debugDiscPositionMarker', ['top', 'bottom', 'left', 'right', ])
+    gui.add(
+      game, 'debugDiscPositionMarker', 
+      ['top', 'bottom', 'left', 'right', '']
+    )
 
     // **********************************************************************
     // ********************   GAMETEST
