@@ -91,11 +91,11 @@ export default class BaseDisc {
     // Style disc fill and shadow according to disc type: ghost, red, or black
     if (this.isGrabbed) {
       this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.9)'
-      this.ctx.shadowBlur = 25
+      this.ctx.shadowBlur = (25 / 40) * this.radius
       this.ctx.shadowOffsetY = this.radius * 0.6
     } else {
       this.ctx.shadowColor = 'hsla(0, 0%, 0%, 0.8)'
-      this.ctx.shadowBlur = 6
+      this.ctx.shadowBlur = (6 / 40) * this.radius
       this.ctx.shadowOffsetY = this.radius * 0.07
     }
 

@@ -45,7 +45,6 @@ export default class Game {
     this.wasThisTurnPassed = false
 
     this.ui = ui
-    this.ui.update(this)
     this.ctx = this.ui.canvas.getContext('2d')
 
     this.board = this.debugMode
@@ -96,10 +95,6 @@ export default class Game {
 
     this.ghostSourceDisc = null
 
-    this.initDiscs()
-    this.updateDiscActors()
-    this.setupEventListeners()
-
     const Sounds = initSounds()
     this.sounds = Sounds.sounds
     this.play = Sounds.play
@@ -119,6 +114,11 @@ export default class Game {
       }
     }
     this.ongoingTouches = new Array()
+
+    this.initDiscs()
+    this.updateDiscActors()
+    this.setupEventListeners()
+    this.updateUI()
   }
 
   passTurn(playerColor) {
@@ -279,6 +279,21 @@ export default class Game {
       this.nextTurn()
     }
   }
+
+  updateUI() {
+    this.ui.update(
+      { 
+        match: { 
+          red: this.match.red,
+          black: this.match.black,
+          gameNo: this.match.gameNo,
+          matchLength: this.match.matchLength,
+        },
+        turnCount: this.turnCount,
+        msg: this.msg
+      }
+    )
+  }
   
   capture(grabbedDisc, to) {
     const capturedDisc = this.findCaptured(grabbedDisc, to)
@@ -294,7 +309,6 @@ export default class Game {
     capturedDisc.row = capturedDisc.col = 9
 
     this.hasCaptureChainStarted = true
-    this.ui.update(this)
     return capturedDisc
   }
 
@@ -343,7 +357,7 @@ export default class Game {
     this.msg = ''
     this.hasCaptureChainStarted = false
     this.updateDiscActors()
-    this.ui.update(this)
+    this.updateUI()
   }
 
   getActorType(disc) {
@@ -543,6 +557,7 @@ export default class Game {
       } else {
         this.play.playRandomClickSound()
       }
+    this.updateUI()
     }
 
     const handlePointerMove = (e) => {
@@ -596,7 +611,7 @@ export default class Game {
             const capturedDisc = this.capture(grabbedDisc, validCaptureMove)
             let deathSound
             if (capturedDisc.isKing) {
-              his.sounds.king[1].currentTime = 0
+              this.sounds.king[1].currentTime = 0
               this.sounds.king[1].play()
             } else {
               deathSound = this.play.playRandomCaptureSound()
@@ -625,6 +640,7 @@ export default class Game {
         grabbedDisc.toggleGrab()
         grabbedDisc.updateDiscGeometry()
       }
+      this.updateUI()
     }
 
     function handlePointerCancel(e) {

@@ -2,22 +2,27 @@ import CONSTANTS from '../Constants'
 import BaseDisc from './BaseDisc'
 
 export default class BoardDisc extends BaseDisc{
-
-    clickArea = {
-      center: {
-        x: 0, y: 0,
-      },
-      radius: 0, lineWidth: 0,
-      top: 0, bottom: 0, left: 0, right: 0,
-    }
-    isGrabbed = false
-    // debug helpers, points to drawArea relative to canvas
-    drawArea = {
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    }
+  row
+  col
+  id
+  direction
+  offset
+  radius = 40
+  clickArea = {
+    center: {
+      x: 0, y: 0,
+    },
+    radius: 0, lineWidth: 0,
+    top: 0, bottom: 0, left: 0, right: 0,
+  }
+  isGrabbed = false
+  // debug helpers, points to drawArea relative to canvas
+  drawArea = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  }
 
   constructor(canvas, row, col, offset, color) {
     // TRY console.assert?
@@ -34,25 +39,17 @@ export default class BoardDisc extends BaseDisc{
 
     this.row = row
     this.col = col
+    this.offset = offset
     this.id = `${parseInt(this.col)}${parseInt(this.row)}`
     this.direction = color === CONSTANTS.RED ? 1 : -1
 
     // Offset produced by baseboard and other objects within canvas
     // TODO refactor offset out, let board/game handle it
-    this.offset = offset
-
-    // TODO make relative to board or board squares
-    this.radius = 40
 
     this.updateDiscGeometry()
   }
 
-  updateDiscGeometry() {
-    // Disc center wrt canvas
-    this.center = new (function(row, col, offset) {
-      this.x =  ((col) * 100) + 50 + offset.x
-      this.y = ((row) * 100) + 50 + offset.y
-    })(this.row, this.col, this.offset)
+  update() {
 
     this.clickArea = new (function(centerX, centerY, radius) {
       this.center = {
@@ -79,6 +76,15 @@ export default class BoardDisc extends BaseDisc{
       this.left = centerX - radius
       this.right = centerX + radius
     })(this.center.x, this.center.y, this.radius)
+  }
+
+  updateDiscGeometry() {
+    // Disc center wrt canvas
+    this.center = {
+      x: this.col * 100 + 50 + this.offset.x,
+      y: this.row * 100 + 50 + this.offset.y
+    }
+    this.update()
 
     this.perimeter = new Path2D()
     this.perimeter.arc(this.clickArea.center.x, this.clickArea.center.y, this.clickArea.radius, 0, 2 * Math.PI)

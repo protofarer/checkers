@@ -91,20 +91,32 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   let ui = new Panel()
   let game = new Game(match, ui, debugMode, debugOverlay)
 
-  ui.jailBlack.style.display = 'flex'
-  ui.jailBlack.style.flexFlow = 'row wrap'
-  ui.jailBlack.style.alignItems = 'flex-start'
-  const tmpCanvas = document.createElement('canvas')
-  tmpCanvas.style.border = '1px dotted red'
-  tmpCanvas.style.flex = '0 1 auto'
+  // ui.jailBlack.style.display = 'flex'
+  // ui.jailBlack.style.flexFlow = 'row wrap'
+  // ui.jailBlack.style.alignItems = 'flex-start'
+  // const tmpCanvas = document.createElement('canvas')
+  // tmpCanvas.style.border = '1px dotted red'
+  // tmpCanvas.style.flex = '0 1 auto'
   // tmpCanvas.style.width = '33%'
-  // tmpCanvas.height = tmpCanvas.width
-  tmpCanvas.id = 'tmpcanvas'
-  tmpCanvas.width = tmpCanvas.height = 150
-  ui.jailBlack.appendChild(tmpCanvas)
+  // // tmpCanvas.height = tmpCanvas.width
+  // tmpCanvas.id = 'tmpcanvas'
+  // tmpCanvas.width = tmpCanvas.height = 150
+  // ui.jailBlack.appendChild(tmpCanvas)
   
-  const tmpDisc = new BaseDisc(tmpCanvas, CONSTANTS.RED)
-  tmpDisc.draw()
+  // const tmpCanvas2 = document.createElement('canvas')
+  // tmpCanvas2.style.border = '1px dotted red'
+  // tmpCanvas2.style.flex = '0 1 auto'
+  // tmpCanvas2.style.width = '33%'
+  // // tmpCanvas2.height = tmpCanvas2.width
+  // tmpCanvas2.id = 'tmpcanvas'
+  // tmpCanvas2.width = tmpCanvas2.height = 150
+  // ui.jailBlack.appendChild(tmpCanvas2)
+
+  // const tmpDisc = new BaseDisc(tmpCanvas, CONSTANTS.RED)
+  // tmpDisc.draw()
+  
+  // const tmpDisc2 = new BaseDisc(tmpCanvas2, CONSTANTS.RED)
+  // tmpDisc2.draw()
 
   // **********************************************************************
   // * debuggery
@@ -127,9 +139,7 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   let loopID = requestAnimationFrame(draw)
   function draw(t) {
     game.clr()
-    // game.drawAll()
-    // tmpDisc.draw()
-    console.log(tmpDisc.toString())
+    game.drawAll()
     
     loopID = requestAnimationFrame(draw)
 

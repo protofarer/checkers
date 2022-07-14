@@ -108,15 +108,15 @@ export default class externalUI {
     this.matchInfo.innerText = 'Game: $no/$len'
     this.turn.innerText = 'Turn: $turn'
     this.statusMsg.innerText = '$msg'
-
+    console.info('%cUI initializing', 'color: orange')
   }
 
   update(game) {
-    console.info('%cUI initializing', 'color: orange')
     this.scoreRed.innerHTML = `Red: ${game.match.red}`
     this.scoreBlack.innerHTML = `Black: ${game.match.black}`
     this.matchInfo.innerHTML = `Game: ${game.match.gameNo}/${game.match.matchLength}`
     this.turn.innerHTML = `Turn: ${game.turnCount}`
+    console.log(game.msg)
     this.statusMsg.innerHTML = `${game.msg}`
     // this.jailBlack.innerHTML = `Reds captured: ${game.captures.capturedReds.length}`
     // this.jailRed.innerHTML = `Blacks captured: ${game.captures.capturedBlacks.length}`
