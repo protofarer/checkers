@@ -3,6 +3,7 @@ import Panel from './WebComponents/Panel.js'
 import BaseDisc from './CanvasComponents/BaseDisc.js'
 import setupDebugGUI from './WebComponents/debugGUI.js'
 import CONSTANTS from './Constants'
+import BoardDisc from './CanvasComponents/Disc.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -91,17 +92,16 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   let ui = new Panel()
   let game = new Game(match, ui, debugMode, debugOverlay)
 
-  // ui.jailBlack.style.display = 'flex'
-  // ui.jailBlack.style.flexFlow = 'row wrap'
-  // ui.jailBlack.style.alignItems = 'flex-start'
   // const tmpCanvas = document.createElement('canvas')
-  // tmpCanvas.style.border = '1px dotted red'
-  // tmpCanvas.style.flex = '0 1 auto'
-  // tmpCanvas.style.width = '33%'
-  // // tmpCanvas.height = tmpCanvas.width
+  // tmpCanvas.className = 'jailCell'
   // tmpCanvas.id = 'tmpcanvas'
-  // tmpCanvas.width = tmpCanvas.height = 150
   // ui.jailBlack.appendChild(tmpCanvas)
+
+  // const tmpDisc = new BaseDisc(tmpCanvas, CONSTANTS.RED)
+  // tmpDisc.draw()
+
+  // ui.jailDisc(new BoardDisc(ui.canvas, 0, 0, { x: 1, y: 1}, CONSTANTS.RED))
+  // ui.update(game)
   
   // const tmpCanvas2 = document.createElement('canvas')
   // tmpCanvas2.style.border = '1px dotted red'
@@ -112,9 +112,6 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   // tmpCanvas2.width = tmpCanvas2.height = 150
   // ui.jailBlack.appendChild(tmpCanvas2)
 
-  // const tmpDisc = new BaseDisc(tmpCanvas, CONSTANTS.RED)
-  // tmpDisc.draw()
-  
   // const tmpDisc2 = new BaseDisc(tmpCanvas2, CONSTANTS.RED)
   // tmpDisc2.draw()
 

@@ -28,9 +28,22 @@ body {
 }
 
 .jail {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+
   flex: 1 1 auto;
   border: 1px dashed purple;
   height: 10em;
+}
+
+.jailCell {
+  padding: 0;
+  margin: 0;
+  flex: 0 0 auto;
+  /* width: 100%; */
+  /* height: 25%; */
+  border: 1px dotted red;
 }
 
 .turnContainer {

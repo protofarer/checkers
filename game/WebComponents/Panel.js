@@ -22,11 +22,8 @@ export default class externalUI {
   turnIndicatorBlack = document.createElement('div')
   passBlack = document.createElement('button')
   jailBlack = document.createElement('div')
+  jailCells = []
 
-  jailCanvases = {
-    reds: [],
-    blacks: []
-  }
   constructor() {
     document.body.appendChild(this.container)
 
@@ -101,8 +98,6 @@ export default class externalUI {
     // debug
     this.passRed.innerText = '$pass'
     this.passBlack.innerText = '$pass'
-    this.jailBlack.innerText = '$blackjail'
-    this.jailRed.innerText = '$redjail'
     this.scoreRed.innerText = 'Red: $redscore'
     this.scoreBlack.innerText = 'Black: $blackscore'
     this.matchInfo.innerText = 'Game: $no/$len'
@@ -116,12 +111,7 @@ export default class externalUI {
     this.scoreBlack.innerHTML = `Black: ${game.match.black}`
     this.matchInfo.innerHTML = `Game: ${game.match.gameNo}/${game.match.matchLength}`
     this.turn.innerHTML = `Turn: ${game.turnCount}`
-    console.log(game.msg)
     this.statusMsg.innerHTML = `${game.msg}`
-    // this.jailBlack.innerHTML = `Reds captured: ${game.captures.capturedReds.length}`
-    // this.jailRed.innerHTML = `Blacks captured: ${game.captures.capturedBlacks.length}`
-    this.jailBlack.innerHTML = ``
-    this.jailRed.innerHTML = ``
 
     if (game.turnColor === CONSTANTS.BLACK) {
       this.passBlack.style.backgroundColor = 'hsl(210, 90%, 85%)'
@@ -138,34 +128,38 @@ export default class externalUI {
       this.turnIndicatorRed.style.backgroundColor = 'hsl(100, 100%, 45%)'
       this.turnIndicatorBlack.style.backgroundColor = 'lightgrey'
     }
-    // this.drawCapturedDiscs()
+
+    // WARN may be superfluous
+    console.log('this.jailCells.length', this.jailCells.length)
+    console.log('jailBlack childnodes', this.jailBlack.childNodes )
+    this.jailCells.forEach(({ jailedDisc }) => {
+      jailedDisc.update() 
+    })
+
   }
 
   jailDisc(disc) {
-    // Converts a BoardDisc to BaseDisc and draws it appropriately in jail
-    const canvas = document.createElement('canvas')
-    disc.color === CONSTANTS.BLACK 
-      && this.jailCanvases.blacks.push(new BaseDisc(canvas, disc.color))
-    disc.color === CONSTANTS.RED 
-      && this.jailCanvases.reds.push(new BaseDisc(canvas, disc.color))
+    // Called by game and adds a canvas and JailDisc to a jail cell
+    console.log(`jailing disc`, )
+    
+    const jailCell = document.createElement('canvas')
+    jailCell.className = 'jailCell'
 
-    // TODO when disc is captured it must be modified to fit in jail
+    const jailedDisc = new BaseDisc(jailCell, disc.color) 
+    jailedDisc.isKing = disc.isKing
+
+    this.jailCells.push({ jailCell, jailedDisc })
+
+    if (disc.color === CONSTANTS.RED) {
+      this.jailBlack.appendChild(jailCell)
+      console.log(`appended jailCell to jailBlack`, )
+    } else {
+      this.jailRed.appendChild(jailCell)
+      console.log(`appended jailCell to jailRed`, )
+    }
+    // console.log(`jailCell`, jailCell)
   }
 
-  drawJailedDisc(canvas, ctx, disc) {
-    // canvas must be square
-
-    // req'd disc props:
-    //  mod disc props: ctx, radius, center, 
-    //  read disc props: color, isKing
-    //  use methods:  draw
-
-    // TODO make clean copy
-
-    // TODO modify props
-
-
-  }
 
   drawJailedDiscs() {
     this.jailCanvases.reds.forEach(

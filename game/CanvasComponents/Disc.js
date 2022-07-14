@@ -116,8 +116,6 @@ export default class BoardDisc extends BaseDisc{
     } 
 
     super.draw(this.center)
-
-    this.ctx.restore() // restore A
   }
 
   drawClickArea(position) {

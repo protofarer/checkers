@@ -1,6 +1,5 @@
 import Disc from './CanvasComponents/Disc'
 import CONSTANTS from './Constants'
-import Panel from './CanvasComponents/Panel'
 import EndDialog from './CanvasComponents/EndDialog'
 import initSounds from './audio'
 
@@ -73,27 +72,11 @@ export default class Game {
 
     this.endDialog = new EndDialog(this)
 
-    const panelOffset = {
-      x: this.boardWidth + 2 * this.baseThickness + this.boardPanelGap,
-      y: 0
-    }
-    const panelDims = {
-      w: 200,
-      h: this.boardHeight + 2 * this.baseThickness
-    }
-    this.panel = new Panel(
-      panelOffset,
-      panelDims,
-      this
-    )
-
     this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
-      + this.boardPanelGap + panelDims.w
+      + this.boardPanelGap
     this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
 
     this.rect = this.ui.canvas.getBoundingClientRect()
-
-    this.ghostSourceDisc = null
 
     const Sounds = initSounds()
     this.sounds = Sounds.sounds
@@ -290,6 +273,7 @@ export default class Game {
           matchLength: this.match.matchLength,
         },
         turnCount: this.turnCount,
+        turnColor: this.turnColor,
         msg: this.msg
       }
     )
@@ -309,6 +293,7 @@ export default class Game {
     capturedDisc.row = capturedDisc.col = 9
 
     this.hasCaptureChainStarted = true
+    this.ui.jailDisc(capturedDisc)
     return capturedDisc
   }
 
@@ -371,142 +356,7 @@ export default class Game {
   }
 
   setupEventListeners() {
-    const handleMouseMove = (e) => {
-      // Scrolled window is not supported
-      
-      // Mouse coordinates relative to canvas
-      this.mouseCoords.canvas.x = e.clientX - this.rect.left // + window.scrollX
-      this.mouseCoords.canvas.y = e.clientY - this.rect.top // + window.scrollY
-
-      // Mouse coordinates relative to play area
-      this.mouseCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x // + window.scrollX
-      this.mouseCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y // + window.scrollY
-
-      // Mouse coordinates relative to window
-      this.mouseCoords.client.x = e.clientX // + window.scrollX
-      this.mouseCoords.client.y = e.clientY // + window.scrollY
-          
-      // Calculate row,col from mouse coords
-      this.mouseCoords.square.col = Math.floor((parseFloat((this.mouseCoords.board.x)/100,2).toFixed(2)))
-      this.mouseCoords.square.row = Math.floor(parseFloat((this.mouseCoords.board.y)/100,2).toFixed(2))
-    }
-
-    const handleMouseDown = () => {
-      const pushGrabbedDisc = (grabbedDisc, discs) => {
-        discs = discs.filter(disc => disc !== grabbedDisc)
-        discs.push(grabbedDisc)
-        return discs
-      }
-
-      const clickedDisc = this.discs.find(disc =>
-        disc.isClicked(this.mouseCoords.canvas.x, this.mouseCoords.canvas.y)
-      )
-
-      if (clickedDisc) {
-        // Debug logging
-        if (this.debugOverlay || this.debugMode) {
-          if (this.debugDiscPositionMarker !== '') {
-            // console.log(`Clicked Disc ${clickedDisc.id}`)
-            console.log('------------', )
-            console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
-            console.log(`clickedDisc.clickArea.${this.debugDiscPositionMarker}: ${clickedDisc.clickArea[this.debugDiscPositionMarker]}`, )
-            console.log(`drawArea.${this.debugDiscPositionMarker}: ${clickedDisc.drawArea[this.debugDiscPositionMarker]}`, )
-            console.log(`mouseCoord.canvas: ${this.mouseCoords.canvas.x} ${this.mouseCoords.canvas.y}`, )
-            console.log('------------', )
-          }
-        }
-
-        if (clickedDisc.color === this.turnColor) {
-          const actor = this.getActorType(clickedDisc)
-          if (actor === 'enticed') {
-            clickedDisc.toggleGrab()
-            this.discs = pushGrabbedDisc(clickedDisc, this.discs)
-          } else if (actor === 'carefree') {
-            if (this.enticed.length > 0) {
-              this.msg = 'You must make a capture when available'
-            } else {
-              // RFCT
-              clickedDisc.toggleGrab()
-              this.discs = pushGrabbedDisc(clickedDisc, this.discs)
-            }
-          } else {  // actor is null, neither carefree nor enticed
-            this.msg = (this.enticed.length > 0 || this.carefrees.length > 0)
-              ? 'This disc cannot move'
-              : 'You have no moves available. Pass your turn'
-          }
-        } else {
-          this.msg = 'That isn\'t your disc'
-        }
-      } else {
-        this.play.playRandomClickSound()
-      }
-    }
-
-    const handleMouseUp = () => {
-
-      function isMouseInSquare(x, y, r, c) {
-        // console.debug(`isMouseInSquarexy`, x, y)
-        return (Math.floor(x/100) === c && Math.floor(y/100) === r)
-      }
-
-      // WARN may not copy disc.center.x|y
-      //    if not, try structuredClone or parse/stringify
-      // const grabbedDisc = JSON.parse(JSON.stringify(this.discs.find(disc => disc.isGrabbed)))
-      // const grabbedDisc = Object.assign({}, this.discs.find(disc => disc.isGrabbed))
-      const grabbedDisc = this.discs.find(disc => disc.isGrabbed)
-
-      if (grabbedDisc) {
-        const isEnticed = this.enticed.find(c => c === grabbedDisc) 
-        const isCarefree = this.carefrees.find(m => m === grabbedDisc)
-
-        // if is an enticed (can capture) and mouseupped on valid capture move
-        if (isEnticed) {
-          const captureMoves = this.findCaptureMoves(grabbedDisc)
-          const validCaptureMove = captureMoves.find(move => 
-            isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
-          )
-          if (validCaptureMove) {
-            // DISPATCH valid capture move
-            const capturedDisc = this.capture(grabbedDisc, validCaptureMove)
-            let deathSound
-            if (capturedDisc.isKing) {
-              this.sounds.king[1].currentTime = 0
-              this.sounds.king[1].play()
-            } else {
-              deathSound = this.play.playRandomCaptureSound()
-            }
-            this.move(grabbedDisc, validCaptureMove, deathSound)
-          } else {
-            // DISPATCH not-valid-capture msg
-            this.msg = 'Not a valid capture move'
-          }
-        } else if (isCarefree) {
-          const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc)
-          const nonCaptureMove = nonCaptureMoves.find(move =>
-            isMouseInSquare(this.mouseCoords.board.x, this.mouseCoords.board.y, move.row, move.col)
-          )
-          if (nonCaptureMove) {
-            // DISPATCH valid carefree move
-            this.move(grabbedDisc, nonCaptureMove)
-            this.play.playRandomMoveSound()
-          } else {
-            // DISPATCH invalid-mover-move msg
-            this.msg = 'Invalid move. Try again'
-          }
-        }
-
-        // DISPATCH
-        grabbedDisc.toggleGrab()
-        grabbedDisc.updateDiscGeometry()
-      }
-    }
-    // document.addEventListener('mousemove', handleMouseMove)
-    // this.ui.canvas.addEventListener('mousedown', handleMouseDown) 
-    // this.ui.canvas.addEventListener('mouseup', handleMouseUp) 
-
     const handlePointerStart = (e) => {
-      // console.log(`pointerdown`, )
-      // console.log(`pointerdown: id = ${e.pointerId}`, )
       this.ongoingTouches.push(this.copyTouch(e))
       
       const pushGrabbedDisc = (grabbedDisc, discs) => {
@@ -523,7 +373,6 @@ export default class Game {
         // Debug logging
         if (this.debugOverlay || this.debugMode) {
           if (this.debugDiscPositionMarker !== '') {
-            // console.log(`Clicked Disc ${clickedDisc.id}`)
             console.log('------------', )
             console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
             console.log(`clickedDisc.clickArea.${this.debugDiscPositionMarker}: ${clickedDisc.clickArea[this.debugDiscPositionMarker]}`, )
@@ -542,7 +391,7 @@ export default class Game {
             if (this.enticed.length > 0) {
               this.msg = 'You must make a capture when available'
             } else {
-              // RFCT
+              // TODO RFCT
               clickedDisc.toggleGrab()
               this.discs = pushGrabbedDisc(clickedDisc, this.discs)
             }
@@ -777,9 +626,6 @@ export default class Game {
     this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
-    this.panel.draw(
-      { captures: this.captures, turnColor: this.turnColor }
-    )
 
     if (this.debugOverlay) {
       this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))

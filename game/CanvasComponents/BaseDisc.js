@@ -8,19 +8,20 @@ export default class BaseDisc {
   //      shortest length as its radius and positioning itself near the
   //      0,0 coordinate (origin aka top left)
 
-    isKing = false
+    isKing
     kingColor = 'black'
     animateFrame = 0
     radius = 0
     center = { x: 0, y: 0 }
 
-  constructor(canvas, color) {
+  constructor(canvas, color, isKing=false) {
     if (!(color === CONSTANTS.BLACK || color === CONSTANTS.RED)) {
       throw new Error('Disc must be either CONSTANTS.BLACK or CONSTANTS.RED')
     }
     this.canvas = canvas
     this.ctx = this.canvas.getContext('2d')
     this.color = color
+    this.isKing = isKing
 
     // Strokes adjusted for disc's fill
     this.strokeColor = this.color === CONSTANTS.RED 
@@ -29,15 +30,16 @@ export default class BaseDisc {
       ? 'hsl(0,0%,80%)'
       : 'hsl(250, 100%, 60%)'
 
-    this.update()
+    this.update() // calls draw
   }
 
   toString() {
-    return `center:(${this.center.x},${this.center.y})`
+    return `r:${this.radius} center:(${this.center.x},${this.center.y})`
   }
 
-  update(newCenter) {
+  update(newCenter=null) {
     let squeeze
+    
     if (this.canvas.width > this.canvas.height) {
       squeeze = this.canvas.height * 0.07
       this.radius = this.canvas.height / 2 - squeeze
@@ -45,14 +47,17 @@ export default class BaseDisc {
       squeeze = this.canvas.width * 0.07
       this.radius = this.canvas.width / 2 - squeeze
     }
+    
     this.center = newCenter || {
       x: this.radius + squeeze,
       y: this.radius + squeeze,
     }
+    
+    this.draw()
   }
 
-  draw(newCenter=null) { 
-    if (newCenter) this.update(newCenter)
+  draw() {
+    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const animateStep = () => {
       // animateFrame, the *2*2.85 is to give high enough animate frame to reach 
       // full range of desired colors in periodicColor
@@ -84,6 +89,8 @@ export default class BaseDisc {
     // this.col < 8 && this.ctx.translate(this.center.x, this.center.y)
 
     this.ctx.translate(this.center.x, this.center.y)
+    
+    
 
     this.ctx.beginPath()
     this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI)
@@ -189,7 +196,7 @@ export default class BaseDisc {
       this.ctx.restore()
     }
     this.ctx.restore()
-
     this.ctx.stroke()
+    this.ctx.restore()
   }
 }
