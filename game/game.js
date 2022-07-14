@@ -87,11 +87,23 @@ export default class Game {
 
     this.endDialog = new EndDialog(this)
 
+    // TODO dependent on whether baseboard included or not
+    this.gameDims = new (function(boardHeight, boardWidth, baseThickness) {
+      return {
+        h: boardHeight + 2 * baseThickness,
+        w: boardWidth + 2 * baseThickness
+      }
+    })(this.boardHeight, this.boardWidth, this.baseThickness)
+
     this.baseBoardCanvas.height = this.boardHeight + 2 * this.baseThickness
     this.baseBoardCanvas.width = this.boardWidth + 2 * this.baseThickness
+    this.baseBoardCanvas.left = 0
+    this.baseBoardCanvas.top = 0
 
-    this.canvas.width = this.boardWidth + 2 * this.baseThickness
-    this.canvas.height = this.boardHeight + 2 * this.baseThickness
+    this.canvas.width = this.boardWidth
+    this.canvas.height = this.boardHeight
+    this.canvas.style.left = `${this.baseThickness}px`
+    this.canvas.style.top = `${this.baseThickness}px`
 
     this.rect = this.canvas.getBoundingClientRect()
 
@@ -439,33 +451,31 @@ export default class Game {
     const handlePointerMove = (e) => {
       // Scrolled window is not supported
       
-      // Mouse coordinates relative to canvas
+      // Mouse coordinates relative to game canvas aka game layer
       this.pointerCoords.canvas.x = e.clientX - this.rect.left // + window.scrollX
       this.pointerCoords.canvas.y = e.clientY - this.rect.top // + window.scrollY
-
-      // Mouse coordinates relative to play area
-      this.pointerCoords.board.x = e.clientX - this.rect.left - this.playAreaOffset.x // + window.scrollX
-      this.pointerCoords.board.y = e.clientY - this.rect.top - this.playAreaOffset.y // + window.scrollYA
 
       // Mouse coordinates relative to window
       this.pointerCoords.client.x = e.clientX // + window.scrollX
       this.pointerCoords.client.y = e.clientY // + window.scrollY
           
       // Calculate row,col from mouse coords
-      this.pointerCoords.square.col = Math.floor((parseFloat((this.pointerCoords.board.x)/100,2).toFixed(2)))
-      this.pointerCoords.square.row = Math.floor(parseFloat((this.pointerCoords.board.y)/100,2).toFixed(2))
+      this.pointerCoords.square.col = Math.floor((parseFloat((this.pointerCoords.canvas.x)/100,2).toFixed(2)))
+      this.pointerCoords.square.row = Math.floor(parseFloat((this.pointerCoords.canvas.y)/100,2).toFixed(2))
     }
 
     const handlePointerEnd = (e) => {
+      console.log(`pointerup`, )
+
       function isPointerInSquare(x, y, r, c) {
         // console.debug(`isMouseInSquarexy`, x, y)
         return (Math.floor(x/100) === c && Math.floor(y/100) === r)
       }
-      console.log(`pointerup`, )
+
+
       const idx = this.ongoingTouchIndexById(e.pointerId)
       this.ongoingTouches.splice(idx, 1)
       
-
       // WARN may not copy disc.center.x|y
       //    if not, try structuredClone or parse/stringify
       // const grabbedDisc = JSON.parse(JSON.stringify(this.discs.find(disc => disc.isGrabbed)))
@@ -480,7 +490,7 @@ export default class Game {
         if (isEnticed) {
           const captureMoves = this.findCaptureMoves(grabbedDisc)
           const validCaptureMove = captureMoves.find(move => 
-            isPointerInSquare(this.pointerCoords.board.x, this.pointerCoords.board.y, move.row, move.col)
+            isPointerInSquare(this.pointerCoords.canvas.x, this.pointerCoords.canvas.y, move.row, move.col)
           )
           if (validCaptureMove) {
             // DISPATCH valid capture move
@@ -500,7 +510,7 @@ export default class Game {
         } else if (isCarefree) {
           const nonCaptureMoves = this.findNonCaptureMoves(grabbedDisc)
           const nonCaptureMove = nonCaptureMoves.find(move =>
-            isPointerInSquare(this.pointerCoords.board.x, this.pointerCoords.board.y, move.row, move.col)
+            isPointerInSquare(this.pointerCoords.canvas.x, this.pointerCoords.canvas.y, move.row, move.col)
           )
           if (nonCaptureMove) {
             // DISPATCH valid carefree move
@@ -582,9 +592,6 @@ export default class Game {
     const darkHue = 18
     const lightHue = 45
 
-    this.ctx.save()
-    this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
-
     for (let row = 0;row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         this.ctx.beginPath()
@@ -597,18 +604,13 @@ export default class Game {
         }
       }
     }
-    this.ctx.restore()
   }
 
 
   drawDiscs() {
     this.discs.forEach(disc => {
-      this.ctx.save()
-      this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
       disc.draw(this.pointerCoords.canvas.x, this.pointerCoords.canvas.y)
-      this.ctx.restore()
-    }
-    )
+    })
   }
 
   drawBaseBoard() {
@@ -667,14 +669,8 @@ export default class Game {
 
     if (this.debugOverlay) {
       this.discs.forEach(d => {
-        this.ctx.save()
-        this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
         d.drawClickArea(this.debugDiscPositionMarker)
-        this.ctx.restore()
       })
-      this.canvas.style.border = '1px solid red'
-    } else {
-      this.canvas.style.border = 'none'
     }
   }
 }

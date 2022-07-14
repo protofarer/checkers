@@ -15,6 +15,7 @@ export default class BoardDisc extends BaseDisc{
     top: 0, bottom: 0, left: 0, right: 0,
   }
   isGrabbed = false
+
   // debug helpers, points to drawArea relative to canvas
   drawArea = {
     top: 0,

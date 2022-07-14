@@ -1,15 +1,21 @@
 body {
+  margin: 0;
+  padding: 0;
   background-color: black;
+}
+
+#game {
+  /* display: flex; */
+  /* flex-flow: row nowrap; */
 }
 
 #layerBackground {
   position: absolute;
   z-index: 1;
-  border: 1px dashed blue;
 }
 
 #layerGame {
-  /* position: absolute; */
+  position: absolute;
   touch-action: none;
   z-index: 2;
 }
@@ -19,25 +25,18 @@ body {
   z-index: 3;
 }
 
-#game {
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 0.5em;
-}
 
 #panel {
+  position: absolute;
   z-index: 4;
   padding: 0.5em;
-  max-width: 15em;
-  min-width: 10em;
+  background-color: hsl(45, 80%, 93%);
 
   font-family: Arial;
 
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
-  background-color: hsl(45, 80%, 93%);
-  border: 1px dotted purple;
   gap: 0.8em;
 }
 
@@ -48,7 +47,6 @@ body {
 
   flex: 1 1 auto;
   border: 3px dashed purple;
-  height: 10em;
 }
 
 .jailCell {
@@ -149,14 +147,15 @@ button:hover {
 }
 
 #info-status {
+  position: relative;
+  width: 11.5em;
   min-height: 6em;
   margin: 0.5em 0 0.5em 0.5em;
+  padding: 0.7em;
   font-size: smaller;
   background: white;
   border-radius: 15px;
-  padding: 0.7em;
-  position: relative;
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
   /* border: 1px dotted orange; */
 }
 

@@ -15,16 +15,6 @@ export default function setupDebugGUI(game, frames) {
     guiGamePositioning.add(game.canvas, 'width').name('canvas.width')
     guiGamePositioning.add(game.canvas,'height').name('canvas.height')
 
-    const guiMouseTracking = gui.addFolder('MouseTracking')
-    guiMouseTracking.add(game.mouseCoords.client, 'x').name('client.x').listen()
-    guiMouseTracking.add(game.mouseCoords.client, 'y').name('client.y').listen()
-    guiMouseTracking.add(game.mouseCoords.canvas, 'x').name('canvas.x').listen()
-    guiMouseTracking.add(game.mouseCoords.canvas, 'y').name('canvas.y').listen()
-    guiMouseTracking.add(game.mouseCoords.board, 'x').name('board.x').listen()
-    guiMouseTracking.add(game.mouseCoords.board, 'y').name('board.y').listen()
-    guiMouseTracking.add(game.mouseCoords.square, 'col').name('mouse.col').listen()
-    guiMouseTracking.add(game.mouseCoords.square, 'row').name('mouse.row').listen()
-
     const guiGameState = gui.addFolder('GameState')
     guiGameState.add(game, 'turnCount').name('turnCount').listen()
     guiGameState.add(game, 'turnColor').name('turnColor').listen()
@@ -92,16 +82,20 @@ export default function setupDebugGUI(game, frames) {
     guiPointerTracking.add(game.pointerCoords.client, 'y').name('client.y').listen()
     guiPointerTracking.add(game.pointerCoords.canvas, 'x').name('canvas.x').listen()
     guiPointerTracking.add(game.pointerCoords.canvas, 'y').name('canvas.y').listen()
-    guiPointerTracking.add(game.pointerCoords.board, 'x').name('board.x').listen()
-    guiPointerTracking.add(game.pointerCoords.board, 'y').name('board.y').listen()
-    guiPointerTracking.add(game.pointerCoords.square, 'col').name('pointer.col').listen()
-    guiPointerTracking.add(game.pointerCoords.square, 'row').name('pointer.row').listen()
+    guiPointerTracking.add(game.pointerCoords.square, 'col').name('square.col').listen()
+    guiPointerTracking.add(game.pointerCoords.square, 'row').name('square.row').listen()
 
+    guiGameState.show(false)
     guiMatchState.show(false)
     guiMatchTest.show(false)
     guiGamePositioning.show(false)
-    guiMouseTracking.show(false)
-    guiPointerTracking.show(false)
+    guiPointerTracking.show(true)
 
-    return [gui, guiGamePositioning, guiGameState, guiMouseTracking, guiMatchState, guiGameTest, guiMatchTest]
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '`') {
+        gui._hidden === false ? gui.hide() : gui.show()
+      }
+    })
+
+    // return [gui, guiGamePositioning, guiGameState, guiPointerTracking, guiMatchState, guiGameTest, guiMatchTest]
   }

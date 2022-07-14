@@ -95,7 +95,6 @@ export default class Panel {
     this.turn.innerText = 'Turn: $turn'
     this.statusMsg.innerText = '$msg'
     console.info('%cUI initializing', 'color: orange')
-
   }
 
   init(game) {
@@ -118,12 +117,22 @@ export default class Panel {
   }
 
   update() {
+    this.panelContainer.style.top = '0px'
+    this.panelContainer.style.left = `${this.game.baseBoardCanvas.width + 3}px`
+
+    // ! where is 16px from? Panel adds 16px to gameDims? Browser? Border?
+    this.panelContainer.style.height = `${this.game.gameDims.h - 16}px`
+
     this.scoreRed.innerHTML = `Red: ${this.game.match.red}`
     this.scoreBlack.innerHTML = `Black: ${this.game.match.black}`
     this.matchInfo.innerHTML = `\
       Game: ${this.game.match.gameNo}/${this.game.match.matchLength}`
     this.turn.innerHTML = `Turn: ${this.game.turnCount}`
+
     this.statusMsg.innerHTML = `${this.game.msg}`
+    const delayClr = (delay) => new Promise(res => setTimeout(res, delay))
+    delayClr(4000)
+      .then(() => this.statusMsg.innerHTML = '')
 
     if (this.game.turnColor === CONSTANTS.BLACK) {
       this.passBlack.style.backgroundColor = 'hsl(210, 90%, 85%)'
@@ -148,7 +157,6 @@ export default class Panel {
       jailedDisc.clr()
       jailedDisc.update() 
     })
-
   }
 
   jailDisc(disc) {
