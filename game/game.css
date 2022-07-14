@@ -1,9 +1,22 @@
 body {
-  background-color: white;
+  background-color: black;
 }
 
-#gameCanvas {
+#layerBackground {
+  position: absolute;
+  z-index: 1;
+  border: 1px dashed blue;
+}
+
+#layerGame {
+  /* position: absolute; */
   touch-action: none;
+  z-index: 2;
+}
+
+#layerUI {
+  position: absolute;
+  z-index: 3;
 }
 
 #game {
@@ -13,6 +26,7 @@ body {
 }
 
 #panel {
+  z-index: 4;
   padding: 0.5em;
   max-width: 15em;
   min-width: 10em;

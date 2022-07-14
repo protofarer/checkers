@@ -48,8 +48,14 @@ export default class Game {
     this.container.id = 'game'
     document.body.appendChild(this.container)
 
+    this.baseBoardCanvas = document.createElement('canvas')
+    this.baseBoardCanvas.id = 'layerBackground'
+    this.container.appendChild(this.baseBoardCanvas)
+
+    this.baseBoardCtx = this.baseBoardCanvas.getContext('2d', { alpha: false })
+
     this.canvas = document.createElement('canvas')
-    this.canvas.id = 'gameCanvas'
+    this.canvas.id = 'layerGame'
     this.container.appendChild(this.canvas)
 
     this.ctx = this.canvas.getContext('2d')
@@ -80,6 +86,9 @@ export default class Game {
 
 
     this.endDialog = new EndDialog(this)
+
+    this.baseBoardCanvas.height = this.boardHeight + 2 * this.baseThickness
+    this.baseBoardCanvas.width = this.boardWidth + 2 * this.baseThickness
 
     this.canvas.width = this.boardWidth + 2 * this.baseThickness
     this.canvas.height = this.boardHeight + 2 * this.baseThickness
@@ -112,7 +121,11 @@ export default class Game {
     this.setupEventListeners()
 
     this.panel.init(this)     // Invokes panel.update()
-    this.drawBaseBoard()
+
+    // Intermittent update and draw components
+    // TODO ensure update when window or gameContainer resizes/moves
+    //    and draws responsively to viewport dims
+    this.drawBaseBoard()      
   }
 
   passTurn(playerColor) {
@@ -603,53 +616,52 @@ export default class Game {
     const origin = { x: 0, y: 0 }
 
     // Filler
-    this.ctx.beginPath()
-    this.ctx.fillStyle = 'hsla(28, 55%, 55%, 1)'
-    // this.ctx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
+    this.baseBoardCtx.beginPath()
+    this.baseBoardCtx.fillStyle = 'hsla(28, 55%, 55%, 1)'
+    // this.baseBoardCtx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
 
-    this.ctx.strokeStyle = 'hsla(28, 55%, 55%, 1)'
-    this.ctx.lineWidth = this.baseThickness
-    this.ctx.lineCap = 'round'
-    this.ctx.miterLimit = 1
+    this.baseBoardCtx.strokeStyle = 'hsla(28, 55%, 55%, 1)'
+    this.baseBoardCtx.lineWidth = this.baseThickness
+    this.baseBoardCtx.lineCap = 'round'
+    this.baseBoardCtx.miterLimit = 1
 
-    this.ctx.moveTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
-    this.ctx.lineTo(this.boardWidth + 1.5*this.baseThickness, origin.y + this.baseThickness/2)
-    this.ctx.stroke()
+    this.baseBoardCtx.moveTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
+    this.baseBoardCtx.lineTo(this.boardWidth + 1.5*this.baseThickness, origin.y + this.baseThickness/2)
+    this.baseBoardCtx.stroke()
 
-    this.ctx.lineTo(this.boardWidth + 1.5*this.baseThickness, this.boardHeight + 1.5 * this.baseThickness)
-    this.ctx.stroke()
+    this.baseBoardCtx.lineTo(this.boardWidth + 1.5*this.baseThickness, this.boardHeight + 1.5 * this.baseThickness)
+    this.baseBoardCtx.stroke()
 
-    this.ctx.lineTo(origin.x + this.baseThickness/2,  this.boardHeight + 1.5 * this.baseThickness)
-    this.ctx.stroke()
+    this.baseBoardCtx.lineTo(origin.x + this.baseThickness/2,  this.boardHeight + 1.5 * this.baseThickness)
+    this.baseBoardCtx.stroke()
 
-    this.ctx.lineTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
-    this.ctx.stroke()
+    this.baseBoardCtx.lineTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
+    this.baseBoardCtx.stroke()
 
     // Joints
-    this.ctx.beginPath()
-    this.ctx.strokeStyle = 'hsla(28, 55%, 40%,1)'
-    this.ctx.lineWidth = 2
-    this.ctx.moveTo(
+    this.baseBoardCtx.beginPath()
+    this.baseBoardCtx.strokeStyle = 'hsla(28, 55%, 40%,1)'
+    this.baseBoardCtx.lineWidth = 2
+    this.baseBoardCtx.moveTo(
       origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
       origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
     )
-    this.ctx.lineTo(
+    this.baseBoardCtx.lineTo(
       this.boardWidth - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2), 
       this.boardHeight - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2)
     )
-    this.ctx.moveTo(
+    this.baseBoardCtx.moveTo(
       origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
       origin.y - 1 + this.boardHeight + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2)
     )
-    this.ctx.lineTo(
+    this.baseBoardCtx.lineTo(
       origin.x - 1 + this.boardWidth + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2), 
       origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
     )
-    this.ctx.stroke()
+    this.baseBoardCtx.stroke()
   }
 
   drawAll() {
-    // this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
 
