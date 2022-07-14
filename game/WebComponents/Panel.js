@@ -1,10 +1,8 @@
 import BaseDisc from '../CanvasComponents/BaseDisc'
 import CONSTANTS from '../Constants'
 
-export default class externalUI {
-  container = document.createElement('div')
-  canvas = document.createElement('canvas')
-  panel = document.createElement('div')
+export default class Panel {
+  panelContainer = document.createElement('div')
   jailRed = document.createElement('div')
   turnContainerRed = document.createElement('div')
   turnIndicatorRed = document.createElement('div')
@@ -23,25 +21,18 @@ export default class externalUI {
   passBlack = document.createElement('button')
   jailBlack = document.createElement('div')
   jailCells = []
+  game = null
 
   constructor() {
-    document.body.appendChild(this.container)
+    this.panelContainer.id = 'panel'
 
-    this.container.id = 'game'
-
-    this.canvas.id = 'gameCanvas'
-    this.container.appendChild(this.canvas)
-
-    this.panel.id = 'panel'
-    this.container.appendChild(this.panel)
-  
     this.jailRed.className = 'jail'
     this.jailRed.id = 'jailRed'
-    this.panel.appendChild(this.jailRed)
+    this.panelContainer.appendChild(this.jailRed)
   
     this.turnContainerRed.className = 'turnContainer'
     this.turnContainerRed.id = 'turnContainerRed'
-    this.panel.appendChild(this.turnContainerRed)
+    this.panelContainer.appendChild(this.turnContainerRed)
   
     this.turnIndicatorRed.className = 'turn-indicator'
     this.turnIndicatorRed.id = 'turnIndicatorRed'
@@ -52,7 +43,7 @@ export default class externalUI {
     this.turnContainerRed.appendChild(this.passRed)
   
     this.infobox.id = 'infobox'
-    this.panel.appendChild(this.infobox)
+    this.panelContainer.appendChild(this.infobox)
   
     this.score.id = 'info-score'
     this.infobox.appendChild(this.score)
@@ -81,7 +72,7 @@ export default class externalUI {
   
     this.turnContainerBlack.className = 'turnContainer'
     this.turnContainerBlack.id = 'turnContainerBlack'
-    this.panel.appendChild(this.turnContainerBlack)
+    this.panelContainer.appendChild(this.turnContainerBlack)
   
     this.turnIndicatorBlack.className = 'turn-indicator'
     this.turnIndicatorBlack.id = 'turnIndicatorBlack'
@@ -93,7 +84,7 @@ export default class externalUI {
 
     this.jailBlack.id = 'jailBlack'
     this.jailBlack.className = 'jail'
-    this.panel.appendChild(this.jailBlack)
+    this.panelContainer.appendChild(this.jailBlack)
   
     // debug
     this.passRed.innerText = '$pass'
@@ -104,16 +95,37 @@ export default class externalUI {
     this.turn.innerText = 'Turn: $turn'
     this.statusMsg.innerText = '$msg'
     console.info('%cUI initializing', 'color: orange')
+
   }
 
-  update(game) {
-    this.scoreRed.innerHTML = `Red: ${game.match.red}`
-    this.scoreBlack.innerHTML = `Black: ${game.match.black}`
-    this.matchInfo.innerHTML = `Game: ${game.match.gameNo}/${game.match.matchLength}`
-    this.turn.innerHTML = `Turn: ${game.turnCount}`
-    this.statusMsg.innerHTML = `${game.msg}`
+  init(game) {
+    // Call after game is initialized
+    this.game = game
+    this.setupEventListeners()
+    this.update()
+  }
 
-    if (game.turnColor === CONSTANTS.BLACK) {
+  setupEventListeners() {
+    this.newMatchButton.addEventListener('click', () => {
+      window.location.replace('/')
+    })
+    this.passRed.addEventListener('click', () => {
+      this.game.passTurn(CONSTANTS.RED)
+    })
+    this.passBlack.addEventListener('click', () => {
+      this.game.passTurn(CONSTANTS.BLACK)
+    })
+  }
+
+  update() {
+    this.scoreRed.innerHTML = `Red: ${this.game.match.red}`
+    this.scoreBlack.innerHTML = `Black: ${this.game.match.black}`
+    this.matchInfo.innerHTML = `\
+      Game: ${this.game.match.gameNo}/${this.game.match.matchLength}`
+    this.turn.innerHTML = `Turn: ${this.game.turnCount}`
+    this.statusMsg.innerHTML = `${this.game.msg}`
+
+    if (this.game.turnColor === CONSTANTS.BLACK) {
       this.passBlack.style.backgroundColor = 'hsl(210, 90%, 85%)'
       this.passBlack.innerHTML = 'Pass'
       this.passRed.style.backgroundColor = 'lightgrey'
@@ -133,6 +145,7 @@ export default class externalUI {
     console.log('this.jailCells.length', this.jailCells.length)
     console.log('jailBlack childnodes', this.jailBlack.childNodes )
     this.jailCells.forEach(({ jailedDisc }) => {
+      jailedDisc.clr()
       jailedDisc.update() 
     })
 

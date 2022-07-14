@@ -1,10 +1,11 @@
-import Disc from './CanvasComponents/Disc'
+import BoardDisc from './CanvasComponents/BoardDisc'
+import Panel from './WebComponents/Panel'
 import CONSTANTS from './Constants'
 import EndDialog from './CanvasComponents/EndDialog'
 import initSounds from './audio'
 
 export default class Game {
-  constructor (match, ui, debugMode=false, debugOverlay=false) {
+  constructor (match, debugMode=false, debugOverlay=false) {
     this.debugMode = debugMode
     this.debugOverlay = debugOverlay
     this.debugDiscPositionMarker = ''
@@ -43,15 +44,24 @@ export default class Game {
     this.lastPassedTurn = -1
     this.wasThisTurnPassed = false
 
-    this.ui = ui
-    this.ctx = this.ui.canvas.getContext('2d')
+    this.container = document.createElement('div')
+    this.container.id = 'game'
+    document.body.appendChild(this.container)
+
+    this.canvas = document.createElement('canvas')
+    this.canvas.id = 'gameCanvas'
+    this.container.appendChild(this.canvas)
+
+    this.ctx = this.canvas.getContext('2d')
+
+    this.panel = new Panel()
+    this.container.appendChild(this.panel.panelContainer)
 
     this.board = this.debugMode
       ? CONSTANTS.BOARD_INIT_DEBUG
       : CONSTANTS.BOARD_INIT_PROD
 
     this.discs = []
-    
     
     this.boardHeight = 800
     this.boardWidth = 800
@@ -72,11 +82,11 @@ export default class Game {
 
     this.endDialog = new EndDialog(this)
 
-    this.ui.canvas.width = this.boardWidth + 2 * this.baseThickness
+    this.canvas.width = this.boardWidth + 2 * this.baseThickness
       + this.boardPanelGap
-    this.ui.canvas.height = this.boardHeight + 2 * this.baseThickness
+    this.canvas.height = this.boardHeight + 2 * this.baseThickness
 
-    this.rect = this.ui.canvas.getBoundingClientRect()
+    this.rect = this.canvas.getBoundingClientRect()
 
     const Sounds = initSounds()
     this.sounds = Sounds.sounds
@@ -96,21 +106,21 @@ export default class Game {
         col: 0, row: 0
       }
     }
+
     this.ongoingTouches = new Array()
 
     this.initDiscs()
     this.updateDiscActors()
     this.setupEventListeners()
-    this.updateUI()
+
+    this.panel.init(this)     // Invokes panel.update()
   }
 
   passTurn(playerColor) {
-    return () => {
       if (this.turnColor === playerColor) {
         this.wasThisTurnPassed = true
         this.nextTurn()
       }
-    }
   }
 
   initDiscs() {
@@ -119,26 +129,29 @@ export default class Game {
         switch(this.board[i][j]) {
           case CONSTANTS.RED:
             this.discs.push(
-              new Disc(this.ui.canvas, i, j, this.playAreaOffset, CONSTANTS.RED)
+              new BoardDisc(this.canvas, i, j, CONSTANTS.RED)
             )
             break
           case CONSTANTS.BLACK:
             this.discs.push(
-              new Disc(this.ui.canvas, i, j, this.playAreaOffset, CONSTANTS.BLACK)
+              new BoardDisc(this.canvas, i, j, CONSTANTS.BLACK)
             )
             break
           case CONSTANTS.BLANK:
             break
           default:
             console.log('unhandled board object render')
-            this.ui.debug.innerText += 'error rendering board object'
         }
       }
     }
     if (this.debugMode) {
       for (let i = 0; i < 11; i++) {
-      this.captures.capturedBlacks.push(new Disc(this.ui.canvas,9,9,this.playAreaOffset,CONSTANTS.BLACK))
-      this.captures.capturedReds.push(new Disc(this.ui.canvas,9,9,this.playAreaOffset,CONSTANTS.RED))
+      this.captures.capturedBlacks.push(
+        new BoardDisc(this.canvas, 9, 9, CONSTANTS.BLACK)
+      )
+      this.captures.capturedReds.push(
+        new BoardDisc(this.canvas, 9, 9, CONSTANTS.RED)
+      )
       }
       this.captures.capturedBlacks[0].isKing = true
       this.captures.capturedReds[0].isKing = true
@@ -263,21 +276,21 @@ export default class Game {
     }
   }
 
-  updateUI() {
-    this.ui.update(
-      { 
-        match: { 
-          red: this.match.red,
-          black: this.match.black,
-          gameNo: this.match.gameNo,
-          matchLength: this.match.matchLength,
-        },
-        turnCount: this.turnCount,
-        turnColor: this.turnColor,
-        msg: this.msg
-      }
-    )
-  }
+  // updateUI() {
+  //   this.panel.update(
+  //     { 
+  //       match: { 
+  //         red: this.match.red,
+  //         black: this.match.black,
+  //         gameNo: this.match.gameNo,
+  //         matchLength: this.match.matchLength,
+  //       },
+  //       turnCount: this.turnCount,
+  //       turnColor: this.turnColor,
+  //       msg: this.msg
+  //     }
+  //   )
+  // }
   
   capture(grabbedDisc, to) {
     const capturedDisc = this.findCaptured(grabbedDisc, to)
@@ -293,7 +306,7 @@ export default class Game {
     capturedDisc.row = capturedDisc.col = 9
 
     this.hasCaptureChainStarted = true
-    this.ui.jailDisc(capturedDisc)
+    this.panel.jailDisc(capturedDisc)
     return capturedDisc
   }
 
@@ -342,7 +355,8 @@ export default class Game {
     this.msg = ''
     this.hasCaptureChainStarted = false
     this.updateDiscActors()
-    this.updateUI()
+    // this.updateUI()
+    this.panel.update()
   }
 
   getActorType(disc) {
@@ -406,7 +420,8 @@ export default class Game {
       } else {
         this.play.playRandomClickSound()
       }
-    this.updateUI()
+    // this.updateUI()
+    this.panel.update()
     }
 
     const handlePointerMove = (e) => {
@@ -489,21 +504,25 @@ export default class Game {
         grabbedDisc.toggleGrab()
         grabbedDisc.updateDiscGeometry()
       }
-      this.updateUI()
+      // this.updateUI()
+      this.panel.update()
     }
 
-    function handlePointerCancel(e) {
+    const handlePointerCancel = (e) => {
       console.log(`pointercancel: id = ${e.pointerId}`, )
       const idx = this.ongoingTouchIndexById(e.pointerId)
       this.ongoingTouches.splice(idx, 1)
     }
 
-    this.ui.canvas.addEventListener('pointerdown', handlePointerStart, false)
-    this.ui.canvas.addEventListener('pointerup', handlePointerEnd, false)
-    this.ui.canvas.addEventListener('pointercancel', handlePointerCancel, false)
-    this.ui.canvas.addEventListener('pointermove', handlePointerMove, false)
-    console.info('EventHandlers initialized')
-
+    try {
+      this.canvas.addEventListener('pointerdown', handlePointerStart, false)
+      this.canvas.addEventListener('pointerup', handlePointerEnd, false)
+      this.canvas.addEventListener('pointercancel', handlePointerCancel, false)
+      this.canvas.addEventListener('pointermove', handlePointerMove, false)
+      console.info('EventHandlers initialized')
+    } catch (err) {
+      console.error(`Game AddEventListeners Error: ${err}`)
+    }
   }
 
   ongoingTouchIndexById(idToFind) {
@@ -539,7 +558,7 @@ export default class Game {
   }
 
   clr() {
-    this.ctx.clearRect(0, 0, this.ui.canvas.width, this.ui.canvas.height)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
   drawBoard() {
@@ -566,8 +585,12 @@ export default class Game {
 
 
   drawDiscs() {
-    this.discs.forEach(disc => disc
-      .draw(this.pointerCoords.canvas.x, this.pointerCoords.canvas.y)
+    this.discs.forEach(disc => {
+      this.ctx.save()
+      this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
+      disc.draw(this.pointerCoords.canvas.x, this.pointerCoords.canvas.y)
+      this.ctx.restore()
+    }
     )
   }
 
@@ -628,10 +651,15 @@ export default class Game {
     this.drawDiscs()
 
     if (this.debugOverlay) {
-      this.discs.forEach(d => d.drawClickArea(this.debugDiscPositionMarker))
-      this.ui.canvas.style.border = '1px solid red'
+      this.discs.forEach(d => {
+        this.ctx.save()
+        this.ctx.translate(this.playAreaOffset.x, this.playAreaOffset.y)
+        d.drawClickArea(this.debugDiscPositionMarker)
+        this.ctx.restore()
+      })
+      this.canvas.style.border = '1px solid red'
     } else {
-      this.ui.canvas.style.border = 'none'
+      this.canvas.style.border = 'none'
     }
   }
 }

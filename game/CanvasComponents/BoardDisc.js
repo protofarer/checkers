@@ -6,7 +6,6 @@ export default class BoardDisc extends BaseDisc{
   col
   id
   direction
-  offset
   radius = 40
   clickArea = {
     center: {
@@ -24,7 +23,7 @@ export default class BoardDisc extends BaseDisc{
     right: 0,
   }
 
-  constructor(canvas, row, col, offset, color) {
+  constructor(canvas, row, col, color) {
     // TRY console.assert?
     if (!(col >= 0 && row >= 0)) {
       throw new TypeError('A disc\'s col and row are not initialized')
@@ -32,25 +31,17 @@ export default class BoardDisc extends BaseDisc{
     if (![CONSTANTS.RED, CONSTANTS.BLACK, CONSTANTS.GHOST].some(ele => color === ele)) {
       throw new TypeError('A disc was not initialized a color')
     }
-    if (!offset?.x || !offset?.y) {
-      throw new TypeError('A disc\'s offsets are not initialized')
-    }
     super(canvas, color)
 
     this.row = row
     this.col = col
-    this.offset = offset
     this.id = `${parseInt(this.col)}${parseInt(this.row)}`
     this.direction = color === CONSTANTS.RED ? 1 : -1
-
-    // Offset produced by baseboard and other objects within canvas
-    // TODO refactor offset out, let board/game handle it
 
     this.updateDiscGeometry()
   }
 
   update() {
-
     this.clickArea = new (function(centerX, centerY, radius) {
       this.center = {
         x: centerX,
@@ -81,8 +72,8 @@ export default class BoardDisc extends BaseDisc{
   updateDiscGeometry() {
     // Disc center wrt canvas
     this.center = {
-      x: this.col * 100 + 50 + this.offset.x,
-      y: this.row * 100 + 50 + this.offset.y
+      x: this.col * 100 + 50,
+      y: this.row * 100 + 50
     }
     this.update()
 

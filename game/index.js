@@ -1,9 +1,8 @@
 import Game from './game.js'
-import Panel from './WebComponents/Panel.js'
 import BaseDisc from './CanvasComponents/BaseDisc.js'
 import setupDebugGUI from './WebComponents/debugGUI.js'
 import CONSTANTS from './Constants'
-import BoardDisc from './CanvasComponents/Disc.js'
+import BoardDisc from './CanvasComponents/BoardDisc.js'
 
 export const ENV = new (function() {
   this.MODE = import.meta.env ? import.meta.env.MODE : 'production' 
@@ -89,8 +88,7 @@ if (import.meta.env.DEV) {
 // **********************************************************************
 
 export function startNewGame(debugMode=false, debugOverlay=false) {
-  let ui = new Panel()
-  let game = new Game(match, ui, debugMode, debugOverlay)
+  let game = new Game(match, debugMode, debugOverlay)
 
   // const tmpCanvas = document.createElement('canvas')
   // tmpCanvas.className = 'jailCell'

@@ -33,7 +33,7 @@ body {
   justify-content: flex-start;
 
   flex: 1 1 auto;
-  border: 1px dashed purple;
+  border: 3px dashed purple;
   height: 10em;
 }
 

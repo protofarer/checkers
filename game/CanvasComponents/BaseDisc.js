@@ -56,8 +56,11 @@ export default class BaseDisc {
     this.draw()
   }
 
+  clr() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+
   draw() {
-    // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     const animateStep = () => {
       // animateFrame, the *2*2.85 is to give high enough animate frame to reach 
       // full range of desired colors in periodicColor
