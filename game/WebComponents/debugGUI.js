@@ -2,7 +2,7 @@ import GUI from 'lil-gui'
 import CONSTANTS from '../Constants'
 import { resetGame, } from '..'
 
-export default function setupDebugGUI(game, ui, frames) {
+export default function setupDebugGUI(game, frames) {
     const gui = new GUI()
     const rectpos = {
       left: `${Math.floor(game.rect.left)}`,
@@ -12,8 +12,8 @@ export default function setupDebugGUI(game, ui, frames) {
     const guiGamePositioning = gui.addFolder('GamePositioning') 
     guiGamePositioning.add(rectpos, 'left').name('rect.left').listen()
     guiGamePositioning.add(rectpos, 'top').name('rect.top').listen()
-    guiGamePositioning.add(ui.canvas, 'width').name('canvas.width')
-    guiGamePositioning.add(ui.canvas,'height').name('canvas.height')
+    guiGamePositioning.add(game.canvas, 'width').name('canvas.width')
+    guiGamePositioning.add(game.canvas,'height').name('canvas.height')
 
     const guiMouseTracking = gui.addFolder('MouseTracking')
     guiMouseTracking.add(game.mouseCoords.client, 'x').name('client.x').listen()

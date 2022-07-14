@@ -1,4 +1,4 @@
-import BoardDisc from './game/CanvasComponents/Disc'
+import BoardDisc from './game/CanvasComponents/BoardDisc'
 
 const formEle = document.querySelector('form')
 

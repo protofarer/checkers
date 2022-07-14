@@ -78,12 +78,10 @@ export default class Game {
       y: this.baseThickness,
     }
 
-    this.boardPanelGap = 8
 
     this.endDialog = new EndDialog(this)
 
     this.canvas.width = this.boardWidth + 2 * this.baseThickness
-      + this.boardPanelGap
     this.canvas.height = this.boardHeight + 2 * this.baseThickness
 
     this.rect = this.canvas.getBoundingClientRect()
@@ -114,6 +112,7 @@ export default class Game {
     this.setupEventListeners()
 
     this.panel.init(this)     // Invokes panel.update()
+    this.drawBaseBoard()
   }
 
   passTurn(playerColor) {
@@ -558,7 +557,12 @@ export default class Game {
   }
 
   clr() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.clearRect(
+      this.baseThickness, 
+      this.baseThickness, 
+      this.canvas.width - 2 * this.baseThickness, 
+      this.canvas.height - 2 * this.baseThickness
+    )
   }
 
   drawBoard() {
@@ -593,7 +597,6 @@ export default class Game {
     }
     )
   }
-
 
   drawBaseBoard() {
     // RFCT reference directly
@@ -646,7 +649,7 @@ export default class Game {
   }
 
   drawAll() {
-    this.drawBaseBoard()
+    // this.drawBaseBoard()
     this.drawBoard()
     this.drawDiscs()
 
