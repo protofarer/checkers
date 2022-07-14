@@ -11,9 +11,6 @@ export default class BoardDisc extends BaseDisc{
       top: 0, bottom: 0, left: 0, right: 0,
     }
     isGrabbed = false
-    isKing = false
-    kingColor = 'black'
-    animateFrame = 0
     // debug helpers, points to drawArea relative to canvas
     drawArea = {
       top: 0,
@@ -35,21 +32,10 @@ export default class BoardDisc extends BaseDisc{
     }
     super(canvas, color)
 
-    this.canvas = canvas
-    this.ctx = this.canvas.getContext('2d')
     this.row = row
     this.col = col
-    this.color = color
     this.id = `${parseInt(this.col)}${parseInt(this.row)}`
     this.direction = color === CONSTANTS.RED ? 1 : -1
-
-    // Strokes adjusted for disc's fill
-    this.strokeColor = this.color === CONSTANTS.RED 
-    ? 'hsl(0,100%,10%)' 
-    : this.color === CONSTANTS.BLACK
-      ? 'hsl(0,0%,80%)'
-      : 'hsl(250, 100%, 60%)'
-    
 
     // Offset produced by baseboard and other objects within canvas
     // TODO refactor offset out, let board/game handle it

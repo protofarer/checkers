@@ -1,5 +1,6 @@
 import Game from './game.js'
-import externalUI from './WebComponents/PanelUI.js'
+import Panel from './WebComponents/Panel.js'
+import BaseDisc from './CanvasComponents/BaseDisc.js'
 import setupDebugGUI from './WebComponents/debugGUI.js'
 import CONSTANTS from './Constants'
 
@@ -87,12 +88,26 @@ if (import.meta.env.DEV) {
 // **********************************************************************
 
 export function startNewGame(debugMode=false, debugOverlay=false) {
-  let ui = new externalUI()
+  let ui = new Panel()
   let game = new Game(match, ui, debugMode, debugOverlay)
+
+  ui.jailBlack.style.display = 'flex'
+  ui.jailBlack.style.flexFlow = 'row wrap'
+  ui.jailBlack.style.alignItems = 'flex-start'
+  const tmpCanvas = document.createElement('canvas')
+  tmpCanvas.style.border = '1px dotted red'
+  tmpCanvas.style.flex = '0 1 auto'
+  // tmpCanvas.style.width = '33%'
+  // tmpCanvas.height = tmpCanvas.width
+  tmpCanvas.id = 'tmpcanvas'
+  tmpCanvas.width = tmpCanvas.height = 150
+  ui.jailBlack.appendChild(tmpCanvas)
+  
+  const tmpDisc = new BaseDisc(tmpCanvas, CONSTANTS.RED)
+  tmpDisc.draw()
 
   // **********************************************************************
   // * debuggery
-  // **********************************************************************
 
   // let frames = { fps: 0, times: [] }
   // if (import.meta.env.DEV) {
@@ -108,12 +123,14 @@ export function startNewGame(debugMode=false, debugOverlay=false) {
   // }
 
   // **********************************************************************
-  // **********************************************************************
 
   let loopID = requestAnimationFrame(draw)
   function draw(t) {
     game.clr()
-    game.drawAll()
+    // game.drawAll()
+    // tmpDisc.draw()
+    console.log(tmpDisc.toString())
+    
     loopID = requestAnimationFrame(draw)
 
     // calcFPS(t, frames)

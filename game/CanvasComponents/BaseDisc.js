@@ -7,19 +7,52 @@ export default class BaseDisc {
   //    - Fits inside whatever canvas is given to it by setting up the canvas'
   //      shortest length as its radius and positioning itself near the
   //      0,0 coordinate (origin aka top left)
-  constructor(canvas, color, isKing=false) {
+
+    isKing = false
+    kingColor = 'black'
+    animateFrame = 0
+    radius = 0
+    center = { x: 0, y: 0 }
+
+  constructor(canvas, color) {
     if (!(color === CONSTANTS.BLACK || color === CONSTANTS.RED)) {
       throw new Error('Disc must be either CONSTANTS.BLACK or CONSTANTS.RED')
     }
     this.canvas = canvas
-    this.ctx = canvas.getContext('2d')
+    this.ctx = this.canvas.getContext('2d')
     this.color = color
-    this.isKing = isKing
 
+    // Strokes adjusted for disc's fill
+    this.strokeColor = this.color === CONSTANTS.RED 
+    ? 'hsl(0,100%,10%)' 
+    : this.color === CONSTANTS.BLACK
+      ? 'hsl(0,0%,80%)'
+      : 'hsl(250, 100%, 60%)'
 
+    this.update()
+  }
+
+  toString() {
+    return `center:(${this.center.x},${this.center.y})`
+  }
+
+  update(newCenter) {
+    let squeeze
+    if (this.canvas.width > this.canvas.height) {
+      squeeze = this.canvas.height * 0.07
+      this.radius = this.canvas.height / 2 - squeeze
+    } else {
+      squeeze = this.canvas.width * 0.07
+      this.radius = this.canvas.width / 2 - squeeze
+    }
+    this.center = newCenter || {
+      x: this.radius + squeeze,
+      y: this.radius + squeeze,
+    }
   }
 
   draw(newCenter=null) { 
+    if (newCenter) this.update(newCenter)
     const animateStep = () => {
       // animateFrame, the *2*2.85 is to give high enough animate frame to reach 
       // full range of desired colors in periodicColor
@@ -41,17 +74,6 @@ export default class BaseDisc {
       return this.kingColor
     }
 
-    let radius
-    if (this.canvas.width > this.canvas.height) {
-      radius = this.canvas.height / 2
-    } else {
-      radius = this.canvas.width
-    }
-    let center = newCenter || {
-      x: radius,
-      y: radius,
-    }
-
     // **************************************************************************
     // * Draw Basic Red/Black Disc
     // **************************************************************************
@@ -61,7 +83,7 @@ export default class BaseDisc {
     // TODO cleanup when JailDisc developed
     // this.col < 8 && this.ctx.translate(this.center.x, this.center.y)
 
-    this.ctx.translate(center.x, center.y)
+    this.ctx.translate(this.center.x, this.center.y)
 
     this.ctx.beginPath()
     this.ctx.arc(0, 0, this.radius, 0, 2*Math.PI)
@@ -160,16 +182,14 @@ export default class BaseDisc {
       if (this.isKing) {
         this.ctx.rotate(Math.floor(animateStep() / 60) * 2 * Math.PI / 180)
         }
-      this.ctx.translate(9, 0)
+      this.ctx.translate((9 / 40) * this.radius, 0)
       this.ctx.rotate(Math.PI*3/12)
-      this.ctx.moveTo(11,0)
-      this.ctx.arc(0, 0, 11, 0, Math.PI*18/12)
+      this.ctx.moveTo((11 / 40) * this.radius,0 )
+      this.ctx.arc(0, 0, (11 / 40) * this.radius, 0, Math.PI*18.5/12)
       this.ctx.restore()
     }
     this.ctx.restore()
 
     this.ctx.stroke()
   }
-
-  toString() { throw new Error('Abstract method') }
 }

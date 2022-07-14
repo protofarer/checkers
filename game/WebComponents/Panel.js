@@ -1,10 +1,11 @@
+import BaseDisc from '../CanvasComponents/BaseDisc'
 import CONSTANTS from '../Constants'
 
 export default class externalUI {
   container = document.createElement('div')
   canvas = document.createElement('canvas')
   panel = document.createElement('div')
-  jailBlack = document.createElement('div')
+  jailRed = document.createElement('div')
   turnContainerRed = document.createElement('div')
   turnIndicatorRed = document.createElement('div')
   passRed = document.createElement('button')
@@ -20,7 +21,7 @@ export default class externalUI {
   turnContainerBlack = document.createElement('div')
   turnIndicatorBlack = document.createElement('div')
   passBlack = document.createElement('button')
-  jailRed = document.createElement('div')
+  jailBlack = document.createElement('div')
 
   jailCanvases = {
     reds: [],
@@ -107,6 +108,7 @@ export default class externalUI {
     this.matchInfo.innerText = 'Game: $no/$len'
     this.turn.innerText = 'Turn: $turn'
     this.statusMsg.innerText = '$msg'
+
   }
 
   update(game) {
@@ -116,8 +118,10 @@ export default class externalUI {
     this.matchInfo.innerHTML = `Game: ${game.match.gameNo}/${game.match.matchLength}`
     this.turn.innerHTML = `Turn: ${game.turnCount}`
     this.statusMsg.innerHTML = `${game.msg}`
-    this.jailBlack.innerHTML = `Reds captured: ${game.captures.capturedReds.length}`
-    this.jailRed.innerHTML = `Blacks captured: ${game.captures.capturedBlacks.length}`
+    // this.jailBlack.innerHTML = `Reds captured: ${game.captures.capturedReds.length}`
+    // this.jailRed.innerHTML = `Blacks captured: ${game.captures.capturedBlacks.length}`
+    this.jailBlack.innerHTML = ``
+    this.jailRed.innerHTML = ``
 
     if (game.turnColor === CONSTANTS.BLACK) {
       this.passBlack.style.backgroundColor = 'hsl(210, 90%, 85%)'
@@ -138,10 +142,12 @@ export default class externalUI {
   }
 
   jailDisc(disc) {
+    // Converts a BoardDisc to BaseDisc and draws it appropriately in jail
     const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    disc.color === CONSTANTS.BLACK && this.jailCanvases.blacks.push({ canvas, ctx, disc})
-    disc.color === CONSTANTS.RED && this.jailCanvases.reds.push({ canvas, ctx, disc })
+    disc.color === CONSTANTS.BLACK 
+      && this.jailCanvases.blacks.push(new BaseDisc(canvas, disc.color))
+    disc.color === CONSTANTS.RED 
+      && this.jailCanvases.reds.push(new BaseDisc(canvas, disc.color))
 
     // TODO when disc is captured it must be modified to fit in jail
   }
@@ -155,9 +161,9 @@ export default class externalUI {
     //  use methods:  draw
 
     // TODO make clean copy
-    const jailedDisc =
-    jailedDisc.radius = canvas.width / 2
+
     // TODO modify props
+
 
   }
 
