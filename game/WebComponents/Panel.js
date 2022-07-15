@@ -3,6 +3,7 @@ import CONSTANTS from '../Constants'
 
 export default class Panel {
   panelContainer = document.createElement('div')
+  managerRed = document.createElement('div')
   jailRed = document.createElement('div')
   turnContainerRed = document.createElement('div')
   turnIndicatorRed = document.createElement('div')
@@ -16,6 +17,7 @@ export default class Panel {
   turn = document.createElement('span')
   statusMsg = document.createElement('div')
   newMatchButton = document.createElement('button')
+  managerBlack = document.createElement('div')
   turnContainerBlack = document.createElement('div')
   turnIndicatorBlack = document.createElement('div')
   passBlack = document.createElement('button')
@@ -26,13 +28,16 @@ export default class Panel {
   constructor() {
     this.panelContainer.id = 'panel'
 
+    this.managerRed.className = '.colorManager'
+    this.panelContainer.appendChild(this.managerRed)
+
     this.jailRed.className = 'jail'
     this.jailRed.id = 'jailRed'
-    this.panelContainer.appendChild(this.jailRed)
-  
+    this.managerRed.appendChild(this.jailRed)
+
     this.turnContainerRed.className = 'turnContainer'
     this.turnContainerRed.id = 'turnContainerRed'
-    this.panelContainer.appendChild(this.turnContainerRed)
+    this.managerRed.appendChild(this.turnContainerRed)
   
     this.turnIndicatorRed.className = 'turn-indicator'
     this.turnIndicatorRed.id = 'turnIndicatorRed'
@@ -70,9 +75,12 @@ export default class Panel {
     this.newMatchButton.innerText = 'New Match'
     this.infobox.appendChild(this.newMatchButton)
   
+    this.managerBlack.className = 'colorManager'
+    this.panelContainer.appendChild(this.managerBlack)
+
     this.turnContainerBlack.className = 'turnContainer'
     this.turnContainerBlack.id = 'turnContainerBlack'
-    this.panelContainer.appendChild(this.turnContainerBlack)
+    this.managerBlack.appendChild(this.turnContainerBlack)
   
     this.turnIndicatorBlack.className = 'turn-indicator'
     this.turnIndicatorBlack.id = 'turnIndicatorBlack'
@@ -84,7 +92,7 @@ export default class Panel {
 
     this.jailBlack.id = 'jailBlack'
     this.jailBlack.className = 'jail'
-    this.panelContainer.appendChild(this.jailBlack)
+    this.managerBlack.appendChild(this.jailBlack)
   
     // debug
     this.passRed.innerText = '$pass'
@@ -159,6 +167,8 @@ export default class Panel {
     
     const jailCell = document.createElement('canvas')
     jailCell.className = 'jailCell'
+    jailCell.width = 60
+    jailCell.height = 60
 
     const jailedDisc = new BaseDisc(jailCell, disc.color) 
     jailedDisc.isKing = disc.isKing

@@ -60,12 +60,20 @@ export default function setupDebugGUI(game, frames) {
 
     guiGameTest.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
-    guiGameTest.add(
-      { 
-        jailDisc() { 
-          game.panel.jailDisc(new BoardDisc(game.canvas, 0, 0, CONSTANTS.RED)) 
-        } 
-      }, 'jailDisc')
+    function jailIt(color) {
+      return function jailDisc() { 
+        game.panel.jailDisc(new BoardDisc(game.canvas, 0, 0, color)) 
+      } 
+    }
+    const jailRed = jailIt(CONSTANTS.RED)
+    const jailBlack = jailIt(CONSTANTS.BLACK)
+    guiGameTest.add({ jailRed }, 'jailRed')
+    guiGameTest.add({ jailBlack }, 'jailBlack')
+    guiGameTest.add({ 
+      fullJail() { 
+        for(let i=0;i<12;i++){ jailRed(); jailBlack() }
+      }
+    }, 'fullJail')
 
     // **********************************************************************
     // **********************************************************************
