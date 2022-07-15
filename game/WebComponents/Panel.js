@@ -28,7 +28,7 @@ export default class Panel {
   constructor() {
     this.panelContainer.id = 'panel'
 
-    this.managerRed.className = '.colorManager'
+    this.managerRed.className = 'colorManager'
     this.panelContainer.appendChild(this.managerRed)
 
     this.jailRed.className = 'jail'

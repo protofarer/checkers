@@ -41,6 +41,15 @@ body {
   gap: 0.8em;
 }
 
+.colorManager {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  /* height: 25%; */
+
+  flex: 1 1 auto;
+}
+
 @media screen and (min-width: 980px) {
   body {
     font-size: 1rem;
@@ -58,14 +67,24 @@ body {
     flex-flow: row nowrap;
   }
   .jail {
-    flex-flow: column wrap;
-    height: 100%;
-    width: 28%;
+    order: 1;
+  }
+  
+  .turn-indicator {
+    order: -2;
+  }
+  .turn-passButton {
+    order: -1;
+  }
+  .jailCell {
+    width: auto;
+    height: auto;
   }
 }
 
+
 .jail {
-  margin: 0;
+  margin: 5px;
   padding: 0;
   display: flex;
   flex-flow: row wrap;
@@ -77,10 +96,14 @@ body {
   border: 1px dashed purple;
 }
 
+#jailBlack {
+  align-content: flex-start;
+  flex-flow: row wrap-reverse;
+}
+
 .jailCell {
   padding: 0;
   margin: 0;
-  flex: 0 1 25%;
   width: 32%;
   height: 24%;
   border: 1px dotted red;
