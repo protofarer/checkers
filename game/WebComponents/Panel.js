@@ -165,10 +165,11 @@ export default class Panel {
     // Called by game and adds a canvas and JailDisc to a jail cell
     console.log(`jailing disc`, )
     
+    // disc.summon(color, className, {w, h})
     const jailCell = document.createElement('canvas')
     jailCell.className = 'jailCell'
-    jailCell.width = 60
-    jailCell.height = 60
+    jailCell.width = 120
+    jailCell.height = 120
 
     const jailedDisc = new BaseDisc(jailCell, disc.color) 
     jailedDisc.isKing = disc.isKing

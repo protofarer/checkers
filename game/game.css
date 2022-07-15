@@ -50,22 +50,24 @@ body {
   flex: 1 1 auto;
 }
 
-@media screen and (min-width: 980px) {
-  body {
-    font-size: 1rem;
-  }
-}
 
-@media screen and (orientation: portrait) {
+/* TODO add requirement for tall enough aspect ratio*/
+@media screen and (max-aspect-ratio: 3 / 4) {
   #gameContainer {
     flex-flow: column nowrap;
   }
+  #layerGame {
+    border: 5vw solid hsl(28, 55%, 55%);
+  }
+
   #panel {
     padding: 0.5em 0 0.5em 0;
     width: 100vw;
     height: 200px;
     flex-flow: row nowrap;
+    justify-content: center;
   }
+
   .jail {
     order: 1;
   }
@@ -73,12 +75,18 @@ body {
   .turn-indicator {
     order: -2;
   }
+
   .turn-passButton {
     order: -1;
   }
+
   .jailCell {
-    width: auto;
-    height: auto;
+    max-width: 20%;
+  }
+
+  .colorManager {
+    justify-content: flex-start;
+    width: 30%;
   }
 }
 
@@ -92,20 +100,20 @@ body {
   align-items: flex-start;
   align-content: flex-start;
 
-  flex: 1 1 auto;
+  /* flex: 1 1 auto; */
   border: 1px dashed purple;
 }
 
-#jailBlack {
+/* #jailBlack {
   align-content: flex-start;
   flex-flow: row wrap-reverse;
-}
+} */
 
 .jailCell {
   padding: 0;
   margin: 0;
   width: 32%;
-  height: 24%;
+  /* height: 24%; */
   border: 1px dotted red;
   flex: 0 1 auto;
 }
@@ -169,7 +177,6 @@ button:hover {
   border-bottom: 3px double black;
 }
 
-
 #info-score {
   padding: 0.3em;
 
@@ -221,4 +228,10 @@ button:hover {
   border-top: 0.7em solid transparent;
   border-right: 1.2em solid white;
   border-bottom: 0.7em solid transparent;
+}
+
+@media screen and (min-width: 980px) {
+  body {
+    font-size: 1rem;
+  }
 }

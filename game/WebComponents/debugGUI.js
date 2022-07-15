@@ -65,13 +65,13 @@ export default function setupDebugGUI(game, frames) {
         game.panel.jailDisc(new BoardDisc(game.canvas, 0, 0, color)) 
       } 
     }
-    const jailRed = jailIt(CONSTANTS.RED)
-    const jailBlack = jailIt(CONSTANTS.BLACK)
-    guiGameTest.add({ jailRed }, 'jailRed')
-    guiGameTest.add({ jailBlack }, 'jailBlack')
+    const jailaRed = jailIt(CONSTANTS.RED)
+    const jailaBlack = jailIt(CONSTANTS.BLACK)
+    guiGameTest.add({ jailaRed }, 'jailaRed')
+    guiGameTest.add({ jailaBlack }, 'jailaBlack')
     guiGameTest.add({ 
       fullJail() { 
-        for(let i=0;i<12;i++){ jailRed(); jailBlack() }
+        for(let i=0;i<12;i++){ jailaRed(); jailaBlack() }
       }
     }, 'fullJail')
 
