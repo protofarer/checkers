@@ -67,7 +67,7 @@ export default class Panel {
     this.infobox.appendChild(this.statusMsg)
 
     this.newMatchButton.id = 'newMatchButton'
-    this.newMatchButton.innerText = 'Setup New Match'
+    this.newMatchButton.innerText = 'New Match'
     this.infobox.appendChild(this.newMatchButton)
   
     this.turnContainerBlack.className = 'turnContainer'
@@ -117,12 +117,6 @@ export default class Panel {
   }
 
   update() {
-    this.panelContainer.style.top = '0px'
-    this.panelContainer.style.left = `${this.game.baseBoardCanvas.width + 3}px`
-
-    // ! where is 16px from? Panel adds 16px to gameDims? Browser? Border?
-    this.panelContainer.style.height = `${this.game.gameDims.h - 16}px`
-
     this.scoreRed.innerHTML = `Red: ${this.game.match.red}`
     this.scoreBlack.innerHTML = `Black: ${this.game.match.black}`
     this.matchInfo.innerHTML = `\

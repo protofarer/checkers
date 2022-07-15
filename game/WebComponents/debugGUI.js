@@ -1,6 +1,7 @@
 import GUI from 'lil-gui'
 import CONSTANTS from '../Constants'
 import { resetGame, } from '..'
+import BoardDisc from '../CanvasComponents/BoardDisc'
 
 export default function setupDebugGUI(game, frames) {
     const gui = new GUI()
@@ -59,6 +60,16 @@ export default function setupDebugGUI(game, frames) {
 
     guiGameTest.add({ toggleKings() {game.toggleKings()} }, 'toggleKings')
 
+    guiGameTest.add(
+      { 
+        jailDisc() { 
+          game.panel.jailDisc(new BoardDisc(game.canvas, 0, 0, CONSTANTS.RED)) 
+        } 
+      }, 'jailDisc')
+
+    // **********************************************************************
+    // **********************************************************************
+
     // Match function testing
     const guiMatchTest = gui.addFolder('MatchTest')
     guiMatchTest.add({ resetMatchBo3() {
@@ -90,6 +101,8 @@ export default function setupDebugGUI(game, frames) {
     guiMatchTest.show(false)
     guiGamePositioning.show(false)
     guiPointerTracking.show(true)
+
+    gui.hide()
 
     document.addEventListener('keydown', (e) => {
       if (e.key === '`') {

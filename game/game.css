@@ -2,22 +2,29 @@ body {
   margin: 0;
   padding: 0;
   background-color: black;
+  font-size: calc(0.75rem + 0.50 * ((100vw - 20rem) / 80));
 }
 
-#game {
+#gameContainer {
   /* display: flex; */
   /* flex-flow: row nowrap; */
-}
+  /* justify-content: space-between; */
+  /* gap: 5px; */
 
-#layerBackground {
-  position: absolute;
-  z-index: 1;
+  height: 100vh;
 }
 
 #layerGame {
+  border: 3vw solid hsl(28, 55%, 55%);
+  border-radius: 20px;
   position: absolute;
   touch-action: none;
   z-index: 2;
+
+  width: calc(100vw - 220px - 80px);
+  max-width: calc(980px - 80px - 220px);
+  height: calc(100vw - 220px - 80px);
+  max-height: calc(980px - 80px - 220px);
 }
 
 #layerUI {
@@ -25,12 +32,15 @@ body {
   z-index: 3;
 }
 
-
 #panel {
-  position: absolute;
+  float: right;
   z-index: 4;
   padding: 0.5em;
   background-color: hsl(45, 80%, 93%);
+  width: 200px;
+  /* min-width: 175px; */
+  /* max-width: 225px; */
+  height: 100vh;
 
   font-family: Arial;
 
@@ -40,10 +50,18 @@ body {
   gap: 0.8em;
 }
 
+@media screen and (min-width: 980px) {
+  body {
+    font-size: 1rem;
+  }
+}
+
 .jail {
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
 
   flex: 1 1 auto;
   border: 3px dashed purple;
@@ -53,8 +71,8 @@ body {
   padding: 0;
   margin: 0;
   flex: 0 0 auto;
-  /* width: 100%; */
-  /* height: 25%; */
+  width: 32%;
+  height: 24%;
   border: 1px dotted red;
 }
 

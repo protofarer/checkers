@@ -1,0 +1,10 @@
+#con {
+  display: flex;
+  flex-flow: row wrap;
+  width: 500px;
+}
+
+#can {
+  flex-shrink: 1;
+  flex-grow: 1;
+}

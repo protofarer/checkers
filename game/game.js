@@ -5,8 +5,8 @@ import EndDialog from './CanvasComponents/EndDialog'
 import initSounds from './audio'
 
 export default class Game {
-  constructor (match, debugMode=false, debugOverlay=false) {
-    this.debugMode = debugMode
+  constructor (match, debugGame=false, debugOverlay=false) {
+    this.debugGame = debugGame
     this.debugOverlay = debugOverlay
     this.debugDiscPositionMarker = ''
 
@@ -44,47 +44,29 @@ export default class Game {
     this.lastPassedTurn = -1
     this.wasThisTurnPassed = false
 
-    this.container = document.createElement('div')
-    this.container.id = 'game'
-    document.body.appendChild(this.container)
-
-    this.baseBoardCanvas = document.createElement('canvas')
-    this.baseBoardCanvas.id = 'layerBackground'
-    this.container.appendChild(this.baseBoardCanvas)
-
-    this.baseBoardCtx = this.baseBoardCanvas.getContext('2d', { alpha: false })
+    this.gameContainer = document.createElement('div')
+    this.gameContainer.id = 'gameContainer'
+    document.body.appendChild(this.gameContainer)
 
     this.canvas = document.createElement('canvas')
     this.canvas.id = 'layerGame'
-    this.container.appendChild(this.canvas)
+    this.gameContainer.appendChild(this.canvas)
+
+    this.canvas.width = 800
+    this.canvas.height = 800
 
     this.ctx = this.canvas.getContext('2d')
 
     this.panel = new Panel()
-    this.container.appendChild(this.panel.panelContainer)
+    this.gameContainer.appendChild(this.panel.panelContainer)
 
-    this.board = this.debugMode
-      ? CONSTANTS.BOARD_INIT_DEBUG
-      : CONSTANTS.BOARD_INIT_PROD
+    this.board = CONSTANTS.BOARD_INIT_PROD
 
     this.discs = []
     
     this.boardHeight = 800
     this.boardWidth = 800
-    this.baseThickness = 40      // decorative graphic around board
     
-    // Play area is the active area of board, ie not including baseboard
-    // and defined as such to calculate based off coordinates relative to
-    // the interior of the board itself. The board's absolute position
-    // is modified by:
-    // canvas's offset in window (e.clientX,Y)
-    // board's offset in canvas (playAreaOffset.x,y)
-    this.playAreaOffset = {
-      x: this.baseThickness,
-      y: this.baseThickness,
-    }
-
-
     this.endDialog = new EndDialog(this)
 
     // TODO dependent on whether baseboard included or not
@@ -94,16 +76,6 @@ export default class Game {
         w: boardWidth + 2 * baseThickness
       }
     })(this.boardHeight, this.boardWidth, this.baseThickness)
-
-    this.baseBoardCanvas.height = this.boardHeight + 2 * this.baseThickness
-    this.baseBoardCanvas.width = this.boardWidth + 2 * this.baseThickness
-    this.baseBoardCanvas.left = 0
-    this.baseBoardCanvas.top = 0
-
-    this.canvas.width = this.boardWidth
-    this.canvas.height = this.boardHeight
-    this.canvas.style.left = `${this.baseThickness}px`
-    this.canvas.style.top = `${this.baseThickness}px`
 
     this.rect = this.canvas.getBoundingClientRect()
 
@@ -128,16 +100,21 @@ export default class Game {
 
     this.ongoingTouches = new Array()
 
+    this.debugGame && this.setupDebugGame()
+
     this.initDiscs()
     this.updateDiscActors()
     this.setupEventListeners()
 
     this.panel.init(this)     // Invokes panel.update()
+  }
 
-    // Intermittent update and draw components
-    // TODO ensure update when window or gameContainer resizes/moves
-    //    and draws responsively to viewport dims
-    this.drawBaseBoard()      
+  setupDebugGame() {
+    this.board = CONSTANTS.BOARD_INIT_DEBUG
+    for(let i = 0; i < 12; i++) {
+      i % 2 === 0 && this.panel.jailDisc(new BoardDisc(this.canvas, 0, 0, CONSTANTS.BLACK))
+      this.panel.jailDisc(new BoardDisc(this.canvas, 0, 0, CONSTANTS.RED))
+    }
   }
 
   passTurn(playerColor) {
@@ -168,7 +145,7 @@ export default class Game {
         }
       }
     }
-    if (this.debugMode) {
+    if (this.debugGame) {
       for (let i = 0; i < 11; i++) {
       this.captures.capturedBlacks.push(
         new BoardDisc(this.canvas, 9, 9, CONSTANTS.BLACK)
@@ -300,22 +277,6 @@ export default class Game {
     }
   }
 
-  // updateUI() {
-  //   this.panel.update(
-  //     { 
-  //       match: { 
-  //         red: this.match.red,
-  //         black: this.match.black,
-  //         gameNo: this.match.gameNo,
-  //         matchLength: this.match.matchLength,
-  //       },
-  //       turnCount: this.turnCount,
-  //       turnColor: this.turnColor,
-  //       msg: this.msg
-  //     }
-  //   )
-  // }
-  
   capture(grabbedDisc, to) {
     const capturedDisc = this.findCaptured(grabbedDisc, to)
     if (capturedDisc.color === CONSTANTS.RED) {
@@ -409,7 +370,7 @@ export default class Game {
 
       if (clickedDisc) {
         // Debug logging
-        if (this.debugOverlay || this.debugMode) {
+        if (this.debugOverlay || this.debugGame) {
           if (this.debugDiscPositionMarker !== '') {
             console.log('------------', )
             console.log(`discCenterX,Y: ${clickedDisc.center.x} ${clickedDisc.center.y}`, )
@@ -581,10 +542,10 @@ export default class Game {
 
   clr() {
     this.ctx.clearRect(
-      this.baseThickness, 
-      this.baseThickness, 
-      this.canvas.width - 2 * this.baseThickness, 
-      this.canvas.height - 2 * this.baseThickness
+      0, 
+      0, 
+      this.canvas.width,
+      this.canvas.height
     )
   }
 
@@ -613,55 +574,6 @@ export default class Game {
     })
   }
 
-  drawBaseBoard() {
-    // RFCT reference directly
-    const origin = { x: 0, y: 0 }
-
-    // Filler
-    this.baseBoardCtx.beginPath()
-    this.baseBoardCtx.fillStyle = 'hsla(28, 55%, 55%, 1)'
-    // this.baseBoardCtx.fillRect(origin.x, origin.y, this.boardWidth + 2 * this.baseThickness, this.boardHeight + 2 * this.baseThickness)
-
-    this.baseBoardCtx.strokeStyle = 'hsla(28, 55%, 55%, 1)'
-    this.baseBoardCtx.lineWidth = this.baseThickness
-    this.baseBoardCtx.lineCap = 'round'
-    this.baseBoardCtx.miterLimit = 1
-
-    this.baseBoardCtx.moveTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
-    this.baseBoardCtx.lineTo(this.boardWidth + 1.5*this.baseThickness, origin.y + this.baseThickness/2)
-    this.baseBoardCtx.stroke()
-
-    this.baseBoardCtx.lineTo(this.boardWidth + 1.5*this.baseThickness, this.boardHeight + 1.5 * this.baseThickness)
-    this.baseBoardCtx.stroke()
-
-    this.baseBoardCtx.lineTo(origin.x + this.baseThickness/2,  this.boardHeight + 1.5 * this.baseThickness)
-    this.baseBoardCtx.stroke()
-
-    this.baseBoardCtx.lineTo(origin.x + this.baseThickness/2, origin.y + this.baseThickness/2)
-    this.baseBoardCtx.stroke()
-
-    // Joints
-    this.baseBoardCtx.beginPath()
-    this.baseBoardCtx.strokeStyle = 'hsla(28, 55%, 40%,1)'
-    this.baseBoardCtx.lineWidth = 2
-    this.baseBoardCtx.moveTo(
-      origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
-      origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
-    )
-    this.baseBoardCtx.lineTo(
-      this.boardWidth - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2), 
-      this.boardHeight - 1 + 2 * this.baseThickness - this.baseThickness/2 + (this.baseThickness/2)/Math.sqrt(2)
-    )
-    this.baseBoardCtx.moveTo(
-      origin.x + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2), 
-      origin.y - 1 + this.boardHeight + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2)
-    )
-    this.baseBoardCtx.lineTo(
-      origin.x - 1 + this.boardWidth + 1.5 * this.baseThickness + (this.baseThickness/2)/Math.sqrt(2), 
-      origin.y + 1 + this.baseThickness/2 - (this.baseThickness/2)/Math.sqrt(2)
-    )
-    this.baseBoardCtx.stroke()
-  }
 
   drawAll() {
     this.drawBoard()
