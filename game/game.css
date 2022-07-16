@@ -3,21 +3,28 @@ body {
   padding: 0;
   background-color: black;
   font-size: calc(0.75rem + 0.50 * ((100vw - 20rem) / 80));
+  box-sizing: border-box;
 }
 
 #gameContainer {
   display: flex;
   flex-flow: row nowrap;
   /* justify-content: space-between; */
-  gap: 3px;
-  height: 100vh;
+  /* gap: 3px; */
+  width: 100%;
+  height: 100%;
 }
 
 #layerGame {
-  border: 5vh solid hsl(28, 55%, 55%);
-  border-radius: 20px;
+  /* border: 5vh solid hsl(28, 55%, 55%); */
+  border-radius: 10px;
   touch-action: none;
-  flex: 0 0 auto;
+  max-width: 100%;
+  max-height: 98vh;
+  width: calc(100vw - 200px);
+  height: calc(100vw - 200px);
+
+  flex: 0 0 0%;
 }
 
 #layerUI {
@@ -26,16 +33,20 @@ body {
 }
 
 #panel {
+  margin: 1px;
   padding: 0 0.5em 0 0.5em;
   background-color: hsl(45, 80%, 93%);
   width: 200px;
+  height: calc(100vw - 200px);
+  max-height: 98vh;
   /* min-width: 175px; */
   /* max-width: 225px; */
-  height: 100vh;
+  /* height: 90vh; */
 
+  border-radius: 10px;
   font-family: Arial;
 
-  display: flex;
+  display: inline-flex;
   flex-flow: column nowrap;
   justify-content: space-between;
   gap: 0.8em;
@@ -45,9 +56,9 @@ body {
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
-  /* height: 25%; */
 
   flex: 1 1 auto;
+  border: 3px dotted green;
 }
 
 
@@ -57,17 +68,18 @@ body {
     flex-flow: column nowrap;
   }
   #layerGame {
-    border: 5vw solid hsl(28, 55%, 55%);
+    width: 100%;
   }
 
   #panel {
     padding: 0.5em 0 0.5em 0;
-    width: 100vw;
+    width: 100%;
     height: 200px;
     flex-flow: row nowrap;
     justify-content: center;
   }
 
+  /* TODO change grid layout */
   .jail {
     order: 1;
   }
@@ -81,7 +93,7 @@ body {
   }
 
   .jailCell {
-    max-width: 20%;
+    /* max-width: 20%; */
   }
 
   .colorManager {
@@ -92,30 +104,37 @@ body {
 
 
 .jail {
-  margin: 5px;
   padding: 0;
-  display: flex;
+
+  flex: 1 1 auto;
+  border: 3px dashed purple;
+
+  /* display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: flex-start;
-  align-content: flex-start;
+  align-content: flex-start; */
 
-  /* flex: 1 1 auto; */
-  border: 1px dashed purple;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
-/* #jailBlack {
+#jailBlack {
   align-content: flex-start;
   flex-flow: row wrap-reverse;
-} */
+}
 
 .jailCell {
   padding: 0;
   margin: 0;
-  width: 32%;
-  /* height: 24%; */
+
+  /* max-width: 32%; */
+  /* flex: 0 1 auto; */
+
   border: 1px dotted red;
-  flex: 0 1 auto;
+  width: 100%;
+
 }
 
 .turnContainer {
@@ -175,6 +194,7 @@ button:hover {
 
   border-top: 3px double black;
   border-bottom: 3px double black;
+  flex: 0 0 auto;
 }
 
 #info-score {

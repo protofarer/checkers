@@ -94,7 +94,7 @@ export default class Panel {
     this.jailBlack.className = 'jail'
     this.managerBlack.appendChild(this.jailBlack)
   
-    // debug
+    // before init, for debug
     this.passRed.innerText = '$pass'
     this.passBlack.innerText = '$pass'
     this.scoreRed.innerText = 'Red: $redscore'
@@ -168,22 +168,25 @@ export default class Panel {
     // disc.summon(color, className, {w, h})
     const jailCell = document.createElement('canvas')
     jailCell.className = 'jailCell'
-    jailCell.width = 120
-    jailCell.height = 120
+    // jailCell.width = jailCell.height = 120
 
     const jailedDisc = new BaseDisc(jailCell, disc.color) 
     jailedDisc.isKing = disc.isKing
 
     this.jailCells.push({ jailCell, jailedDisc })
 
-    if (disc.color === CONSTANTS.RED) {
-      this.jailBlack.appendChild(jailCell)
-      console.log(`appended jailCell to jailBlack`, )
+    const jailColor = disc.color === CONSTANTS.RED ? this.jailBlack : this.jailRed
+
+    // TODO optimize by using exact window / element dims
+    if (window.innerWidth / window.innerHeight <= 0.75) {
+      console.log(`IN jailDisc 3/4 dims`, )
+      console.log(`jailColor.clientW/h`, jailColor.clientWidth, jailColor.clientHeight)
+      jailCell.width = jailCell.height = jailColor.clientHeight * 0.25
     } else {
-      this.jailRed.appendChild(jailCell)
-      console.log(`appended jailCell to jailRed`, )
+      jailCell.width = jailCell.height = jailColor.clientWidth * 0.4
     }
-    // console.log(`jailCell`, jailCell)
+    jailColor.appendChild(jailCell)
+    this.update()
   }
 
 

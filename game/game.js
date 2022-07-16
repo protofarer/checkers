@@ -52,8 +52,9 @@ export default class Game {
     this.canvas.id = 'layerGame'
     this.gameContainer.appendChild(this.canvas)
 
-    this.canvas.width = 800
-    this.canvas.height = 800
+    this.boardHeight = this.boardWidth = 800
+    // this.canvas.width = this.canvas.height = this.boardHeight
+    this.canvas.height = this.canvas.width = window.innerWidth
 
     this.ctx = this.canvas.getContext('2d')
 
@@ -64,18 +65,15 @@ export default class Game {
 
     this.discs = []
     
-    this.boardHeight = 800
-    this.boardWidth = 800
     
     this.endDialog = new EndDialog(this)
 
-    // TODO dependent on whether baseboard included or not
-    this.gameDims = new (function(boardHeight, boardWidth, baseThickness) {
+    this.gameDims = new (function(boardHeight, boardWidth) {
       return {
-        h: boardHeight + 2 * baseThickness,
-        w: boardWidth + 2 * baseThickness
+        h: boardHeight,
+        w: boardWidth
       }
-    })(this.boardHeight, this.boardWidth, this.baseThickness)
+    })(this.boardHeight, this.boardWidth)
 
     this.rect = this.canvas.getBoundingClientRect()
 
@@ -502,6 +500,17 @@ export default class Game {
       this.canvas.addEventListener('pointerup', handlePointerEnd, false)
       this.canvas.addEventListener('pointercancel', handlePointerCancel, false)
       this.canvas.addEventListener('pointermove', handlePointerMove, false)
+
+      // TODO test this after mobile draw and layout works
+      // screen.orientation.addEventListener('change', () => {
+      //   this.panel.update()
+      // })
+
+      // * do I even need this?
+      // window.addEventListener('resive', () => {
+      //   this.canvas.width = window.innerWidth
+      //   this.canvas.height = window.innerHeight
+      // })
       console.info('EventHandlers initialized')
     } catch (err) {
       console.error(`Game AddEventListeners Error: ${err}`)
